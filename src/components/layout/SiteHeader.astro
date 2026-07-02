@@ -17,10 +17,11 @@ const localizedNavItems = navItems.map((item) => ({
 }));
 
 const homeHref = getLocalizedPath("/", currentLocale);
+const isHomePage = currentPath === "/";
 ---
 
 <span class="header-sentinel" aria-hidden="true"></span>
-<header class="site-header" data-site-header>
+<header class:list={["site-header", { "is-hero-reveal-gated": isHomePage }]} data-site-header>
   <div class="header-shell">
     <a class="wordmark" href={homeHref} aria-label="BELES home">
       <img src="/img/branding/beles-logo-header.svg" alt="BELES" width="529" height="96" />
@@ -67,6 +68,24 @@ const homeHref = getLocalizedPath("/", currentLocale);
 
   if (header instanceof HTMLElement) {
     const hiddenThreshold = 120;
+
+    if (header.classList.contains("is-hero-reveal-gated")) {
+      let isHeaderReleased = false;
+
+      const releaseHeader = () => {
+        if (isHeaderReleased) {
+          return;
+        }
+
+        isHeaderReleased = true;
+        header.classList.remove("is-hero-reveal-gated");
+        header.classList.add("is-hero-reveal-ready");
+        document.removeEventListener("home-hero:ready", releaseHeader);
+      };
+
+      document.addEventListener("home-hero:ready", releaseHeader, { once: true });
+      window.setTimeout(releaseHeader, 2300);
+    }
 
     const updateHeader = () => {
       const currentScrollY = Math.max(window.scrollY, 0);
@@ -280,6 +299,49 @@ const homeHref = getLocalizedPath("/", currentLocale);
 
   .mobile-menu {
     display: none;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .wordmark,
+    .desktop-nav,
+    .desktop-actions,
+    .mobile-menu {
+      animation: header-soft-reveal 620ms cubic-bezier(0.22, 1, 0.36, 1) both;
+    }
+
+    .site-header.is-hero-reveal-gated .wordmark,
+    .site-header.is-hero-reveal-gated .desktop-nav,
+    .site-header.is-hero-reveal-gated .desktop-actions,
+    .site-header.is-hero-reveal-gated .mobile-menu {
+      animation-delay: 2300ms;
+      opacity: 0;
+      transform: translateY(-0.42rem);
+    }
+
+    .wordmark {
+      animation-delay: 130ms;
+    }
+
+    .desktop-nav,
+    .mobile-menu {
+      animation-delay: 190ms;
+    }
+
+    .desktop-actions {
+      animation-delay: 250ms;
+    }
+
+    @keyframes header-soft-reveal {
+      from {
+        opacity: 0;
+        transform: translateY(-0.42rem);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
   }
 
   @media (max-width: 1023px) {
@@ -507,6 +569,10 @@ const homeHref = getLocalizedPath("/", currentLocale);
   @media (prefers-reduced-motion: reduce) {
     .site-header,
     .header-shell,
+    .wordmark,
+    .desktop-nav,
+    .desktop-actions,
+    .mobile-menu,
     .desktop-nav a,
     .desktop-nav a::after,
     .mobile-menu summary,

@@ -22,7 +22,7 @@ const proofItems = [
 ];
 ---
 
-<section class="home-hero" aria-labelledby="home-hero-title">
+<section class="home-hero is-reveal-pending" aria-labelledby="home-hero-title" data-home-hero>
   <picture class="hero-background" aria-hidden="true">
     <source media="(max-width: 720px)" srcset={mobileHeroSrc} type="image/webp" />
     <img
@@ -39,14 +39,14 @@ const proofItems = [
   <div class="hero-overlay" aria-hidden="true"></div>
 
   <div class="hero-content">
-    <div class="hero-copy reveal-item">
-      <p class="hero-eyebrow">ENGINEERING • PRECISION • PURPOSE</p>
-      <h1 id="home-hero-title">Mobility, Engineered.</h1>
-      <p class="hero-body">
+    <div class="hero-copy">
+      <p class="hero-eyebrow hero-reveal">ENGINEERING • PRECISION • PURPOSE</p>
+      <h1 id="home-hero-title" class="hero-reveal">Mobility, Engineered.</h1>
+      <p class="hero-body hero-reveal">
         BELES develops advanced mobility platforms in Kyrgyzstan — built for the next era of
         industrial and urban transport.
       </p>
-      <div class="hero-actions" aria-label="Homepage actions">
+      <div class="hero-actions hero-reveal" aria-label="Homepage actions">
         <a class="primary-action" href="/projects/">
           <span>Explore Platform</span>
           <span class="action-arrow" aria-hidden="true">→</span>
@@ -57,10 +57,10 @@ const proofItems = [
         </a>
       </div>
 
-      <aside class="proof-panel reveal-item" aria-label="BELES capability proof points">
+      <aside class="proof-panel" aria-label="BELES capability proof points">
         {
-          proofItems.map((item) => (
-            <article class="proof-item">
+          proofItems.map((item, index) => (
+            <article class="proof-item hero-reveal" style={`--reveal-index: ${index}`}>
               <strong>{item.value}</strong>
               <span>{item.label}</span>
             </article>
@@ -70,6 +70,89 @@ const proofItems = [
     </div>
   </div>
 </section>
+
+<script is:inline>
+  (() => {
+    const hero = document.querySelector("[data-home-hero]");
+    const image = hero?.querySelector(".hero-background img");
+
+    if (!(hero instanceof HTMLElement) || !(image instanceof HTMLImageElement)) {
+      return;
+    }
+
+    const fallbackDelay = 2000;
+    const paintDelay = 140;
+    let isImageReady = false;
+    let isRevealReady = false;
+
+    const afterPaint = () =>
+      new Promise((resolve) => {
+        requestAnimationFrame(() => {
+          requestAnimationFrame(resolve);
+        });
+      });
+
+    const releaseImage = () => {
+      if (isImageReady) {
+        return;
+      }
+
+      isImageReady = true;
+      hero.classList.add("is-image-ready");
+    };
+
+    const releaseReveal = async () => {
+      if (isRevealReady) {
+        return;
+      }
+
+      isRevealReady = true;
+      releaseImage();
+
+      await afterPaint();
+      window.setTimeout(() => {
+        hero.classList.remove("is-reveal-pending");
+        hero.classList.add("is-reveal-ready");
+        document.dispatchEvent(new CustomEvent("home-hero:ready"));
+      }, paintDelay);
+    };
+
+    const fallbackTimer = window.setTimeout(() => {
+      releaseReveal();
+    }, fallbackDelay);
+
+    const loadHeroImage = async () => {
+      try {
+        if (!image.currentSrc) {
+          await afterPaint();
+        }
+
+        if (image.complete && image.naturalWidth > 0) {
+          if (typeof image.decode === "function") {
+            await image.decode();
+          }
+        } else {
+          await new Promise((resolve, reject) => {
+            image.addEventListener("load", resolve, { once: true });
+            image.addEventListener("error", reject, { once: true });
+          });
+
+          if (typeof image.decode === "function") {
+            await image.decode();
+          }
+        }
+
+        window.clearTimeout(fallbackTimer);
+        releaseImage();
+        releaseReveal();
+      } catch {
+        // Let the fallback timer release the content if loading or decoding fails.
+      }
+    };
+
+    loadHeroImage();
+  })();
+</script>
 
 <style>
   .home-hero {
@@ -95,6 +178,7 @@ const proofItems = [
     height: 100%;
     object-fit: cover;
     object-position: center center;
+    transform-origin: center;
   }
 
   .hero-overlay {
@@ -190,7 +274,7 @@ const proofItems = [
       border-color var(--duration-fast) var(--ease-out),
       background var(--duration-fast) var(--ease-out),
       color var(--duration-fast) var(--ease-out),
-      transform var(--duration-fast) var(--ease-out);
+      transform 220ms cubic-bezier(0.22, 1, 0.36, 1);
   }
 
   .primary-action {
@@ -228,7 +312,7 @@ const proofItems = [
     aspect-ratio: 1;
     font-size: 0.82rem;
     line-height: 0;
-    transition: transform var(--duration-fast) var(--ease-out);
+    transition: transform 260ms cubic-bezier(0.22, 1, 0.36, 1);
   }
 
   .primary-action .action-arrow {
@@ -316,28 +400,129 @@ const proofItems = [
     content: "";
   }
 
-  .reveal-item {
+  .hero-reveal {
     opacity: 1;
   }
 
   @media (prefers-reduced-motion: no-preference) {
-    .reveal-item {
-      animation: hero-rise 780ms var(--ease-out) both;
+    .home-hero.is-reveal-pending .hero-background img {
+      animation: hero-background-fallback 1ms linear 2000ms both;
+      opacity: 0;
+      transform: scale(1.018);
     }
 
-    .proof-panel {
-      animation-delay: 120ms;
+    .home-hero.is-image-ready .hero-background img {
+      opacity: 0.96;
+      transform: scale(1.018);
     }
 
-    @keyframes hero-rise {
+    .home-hero.is-reveal-ready .hero-background img {
+      animation: hero-background-settle 1150ms cubic-bezier(0.22, 1, 0.36, 1) both;
+    }
+
+    .home-hero.is-reveal-pending .hero-reveal {
+      animation: hero-reveal-fallback 1ms linear 2140ms both;
+      opacity: 0;
+      transform: translateY(0.72rem);
+    }
+
+    .home-hero.is-reveal-ready .hero-reveal {
+      animation: hero-reveal-rise 720ms cubic-bezier(0.22, 1, 0.36, 1) both;
+    }
+
+    .home-hero.is-reveal-ready .hero-eyebrow {
+      animation-delay: 280ms;
+    }
+
+    .home-hero.is-reveal-ready h1 {
+      animation-delay: 390ms;
+    }
+
+    .home-hero.is-reveal-ready .hero-body {
+      animation-delay: 520ms;
+    }
+
+    .home-hero.is-reveal-ready .hero-actions {
+      animation-delay: 660ms;
+    }
+
+    .home-hero.is-reveal-ready .proof-item {
+      animation-delay: calc(820ms + (var(--reveal-index) * 70ms));
+    }
+
+    @keyframes hero-background-settle {
+      from {
+        opacity: 0.96;
+        transform: scale(1.018);
+      }
+
+      to {
+        opacity: 1;
+        transform: scale(1);
+      }
+    }
+
+    @keyframes hero-reveal-rise {
       from {
         opacity: 0;
-        transform: translateY(0.9rem);
+        transform: translateY(0.72rem);
       }
 
       to {
         opacity: 1;
         transform: translateY(0);
+      }
+    }
+
+    @keyframes hero-background-fallback {
+      to {
+        opacity: 1;
+        transform: scale(1);
+      }
+    }
+
+    @keyframes hero-reveal-fallback {
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .hero-background img,
+    .hero-reveal {
+      animation: none;
+      transform: none;
+    }
+
+    .home-hero.is-reveal-pending .hero-background img {
+      opacity: 0;
+    }
+
+    .home-hero.is-image-ready .hero-background img {
+      opacity: 1;
+    }
+
+    .home-hero.is-reveal-pending .hero-reveal {
+      animation: hero-reveal-fallback 1ms linear 2140ms both;
+      opacity: 0;
+    }
+
+    .home-hero.is-reveal-ready .hero-background img,
+    .home-hero.is-reveal-ready .hero-reveal {
+      opacity: 1;
+    }
+
+    .primary-action,
+    .secondary-action,
+    .action-arrow {
+      transition-duration: 1ms;
+    }
+
+    @keyframes hero-reveal-fallback {
+      to {
+        opacity: 1;
       }
     }
   }
