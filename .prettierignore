@@ -1,0 +1,6 @@
+dist/
+.astro/
+node_modules/
+package-lock.json
+astro.config.mjs
+src/pages/index.astro
