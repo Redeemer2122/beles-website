@@ -1,0 +1,342 @@
+---
+import { getLocaleFromPathname, getLocalizedPath } from "../../../lib/navigation";
+
+type Props = {
+  content: {
+    title: string;
+    body: string;
+    cta: string;
+    origin: string;
+    regions: string[];
+    proof: string[];
+  };
+};
+
+const { content } = Astro.props;
+const currentLocale = getLocaleFromPathname(Astro.url.pathname);
+const ctaHref = getLocalizedPath("/about/", currentLocale);
+---
+
+<section class="market-section" aria-labelledby="market-title">
+  <div class="market-shell">
+    <div class="market-map" aria-label="BELES regional direction">
+      <div class="origin-node" data-reveal>
+        <span>{content.origin}</span>
+      </div>
+      <span class="route-line route-line-a" data-reveal="line" aria-hidden="true"></span>
+      <span class="route-line route-line-b" aria-hidden="true"></span>
+      <div class="region-cloud">
+        {
+          content.regions.map((region, index) => (
+            <span
+              class={`region-label region-${index + 1}`}
+              data-reveal
+              style={`--reveal-delay: ${index * 70}ms`}
+            >
+              {region}
+            </span>
+          ))
+        }
+      </div>
+    </div>
+
+    <div class="market-copy">
+      <h2 id="market-title" data-reveal>{content.title}</h2>
+      <p data-reveal style="--reveal-delay: 90ms">{content.body}</p>
+      <ul aria-label="Market direction proof points">
+        {
+          content.proof.map((item, index) => (
+            <li data-reveal style={`--reveal-delay: ${150 + index * 60}ms`}>
+              {item}
+            </li>
+          ))
+        }
+      </ul>
+      <a class="home-text-link" href={ctaHref} data-reveal style="--reveal-delay: 320ms">
+        <span>{content.cta}</span>
+        <span aria-hidden="true">→</span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<style>
+  .market-section {
+    overflow: clip;
+    background: #f4f6f9;
+    color: #101722;
+  }
+
+  .market-shell {
+    display: grid;
+    grid-template-columns: minmax(0, 1.02fr) minmax(22rem, 0.8fr);
+    gap: clamp(2.5rem, 6vw, 6rem);
+    width: min(100% - (var(--container-gutter) * 2), var(--container-max));
+    margin-inline: auto;
+    padding-block: clamp(5.5rem, 11vw, 11rem);
+  }
+
+  .market-map {
+    position: relative;
+    min-height: clamp(30rem, 42vw, 42rem);
+    border: 1px solid rgba(37, 43, 50, 0.12);
+    background:
+      linear-gradient(135deg, rgba(255, 255, 255, 0.74), rgba(217, 224, 234, 0.24)),
+      repeating-linear-gradient(90deg, rgba(37, 43, 50, 0.055) 0 1px, transparent 1px 4rem),
+      repeating-linear-gradient(0deg, rgba(37, 43, 50, 0.045) 0 1px, transparent 1px 4rem);
+  }
+
+  .origin-node {
+    position: absolute;
+    top: 52%;
+    left: 16%;
+    z-index: 2;
+    display: grid;
+    place-items: center;
+    width: clamp(8rem, 13vw, 13rem);
+    aspect-ratio: 1;
+    border: 1px solid rgba(12, 67, 223, 0.34);
+    background: rgba(255, 255, 255, 0.62);
+    transform: translateY(-50%);
+  }
+
+  .origin-node::before,
+  .origin-node::after {
+    position: absolute;
+    border: 1px solid rgba(12, 67, 223, 0.12);
+    content: "";
+    inset: 12%;
+  }
+
+  .origin-node::after {
+    inset: 25%;
+  }
+
+  .origin-node span {
+    position: relative;
+    z-index: 1;
+    color: #0c43df;
+    font-family: "Space Grotesk", var(--font-display);
+    font-size: clamp(0.92rem, 1.4vw, 1.25rem);
+    font-weight: 700;
+    letter-spacing: 0.03em;
+    line-height: 1;
+  }
+
+  .route-line {
+    position: absolute;
+    left: 29%;
+    z-index: 1;
+    height: 1px;
+    background: rgba(12, 67, 223, 0.42);
+    transform-origin: left center;
+  }
+
+  .route-line-a {
+    top: 43%;
+    width: 56%;
+    transform: rotate(-12deg);
+  }
+
+  .route-line-b {
+    top: 59%;
+    width: 63%;
+    transform: rotate(8deg);
+  }
+
+  .region-cloud {
+    position: absolute;
+    inset: 0;
+  }
+
+  .region-label {
+    position: absolute;
+    display: inline-flex;
+    min-width: 7.5rem;
+    border: 1px solid rgba(37, 43, 50, 0.12);
+    background: rgba(255, 255, 255, 0.68);
+    padding: 0.58rem 0.72rem;
+    color: rgba(16, 23, 34, 0.74);
+    font-family: "Space Grotesk", var(--font-display);
+    font-size: clamp(0.72rem, 1vw, 0.9rem);
+    font-weight: 650;
+    line-height: 1;
+  }
+
+  .region-1 {
+    top: 19%;
+    right: 21%;
+  }
+
+  .region-2 {
+    top: 35%;
+    right: 7%;
+  }
+
+  .region-3 {
+    top: 51%;
+    right: 25%;
+  }
+
+  .region-4 {
+    right: 9%;
+    bottom: 22%;
+  }
+
+  .region-5 {
+    right: 36%;
+    bottom: 12%;
+  }
+
+  .region-6 {
+    top: 12%;
+    right: 43%;
+  }
+
+  .market-copy {
+    align-self: center;
+  }
+
+  .market-copy h2 {
+    max-width: 12ch;
+    margin: 0;
+    color: #111722;
+    font-family: "Space Grotesk", var(--font-display);
+    font-size: clamp(2.85rem, 5.7vw, 5.9rem);
+    font-weight: 500;
+    letter-spacing: -0.052em;
+    line-height: 0.94;
+    text-wrap: balance;
+  }
+
+  .market-copy p {
+    max-width: 37rem;
+    margin: 1.55rem 0 0;
+    color: rgba(16, 23, 34, 0.68);
+    font-size: clamp(1rem, 1.12vw, 1.12rem);
+    font-weight: 520;
+    line-height: 1.62;
+  }
+
+  .market-copy ul {
+    display: grid;
+    gap: 0.75rem;
+    margin: 2rem 0 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .market-copy li {
+    padding-block: 0.8rem;
+    border-top: 1px solid rgba(37, 43, 50, 0.14);
+    color: rgba(16, 23, 34, 0.76);
+    font-size: 0.92rem;
+    font-weight: 620;
+    line-height: 1.35;
+  }
+
+  .home-text-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.72rem;
+    margin-top: 1.8rem;
+    color: #0c43df;
+    font-family: "Space Grotesk", var(--font-display);
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 0.045em;
+    line-height: 1;
+    text-decoration: none;
+    text-transform: uppercase;
+  }
+
+  .home-text-link span:last-child {
+    transition: transform 220ms var(--ease-out);
+  }
+
+  .home-text-link:hover span:last-child,
+  .home-text-link:focus-visible span:last-child {
+    transform: translateX(0.2rem);
+  }
+
+  @media (max-width: 980px) {
+    .market-shell {
+      grid-template-columns: 1fr;
+    }
+
+    .market-map {
+      min-height: 31rem;
+      order: 2;
+    }
+  }
+
+  @media (max-width: 620px) {
+    .market-copy h2 {
+      font-size: clamp(2.55rem, 12vw, 4rem);
+    }
+
+    .market-map {
+      min-height: 34rem;
+    }
+
+    .origin-node {
+      top: 23%;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+
+    .route-line-a,
+    .route-line-b {
+      left: 50%;
+      width: 1px;
+      height: 55%;
+      transform: none;
+    }
+
+    .route-line-a {
+      top: 34%;
+    }
+
+    .route-line-b {
+      display: none;
+    }
+
+    .region-label {
+      min-width: 0;
+      white-space: nowrap;
+    }
+
+    .region-1 {
+      top: 47%;
+      right: auto;
+      left: 7%;
+    }
+
+    .region-2 {
+      top: 55%;
+      right: 6%;
+    }
+
+    .region-3 {
+      top: 64%;
+      right: auto;
+      left: 12%;
+    }
+
+    .region-4 {
+      right: 9%;
+      bottom: 18%;
+    }
+
+    .region-5 {
+      right: auto;
+      bottom: 10%;
+      left: 8%;
+    }
+
+    .region-6 {
+      top: 39%;
+      right: 12%;
+    }
+  }
+</style>

@@ -1,13 +1,43 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
+import EvolutionTimelineSection from "../components/sections/home/EvolutionTimelineSection.astro";
+import HomeFinalCTASection from "../components/sections/home/HomeFinalCTASection.astro";
 import HomeHero from "../components/sections/home/HomeHero.astro";
+import HomeRevealScript from "../components/sections/home/HomeRevealScript.astro";
+import ManufacturingScaleSection from "../components/sections/home/ManufacturingScaleSection.astro";
+import MarketDirectionSection from "../components/sections/home/MarketDirectionSection.astro";
+import MobilityPlatformsSection from "../components/sections/home/MobilityPlatformsSection.astro";
+import NationalOEMSection from "../components/sections/home/NationalOEMSection.astro";
+import en from "../i18n/locales/en";
+import ky from "../i18n/locales/ky";
+import ru from "../i18n/locales/ru";
+import zh from "../i18n/locales/zh";
+import { getLocaleFromPathname } from "../lib/navigation";
+import type { Locale } from "../i18n";
+
+const translations = {
+  en,
+  ru,
+  zh,
+  ky,
+} satisfies Record<Locale, typeof en>;
+
+const locale = getLocaleFromPathname(Astro.url.pathname);
+const home = translations[locale].home;
 
 const description =
   "BELES develops engineering-led mobility solutions for industrial and commercial transportation.";
 ---
 
-<BaseLayout title="BELES" description={description}>
+<BaseLayout title="BELES" description={description} lang={locale}>
   <main id="main">
     <HomeHero />
+    <NationalOEMSection content={home.nationalOem} />
+    <EvolutionTimelineSection content={home.evolution} />
+    <MobilityPlatformsSection content={home.platforms} />
+    <ManufacturingScaleSection content={home.manufacturing} />
+    <MarketDirectionSection content={home.market} />
+    <HomeFinalCTASection content={home.finalCta} />
   </main>
+  <HomeRevealScript />
 </BaseLayout>

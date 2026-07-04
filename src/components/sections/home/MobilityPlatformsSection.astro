@@ -1,0 +1,283 @@
+---
+import { getLocaleFromPathname, getLocalizedPath } from "../../../lib/navigation";
+
+type PlatformPanel = {
+  title: string;
+  text: string;
+  facts: string[];
+};
+
+type Props = {
+  content: {
+    title: string;
+    body: string;
+    cta: string;
+    panels: PlatformPanel[];
+  };
+};
+
+const { content } = Astro.props;
+const currentLocale = getLocaleFromPathname(Astro.url.pathname);
+const ctaHref = getLocalizedPath("/projects/", currentLocale);
+---
+
+<section class="platforms-section" aria-labelledby="platforms-title">
+  <div class="platforms-shell">
+    <div class="platforms-heading">
+      <h2 id="platforms-title" data-reveal>{content.title}</h2>
+      <p data-reveal style="--reveal-delay: 90ms">{content.body}</p>
+      <a class="home-text-link" href={ctaHref} data-reveal style="--reveal-delay: 160ms">
+        <span>{content.cta}</span>
+        <span aria-hidden="true">→</span>
+      </a>
+    </div>
+
+    <div class="platform-board">
+      {
+        content.panels.map((panel, index) => (
+          <article
+            class={`platform-panel platform-panel-${index + 1}`}
+            data-reveal
+            style={`--reveal-delay: ${index * 90}ms`}
+          >
+            <div class="panel-visual" aria-hidden="true">
+              <span />
+            </div>
+            <div class="panel-copy">
+              <h3>{panel.title}</h3>
+              <p>{panel.text}</p>
+            </div>
+            <ul aria-label={`${panel.title} facts`}>
+              {panel.facts.map((fact) => (
+                <li>{fact}</li>
+              ))}
+            </ul>
+          </article>
+        ))
+      }
+    </div>
+  </div>
+</section>
+
+<style>
+  .platforms-section {
+    overflow: clip;
+    background: #f7f8fa;
+    color: #101722;
+  }
+
+  .platforms-shell {
+    width: min(100% - (var(--container-gutter) * 2), var(--container-max));
+    margin-inline: auto;
+    padding-block: clamp(5.5rem, 11vw, 11.5rem);
+  }
+
+  .platforms-heading {
+    max-width: 54rem;
+  }
+
+  .platforms-heading h2 {
+    max-width: 15ch;
+    margin: 0;
+    font-family: "Space Grotesk", var(--font-display);
+    font-size: clamp(3rem, 6.8vw, 7rem);
+    font-weight: 500;
+    letter-spacing: -0.052em;
+    line-height: 0.92;
+    text-wrap: balance;
+  }
+
+  .platforms-heading p {
+    max-width: 45rem;
+    margin: 1.55rem 0 0;
+    color: rgba(16, 23, 34, 0.68);
+    font-size: clamp(1rem, 1.15vw, 1.14rem);
+    font-weight: 520;
+    line-height: 1.62;
+  }
+
+  .home-text-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.72rem;
+    margin-top: 1.75rem;
+    color: #0c43df;
+    font-family: "Space Grotesk", var(--font-display);
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 0.045em;
+    line-height: 1;
+    text-decoration: none;
+    text-transform: uppercase;
+  }
+
+  .home-text-link span:last-child {
+    transition: transform 220ms var(--ease-out);
+  }
+
+  .home-text-link:hover span:last-child,
+  .home-text-link:focus-visible span:last-child {
+    transform: translateX(0.2rem);
+  }
+
+  .platform-board {
+    display: grid;
+    grid-template-columns: minmax(0, 1.25fr) minmax(0, 0.8fr);
+    grid-template-rows: auto auto;
+    gap: clamp(1rem, 2vw, 1.5rem);
+    margin-top: clamp(3rem, 6vw, 6rem);
+  }
+
+  .platform-panel {
+    position: relative;
+    display: grid;
+    align-content: space-between;
+    min-height: clamp(24rem, 34vw, 34rem);
+    overflow: hidden;
+    border: 1px solid rgba(37, 43, 50, 0.12);
+    background: #eef2f6;
+    transition:
+      border-color 240ms var(--ease-out),
+      transform 240ms var(--ease-out);
+  }
+
+  .platform-panel:hover {
+    border-color: rgba(12, 67, 223, 0.26);
+    transform: translateY(-0.18rem);
+  }
+
+  .platform-panel-1 {
+    grid-row: span 2;
+  }
+
+  .platform-panel-2,
+  .platform-panel-3 {
+    min-height: clamp(18rem, 21vw, 22rem);
+  }
+
+  .panel-visual {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background:
+      linear-gradient(
+        145deg,
+        rgba(255, 255, 255, 0.8),
+        rgba(201, 210, 223, 0.22) 48%,
+        rgba(12, 67, 223, 0.07)
+      ),
+      repeating-linear-gradient(90deg, rgba(37, 43, 50, 0.05) 0 1px, transparent 1px 4.5rem);
+  }
+
+  .platform-panel-1 .panel-visual {
+    background:
+      linear-gradient(180deg, rgba(247, 248, 250, 0.04), rgba(247, 248, 250, 0.78)),
+      linear-gradient(115deg, rgba(12, 67, 223, 0.12), transparent 38%),
+      url("/img/hero/beles-hero-desktop.webp") center / cover;
+  }
+
+  .panel-visual span {
+    position: absolute;
+    right: 10%;
+    bottom: 18%;
+    width: min(42%, 19rem);
+    height: 1px;
+    background: rgba(12, 67, 223, 0.5);
+  }
+
+  .panel-visual span::before,
+  .panel-visual span::after {
+    position: absolute;
+    top: -3.5rem;
+    width: 1px;
+    height: 7rem;
+    background: rgba(12, 67, 223, 0.28);
+    content: "";
+  }
+
+  .panel-visual span::before {
+    left: 18%;
+  }
+
+  .panel-visual span::after {
+    right: 0;
+  }
+
+  .panel-copy,
+  .platform-panel ul {
+    position: relative;
+    z-index: 1;
+  }
+
+  .panel-copy {
+    align-self: end;
+    max-width: 31rem;
+    padding: clamp(1.4rem, 3vw, 2.45rem);
+  }
+
+  .panel-copy h3 {
+    margin: 0;
+    color: #111722;
+    font-family: "Space Grotesk", var(--font-display);
+    font-size: clamp(1.75rem, 3vw, 3.35rem);
+    font-weight: 540;
+    letter-spacing: -0.045em;
+    line-height: 0.98;
+  }
+
+  .panel-copy p {
+    margin: 1rem 0 0;
+    color: rgba(16, 23, 34, 0.66);
+    font-size: 0.98rem;
+    font-weight: 520;
+    line-height: 1.55;
+  }
+
+  .platform-panel ul {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    align-self: end;
+    margin: 0;
+    padding: 0 clamp(1.4rem, 3vw, 2.45rem) clamp(1.35rem, 2.6vw, 2rem);
+    list-style: none;
+  }
+
+  .platform-panel li {
+    border: 1px solid rgba(12, 67, 223, 0.16);
+    background: rgba(255, 255, 255, 0.5);
+    padding: 0.5rem 0.62rem;
+    color: rgba(16, 23, 34, 0.7);
+    font-size: 0.78rem;
+    font-weight: 650;
+    line-height: 1;
+  }
+
+  @media (max-width: 900px) {
+    .platform-board {
+      grid-template-columns: 1fr;
+    }
+
+    .platform-panel,
+    .platform-panel-2,
+    .platform-panel-3 {
+      min-height: 22rem;
+    }
+
+    .platform-panel-1 {
+      grid-row: auto;
+    }
+  }
+
+  @media (max-width: 560px) {
+    .platforms-heading h2 {
+      font-size: clamp(2.65rem, 13vw, 4.1rem);
+    }
+
+    .platform-panel,
+    .platform-panel-2,
+    .platform-panel-3 {
+      min-height: 24rem;
+    }
+  }
+</style>

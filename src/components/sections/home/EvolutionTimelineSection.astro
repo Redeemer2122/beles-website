@@ -1,0 +1,366 @@
+---
+import { getLocaleFromPathname, getLocalizedPath } from "../../../lib/navigation";
+
+type TimelineItem = {
+  year: string;
+  title: string;
+  text: string;
+};
+
+type ProofItem = {
+  value: string;
+  label: string;
+};
+
+type Props = {
+  content: {
+    title: string;
+    body: string;
+    cta: string;
+    proof: ProofItem[];
+    timeline: TimelineItem[];
+    certificate: {
+      kicker: string;
+      title: string;
+      text: string;
+    };
+  };
+};
+
+const { content } = Astro.props;
+const currentLocale = getLocaleFromPathname(Astro.url.pathname);
+const ctaHref = getLocalizedPath("/story/", currentLocale);
+---
+
+<section class="evolution-section" aria-labelledby="evolution-title">
+  <div class="evolution-shell">
+    <div class="evolution-intro">
+      <h2 id="evolution-title" data-reveal>{content.title}</h2>
+      <p data-reveal style="--reveal-delay: 90ms">{content.body}</p>
+      <a class="home-text-link" href={ctaHref} data-reveal style="--reveal-delay: 160ms">
+        <span>{content.cta}</span>
+        <span aria-hidden="true">→</span>
+      </a>
+    </div>
+
+    <div class="evolution-proof">
+      {
+        content.proof.map((item, index) => (
+          <article data-reveal style={`--reveal-delay: ${index * 80}ms`}>
+            <strong>{item.value}</strong>
+            <span>{item.label}</span>
+          </article>
+        ))
+      }
+    </div>
+
+    <ol class="timeline" aria-label="BELES evolution timeline">
+      {
+        content.timeline.map((item, index) => (
+          <li
+            class:list={["timeline-item", { "is-highlight": index === 3 }]}
+            data-reveal
+            style={`--reveal-delay: ${index * 70}ms`}
+          >
+            <time>{item.year}</time>
+            <div>
+              <h3>{item.title}</h3>
+              <p>{item.text}</p>
+            </div>
+          </li>
+        ))
+      }
+    </ol>
+
+    <aside class="certificate-fragment" aria-label={content.certificate.kicker} data-reveal>
+      <span>{content.certificate.kicker}</span>
+      <strong>{content.certificate.title}</strong>
+      <p>{content.certificate.text}</p>
+    </aside>
+  </div>
+</section>
+
+<style>
+  .evolution-section {
+    overflow: clip;
+    background: #eef2f6;
+    color: #101722;
+  }
+
+  .evolution-shell {
+    display: grid;
+    grid-template-columns: minmax(0, 0.9fr) minmax(18rem, 0.48fr);
+    gap: clamp(2rem, 4vw, 4rem);
+    width: min(100% - (var(--container-gutter) * 2), var(--container-max));
+    margin-inline: auto;
+    padding-block: clamp(5rem, 10vw, 10rem);
+  }
+
+  .evolution-intro {
+    max-width: 52rem;
+  }
+
+  .evolution-intro h2 {
+    max-width: 13ch;
+    margin: 0;
+    font-family: "Space Grotesk", var(--font-display);
+    font-size: clamp(3rem, 6.5vw, 6.8rem);
+    font-weight: 500;
+    letter-spacing: -0.048em;
+    line-height: 0.94;
+    text-wrap: balance;
+  }
+
+  .evolution-intro p {
+    max-width: 43rem;
+    margin: 1.6rem 0 0;
+    color: rgba(16, 23, 34, 0.68);
+    font-size: clamp(1rem, 1.15vw, 1.14rem);
+    font-weight: 520;
+    line-height: 1.62;
+  }
+
+  .home-text-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.72rem;
+    margin-top: 1.75rem;
+    color: #0c43df;
+    font-family: "Space Grotesk", var(--font-display);
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 0.045em;
+    line-height: 1;
+    text-decoration: none;
+    text-transform: uppercase;
+  }
+
+  .home-text-link span:last-child {
+    transition: transform 220ms var(--ease-out);
+  }
+
+  .home-text-link:hover span:last-child,
+  .home-text-link:focus-visible span:last-child {
+    transform: translateX(0.2rem);
+  }
+
+  .evolution-proof {
+    display: grid;
+    align-content: start;
+    gap: 1.4rem;
+    padding-top: 0.55rem;
+  }
+
+  .evolution-proof article {
+    padding-bottom: 1.25rem;
+    border-bottom: 1px solid rgba(37, 43, 50, 0.16);
+  }
+
+  .evolution-proof strong {
+    display: block;
+    color: #0c43df;
+    font-family: "Space Grotesk", var(--font-display);
+    font-size: clamp(2.35rem, 4vw, 4.4rem);
+    font-weight: 560;
+    letter-spacing: -0.045em;
+    line-height: 0.92;
+  }
+
+  .evolution-proof span {
+    display: block;
+    margin-top: 0.65rem;
+    color: rgba(16, 23, 34, 0.62);
+    font-size: 0.9rem;
+    font-weight: 560;
+    line-height: 1.42;
+  }
+
+  .timeline {
+    position: relative;
+    grid-column: 1 / -1;
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: 0;
+    margin: clamp(2.5rem, 5vw, 5rem) 0 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .timeline::before {
+    position: absolute;
+    top: 4.65rem;
+    right: 0;
+    left: 0;
+    height: 1px;
+    background: linear-gradient(90deg, rgba(12, 67, 223, 0.42), rgba(37, 43, 50, 0.12));
+    content: "";
+  }
+
+  .timeline-item {
+    position: relative;
+    display: grid;
+    align-content: start;
+    min-height: 21rem;
+    padding: 0 clamp(0.8rem, 1.5vw, 1.35rem) 0 0;
+  }
+
+  .timeline-item::before {
+    position: absolute;
+    top: 4.38rem;
+    left: 0;
+    width: 0.62rem;
+    height: 0.62rem;
+    border: 1px solid rgba(12, 67, 223, 0.72);
+    background: #eef2f6;
+    content: "";
+    transform: rotate(45deg);
+  }
+
+  .timeline-item time {
+    color: rgba(16, 23, 34, 0.92);
+    font-family: "Space Grotesk", var(--font-display);
+    font-size: clamp(1.85rem, 3vw, 3.5rem);
+    font-weight: 560;
+    letter-spacing: -0.045em;
+    line-height: 1;
+  }
+
+  .timeline-item div {
+    margin-top: 3.4rem;
+  }
+
+  .timeline-item h3 {
+    margin: 0;
+    color: #111722;
+    font-family: "Space Grotesk", var(--font-display);
+    font-size: 1rem;
+    font-weight: 650;
+    letter-spacing: 0;
+    line-height: 1.16;
+  }
+
+  .timeline-item p {
+    max-width: 18rem;
+    margin: 0.72rem 0 0;
+    color: rgba(16, 23, 34, 0.62);
+    font-size: 0.88rem;
+    font-weight: 520;
+    line-height: 1.52;
+  }
+
+  .timeline-item.is-highlight {
+    color: #0c43df;
+  }
+
+  .timeline-item.is-highlight::after {
+    position: absolute;
+    inset: 3.05rem 0 auto -0.7rem;
+    z-index: 0;
+    width: min(17rem, 90%);
+    height: 8.6rem;
+    border: 1px solid rgba(12, 67, 223, 0.18);
+    background: rgba(255, 255, 255, 0.28);
+    content: "";
+  }
+
+  .timeline-item.is-highlight > * {
+    position: relative;
+    z-index: 1;
+  }
+
+  .certificate-fragment {
+    grid-column: 1 / -1;
+    justify-self: end;
+    width: min(100%, 34rem);
+    margin-top: -4rem;
+    padding: clamp(1.4rem, 2.8vw, 2.2rem);
+    border: 1px solid rgba(37, 43, 50, 0.14);
+    background:
+      linear-gradient(135deg, rgba(255, 255, 255, 0.72), rgba(220, 227, 236, 0.34)),
+      repeating-linear-gradient(0deg, rgba(37, 43, 50, 0.05) 0 1px, transparent 1px 0.7rem);
+  }
+
+  .certificate-fragment span {
+    display: block;
+    color: rgba(16, 23, 34, 0.48);
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    line-height: 1;
+  }
+
+  .certificate-fragment strong {
+    display: block;
+    margin-top: 1.2rem;
+    color: #111722;
+    font-family: "Space Grotesk", var(--font-display);
+    font-size: clamp(1.35rem, 2vw, 2rem);
+    font-weight: 600;
+    letter-spacing: -0.025em;
+    line-height: 1.08;
+  }
+
+  .certificate-fragment p {
+    margin: 0.95rem 0 0;
+    color: rgba(16, 23, 34, 0.64);
+    font-size: 0.92rem;
+    line-height: 1.52;
+  }
+
+  @media (max-width: 1000px) {
+    .evolution-shell {
+      grid-template-columns: 1fr;
+    }
+
+    .evolution-proof {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .timeline {
+      grid-template-columns: 1fr;
+      gap: 1.2rem;
+    }
+
+    .timeline::before {
+      top: 0;
+      bottom: 0;
+      left: 0.18rem;
+      width: 1px;
+      height: auto;
+    }
+
+    .timeline-item {
+      min-height: 0;
+      padding: 0 0 0 2rem;
+    }
+
+    .timeline-item::before {
+      top: 0.45rem;
+      left: 0;
+    }
+
+    .timeline-item div {
+      margin-top: 0.9rem;
+    }
+
+    .timeline-item.is-highlight::after {
+      inset: -0.75rem 0 -0.75rem 1.1rem;
+      width: auto;
+      height: auto;
+    }
+
+    .certificate-fragment {
+      justify-self: stretch;
+      margin-top: 1rem;
+    }
+  }
+
+  @media (max-width: 620px) {
+    .evolution-proof {
+      grid-template-columns: 1fr;
+    }
+
+    .evolution-intro h2 {
+      font-size: clamp(2.75rem, 13vw, 4.2rem);
+    }
+  }
+</style>

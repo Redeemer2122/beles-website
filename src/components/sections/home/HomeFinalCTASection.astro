@@ -1,0 +1,246 @@
+---
+import { getLocaleFromPathname, getLocalizedPath } from "../../../lib/navigation";
+
+type Props = {
+  content: {
+    title: string;
+    body: string;
+    primaryCta: string;
+    secondaryCta: string;
+    proof: string[];
+  };
+};
+
+const { content } = Astro.props;
+const currentLocale = getLocaleFromPathname(Astro.url.pathname);
+const contactHref = getLocalizedPath("/contact/", currentLocale);
+const capabilitiesHref = getLocalizedPath("/capabilities/", currentLocale);
+---
+
+<section class="final-cta-section" aria-labelledby="final-cta-title">
+  <div class="final-shell">
+    <div class="final-surface" aria-hidden="true">
+      <span></span>
+      <span></span>
+    </div>
+
+    <div class="final-copy">
+      <h2 id="final-cta-title" data-reveal>{content.title}</h2>
+      <p data-reveal style="--reveal-delay: 90ms">{content.body}</p>
+      <div
+        class="final-actions"
+        aria-label="Final homepage actions"
+        data-reveal
+        style="--reveal-delay: 160ms"
+      >
+        <a class="primary-action" href={contactHref}>
+          <span>{content.primaryCta}</span>
+          <span aria-hidden="true">→</span>
+        </a>
+        <a class="secondary-action" href={capabilitiesHref}>
+          <span>{content.secondaryCta}</span>
+          <span aria-hidden="true">→</span>
+        </a>
+      </div>
+    </div>
+
+    <ul class="final-proof" aria-label="BELES partnership proof points">
+      {
+        content.proof.map((item, index) => (
+          <li data-reveal style={`--reveal-delay: ${220 + index * 70}ms`}>
+            {item}
+          </li>
+        ))
+      }
+    </ul>
+  </div>
+</section>
+
+<style>
+  .final-cta-section {
+    overflow: clip;
+    background: #f7f8fa;
+    color: #101722;
+  }
+
+  .final-shell {
+    position: relative;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(18rem, 0.42fr);
+    gap: clamp(2rem, 5vw, 5rem);
+    width: min(100% - (var(--container-gutter) * 2), var(--container-max));
+    min-height: clamp(35rem, 58vw, 50rem);
+    margin-inline: auto;
+    padding-block: clamp(5.5rem, 11vw, 11rem);
+  }
+
+  .final-surface {
+    position: absolute;
+    inset: clamp(3rem, 7vw, 7rem) 0 clamp(3rem, 7vw, 7rem) auto;
+    width: min(54vw, 54rem);
+    pointer-events: none;
+    background:
+      linear-gradient(
+        125deg,
+        rgba(255, 255, 255, 0.86),
+        rgba(221, 228, 237, 0.24) 52%,
+        rgba(12, 67, 223, 0.08)
+      ),
+      repeating-linear-gradient(115deg, rgba(37, 43, 50, 0.06) 0 1px, transparent 1px 4.2rem);
+    clip-path: polygon(22% 0, 100% 0, 78% 100%, 0 100%);
+  }
+
+  .final-surface span {
+    position: absolute;
+    display: block;
+    background: rgba(12, 67, 223, 0.34);
+  }
+
+  .final-surface span:first-child {
+    top: 26%;
+    right: 16%;
+    width: 52%;
+    height: 1px;
+  }
+
+  .final-surface span:last-child {
+    right: 31%;
+    bottom: 18%;
+    width: 1px;
+    height: 42%;
+  }
+
+  .final-copy {
+    position: relative;
+    z-index: 1;
+    align-self: center;
+  }
+
+  .final-copy h2 {
+    max-width: 13ch;
+    margin: 0;
+    color: #111722;
+    font-family: "Space Grotesk", var(--font-display);
+    font-size: clamp(3.4rem, 8vw, 8.4rem);
+    font-weight: 500;
+    letter-spacing: -0.058em;
+    line-height: 0.88;
+    text-wrap: balance;
+  }
+
+  .final-copy p {
+    max-width: 40rem;
+    margin: 1.6rem 0 0;
+    color: rgba(16, 23, 34, 0.68);
+    font-size: clamp(1rem, 1.18vw, 1.18rem);
+    font-weight: 520;
+    line-height: 1.62;
+  }
+
+  .final-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.72rem;
+    margin-top: 2rem;
+  }
+
+  .primary-action,
+  .secondary-action {
+    display: inline-flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.2rem;
+    min-height: 2.72rem;
+    min-width: 11.5rem;
+    padding-inline: 1rem 0.72rem;
+    font-family: "Space Grotesk", var(--font-display);
+    font-size: 0.76rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    line-height: 1;
+    text-decoration: none;
+    text-transform: uppercase;
+    transition:
+      border-color 180ms var(--ease-out),
+      background 180ms var(--ease-out),
+      color 180ms var(--ease-out),
+      transform 220ms var(--ease-out);
+  }
+
+  .primary-action {
+    border: 1px solid rgba(8, 44, 154, 0.88);
+    background: linear-gradient(180deg, #1152ef 0%, #0b3fce 100%);
+    color: #fff;
+  }
+
+  .secondary-action {
+    border: 1px solid rgba(37, 43, 50, 0.2);
+    background: rgba(255, 255, 255, 0.42);
+    color: rgba(16, 23, 34, 0.84);
+  }
+
+  .primary-action:hover,
+  .primary-action:focus-visible,
+  .secondary-action:hover,
+  .secondary-action:focus-visible {
+    transform: translateY(-1px);
+  }
+
+  .secondary-action:hover,
+  .secondary-action:focus-visible {
+    border-color: rgba(12, 67, 223, 0.28);
+    color: #0c43df;
+  }
+
+  .final-proof {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    align-self: end;
+    gap: 0.8rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .final-proof li {
+    padding-block: 0.95rem;
+    border-top: 1px solid rgba(37, 43, 50, 0.14);
+    color: rgba(16, 23, 34, 0.7);
+    font-size: 0.92rem;
+    font-weight: 620;
+    line-height: 1.35;
+  }
+
+  @media (max-width: 900px) {
+    .final-shell {
+      grid-template-columns: 1fr;
+      min-height: auto;
+    }
+
+    .final-surface {
+      inset: 2rem 0 auto auto;
+      width: 86vw;
+      height: 28rem;
+      opacity: 0.72;
+    }
+
+    .final-proof {
+      align-self: start;
+    }
+  }
+
+  @media (max-width: 560px) {
+    .final-copy h2 {
+      font-size: clamp(3rem, 14vw, 4.5rem);
+      letter-spacing: -0.05em;
+      line-height: 0.92;
+    }
+
+    .final-actions {
+      display: grid;
+      grid-template-columns: 1fr;
+      max-width: 22rem;
+    }
+  }
+</style>
