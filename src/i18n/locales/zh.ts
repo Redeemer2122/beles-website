@@ -1,14 +1,31 @@
 const zh = {
   home: {
     nationalOem: {
+      eyebrow: "01 / National OEM",
+      origin: "吉尔吉斯共和国",
+      certification: "WMI K59 / SAE International",
       title: "吉尔吉斯共和国首个国家级商用出行 OEM。",
+      titleLines: ["吉尔吉斯首个", "国家级 OEM", "面向商用", "出行。"],
       body: "BELES 正在为吉尔吉斯共和国的新汽车产业奠定基础，连接工程能力、制造体系和区域出口潜力。",
       cta: "阅读故事",
+      proofLabel: "BELES 国家级 OEM 关键事实",
       proof: [
-        { value: "National OEM", label: "吉尔吉斯共和国首个商用车 OEM" },
-        { value: "WMI K59", label: "通过 SAE International 获得的制造商识别码" },
-        { value: "2012", label: "公司成立并积累商用运输经验" },
-        { value: "Central Asia / EAEU", label: "区域出口潜力" },
+        {
+          title: "National OEM",
+          text: "吉尔吉斯共和国首个商用车辆国家级 OEM 制造商。",
+        },
+        {
+          title: "WMI K59",
+          text: "通过 SAE International 获得的国际制造商识别码。",
+        },
+        {
+          title: "Founded 2012",
+          text: "拥有十余年商用运输与物流经验。",
+        },
+        {
+          title: "Central Asia / EAEU",
+          text: "具备面向中亚和 EAEU 的区域出口潜力。",
+        },
       ],
     },
     evolution: {

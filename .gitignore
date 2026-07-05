@@ -25,3 +25,6 @@ pnpm-debug.log*
 
 .astro-dev.log
 .astro-dev.err.log
+tests/visual/output/
+tests/visual/test-results/
+test-results/

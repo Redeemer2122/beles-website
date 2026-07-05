@@ -2,15 +2,20 @@
 import { getLocaleFromPathname, getLocalizedPath } from "../../../lib/navigation";
 
 type ProofItem = {
-  value: string;
-  label: string;
+  title: string;
+  text: string;
 };
 
 type Props = {
   content: {
+    eyebrow: string;
+    origin: string;
+    certification: string;
     title: string;
+    titleLines: string[];
     body: string;
     cta: string;
+    proofLabel: string;
     proof: ProofItem[];
   };
 };
@@ -21,29 +26,93 @@ const ctaHref = getLocalizedPath("/story/", currentLocale);
 ---
 
 <section class="national-oem-section" aria-labelledby="national-oem-title">
+  <div class="national-atmosphere" aria-hidden="true" data-reveal style="--reveal-delay: 20ms">
+    <span class="national-atmosphere__plane national-atmosphere__plane--wide"></span>
+    <span class="national-atmosphere__plane national-atmosphere__plane--slim"></span>
+    <span class="national-atmosphere__light"></span>
+  </div>
+
   <div class="national-shell">
-    <div class="proof-rail" aria-label="BELES national OEM proof points">
+    <div class="national-meta" data-reveal style="--reveal-delay: 80ms">
+      <span class="national-meta__primary">{content.eyebrow}</span>
+      <span>{content.origin}</span>
+      <span>{content.certification}</span>
+    </div>
+
+    <div class="national-scene">
+      <div class="national-statement">
+        <h2 id="national-oem-title" aria-label={content.title}>
+          {
+            content.titleLines.map((line, index) => (
+              <span
+                class="national-title-line"
+                data-reveal
+                style={`--reveal-delay: ${180 + index * 90}ms`}
+              >
+                {line.includes("OEM") ? (
+                  <>
+                    {line.split("OEM")[0]}
+                    <span class="national-title-emphasis">OEM</span>
+                    {line.split("OEM").slice(1).join("OEM")}
+                  </>
+                ) : (
+                  line
+                )}
+              </span>
+            ))
+          }
+        </h2>
+
+        <p data-reveal style="--reveal-delay: 560ms">{content.body}</p>
+
+        <a class="home-text-link" href={ctaHref} data-reveal style="--reveal-delay: 650ms">
+          <span>{content.cta}</span>
+          <span aria-hidden="true">&rarr;</span>
+        </a>
+      </div>
+
+      <figure class="national-visual" aria-hidden="true" data-reveal style="--reveal-delay: 470ms">
+        <span class="national-visual__halo"></span>
+        <span class="national-visual__slab national-visual__slab--back"></span>
+        <span class="national-visual__slab national-visual__slab--front"></span>
+        <span class="national-visual__accent"></span>
+        <span class="national-visual__ridge national-visual__ridge--one"></span>
+        <span class="national-visual__ridge national-visual__ridge--two"></span>
+        <span class="national-visual__brand">
+          <span class="national-visual__brand-crop national-visual__brand-crop--icon">
+            <img
+              src="/img/branding/beles-logo-header.svg"
+              alt=""
+              width="529"
+              height="96"
+              loading="lazy"
+              decoding="async"
+            />
+          </span>
+          <span class="national-visual__brand-crop national-visual__brand-crop--word">
+            <img
+              src="/img/branding/beles-logo-header.svg"
+              alt=""
+              width="529"
+              height="96"
+              loading="lazy"
+              decoding="async"
+            />
+          </span>
+        </span>
+      </figure>
+    </div>
+
+    <div class="proof-rail" aria-label={content.proofLabel}>
       {
         content.proof.map((item, index) => (
-          <article class="proof-record" data-reveal style={`--reveal-delay: ${index * 80}ms`}>
-            <strong>{item.value}</strong>
-            <span>{item.label}</span>
+          <article class="proof-record" data-reveal style={`--reveal-delay: ${760 + index * 90}ms`}>
+            <span class="proof-record__index">{String(index + 1).padStart(2, "0")}</span>
+            <h3>{item.title}</h3>
+            <p>{item.text}</p>
           </article>
         ))
       }
-    </div>
-
-    <div class="national-statement">
-      <div class="metal-plane" aria-hidden="true">
-        <span></span>
-        <span></span>
-      </div>
-      <h2 id="national-oem-title" data-reveal>{content.title}</h2>
-      <p data-reveal style="--reveal-delay: 90ms">{content.body}</p>
-      <a class="home-text-link" href={ctaHref} data-reveal style="--reveal-delay: 160ms">
-        <span>{content.cta}</span>
-        <span aria-hidden="true">→</span>
-      </a>
     </div>
   </div>
 </section>
@@ -51,183 +120,667 @@ const ctaHref = getLocalizedPath("/story/", currentLocale);
 <style>
   .national-oem-section {
     position: relative;
+    box-sizing: border-box;
     overflow: clip;
-    background: linear-gradient(180deg, #f4f6f9 0%, #eef2f6 100%), var(--color-paper);
-    color: #101722;
+    isolation: isolate;
+    min-height: 100dvh;
+    --national-cobalt: 33 92 220;
+    --national-ink: 17 23 34;
+    background:
+      radial-gradient(circle at 76% 32%, rgba(123, 143, 173, 0.11), transparent 32rem),
+      radial-gradient(circle at 82% 76%, rgba(190, 198, 210, 0.16), transparent 40rem),
+      radial-gradient(circle at 19% 18%, rgba(255, 255, 255, 0.98), transparent 28rem),
+      linear-gradient(118deg, #fcfcfb 0%, #f7f8f9 46%, #eef2f5 100%);
+    color: var(--color-brand-graphite);
+  }
+
+  .national-oem-section::before,
+  .national-oem-section::after {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    content: "";
+  }
+
+  .national-oem-section::before {
+    background:
+      linear-gradient(180deg, rgba(255, 255, 255, 0.92), transparent 34%),
+      linear-gradient(
+        90deg,
+        rgba(var(--national-ink), 0.026),
+        transparent 22%,
+        transparent 78%,
+        rgba(var(--national-ink), 0.028)
+      );
+    opacity: 0.78;
+  }
+
+  .national-oem-section::after {
+    background:
+      linear-gradient(
+        115deg,
+        transparent 0 59.2%,
+        rgba(var(--national-cobalt), 0.18) 59.34% 59.42%,
+        rgba(255, 255, 255, 0.76) 59.5% 59.68%,
+        transparent 59.86%
+      ),
+      linear-gradient(
+        115deg,
+        transparent 0 51.4%,
+        rgba(var(--national-ink), 0.055) 51.52% 51.6%,
+        transparent 51.76%
+      ),
+      linear-gradient(180deg, transparent 0 72%, rgba(255, 255, 255, 0.72) 100%);
+    opacity: 0.66;
+  }
+
+  .national-atmosphere {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    pointer-events: none;
+  }
+
+  .national-atmosphere__plane {
+    position: absolute;
+    display: block;
+    transform: skewX(-14deg);
+    transform-origin: center;
+  }
+
+  .national-atmosphere__plane--wide {
+    right: 1%;
+    bottom: 17%;
+    width: min(40vw, 46rem);
+    height: min(45vw, 34rem);
+    border: 1px solid rgba(255, 255, 255, 0.64);
+    background:
+      linear-gradient(
+        132deg,
+        rgba(255, 255, 255, 0.74),
+        rgba(207, 216, 226, 0.14) 52%,
+        rgba(255, 255, 255, 0.54)
+      ),
+      radial-gradient(circle at 50% 36%, rgba(255, 255, 255, 0.78), transparent 44%);
+    box-shadow:
+      0 30px 84px rgba(77, 88, 104, 0.08),
+      inset 1px 1px 0 rgba(255, 255, 255, 0.86),
+      inset -1px -1px 0 rgba(92, 105, 121, 0.05);
+    opacity: 0.56;
+  }
+
+  .national-atmosphere__plane--slim {
+    right: 34.8%;
+    top: -10%;
+    width: min(8.2vw, 9rem);
+    height: 110%;
+    border-inline: 1px solid rgba(91, 105, 124, 0.16);
+    background: linear-gradient(
+      90deg,
+      rgba(255, 255, 255, 0.52),
+      rgba(182, 193, 207, 0.16),
+      rgba(255, 255, 255, 0.7)
+    );
+    box-shadow:
+      0 0 42px rgba(115, 129, 146, 0.12),
+      inset 1px 0 0 rgba(255, 255, 255, 0.82);
+    opacity: 0.5;
+  }
+
+  .national-atmosphere__light {
+    position: absolute;
+    top: -10%;
+    right: 36.4%;
+    width: 1px;
+    height: 112%;
+    background: linear-gradient(
+      180deg,
+      transparent 2%,
+      rgba(var(--national-cobalt), 0.26) 42%,
+      rgba(var(--national-cobalt), 0.07) 66%,
+      transparent 100%
+    );
+    box-shadow: 0 0 18px rgba(66, 109, 255, 0.13);
+    transform: skewX(-14deg);
+    opacity: 0.48;
   }
 
   .national-shell {
+    position: relative;
+    z-index: 2;
+    box-sizing: border-box;
     display: grid;
-    grid-template-columns: minmax(14rem, 0.72fr) minmax(0, 1.4fr);
-    gap: clamp(2.5rem, 7vw, 8rem);
-    width: min(100% - (var(--container-gutter) * 2), var(--container-max));
+    grid-template-rows: auto auto auto;
+    gap: clamp(1rem, 1.25vw, 1.45rem);
+    width: min(100% - clamp(2rem, 7vw, 9rem), 108rem);
+    min-height: 100dvh;
     margin-inline: auto;
-    padding-block: clamp(6rem, 12vw, 13rem);
+    padding-block: clamp(3.25rem, 3.35vw, 3.65rem) 0;
   }
 
-  .proof-rail {
+  .national-meta {
     display: grid;
-    align-content: end;
-    gap: 1.15rem;
-    padding-top: clamp(1rem, 8vw, 8rem);
-  }
-
-  .proof-record {
-    display: grid;
-    gap: 0.48rem;
-    padding-block: 1rem;
-    border-top: 1px solid rgba(37, 43, 50, 0.16);
-  }
-
-  .proof-record strong {
-    color: #0c43df;
+    grid-template-columns: minmax(0, 1fr) auto auto;
+    gap: clamp(1rem, 3vw, 3rem);
+    align-items: center;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid rgba(var(--national-ink), 0.14);
+    color: rgba(var(--national-ink), 0.62);
     font-family: "Space Grotesk", var(--font-display);
-    font-size: clamp(1.22rem, 2vw, 1.9rem);
-    font-weight: 600;
-    letter-spacing: 0;
-    line-height: 1;
+    font-size: clamp(0.64rem, 0.68vw, 0.72rem);
+    font-weight: 700;
+    letter-spacing: 0.16em;
+    line-height: 1.25;
+    text-transform: uppercase;
   }
 
-  .proof-record span {
-    max-width: 19rem;
-    color: rgba(16, 23, 34, 0.64);
-    font-size: 0.88rem;
-    font-weight: 560;
-    line-height: 1.45;
+  .national-meta__primary {
+    color: rgb(var(--national-cobalt));
+  }
+
+  .national-scene {
+    position: relative;
+    display: grid;
+    grid-template-columns: minmax(0, 0.9fr) minmax(34rem, 0.82fr);
+    gap: clamp(1.25rem, 2.15vw, 3rem);
+    align-items: center;
   }
 
   .national-statement {
     position: relative;
-    min-height: clamp(32rem, 52vw, 47rem);
-    padding: clamp(2.5rem, 6vw, 5.5rem) 0 clamp(2rem, 5vw, 4rem);
-  }
-
-  .metal-plane {
-    position: absolute;
-    inset: 0 0 auto auto;
-    z-index: 0;
-    width: min(48vw, 44rem);
-    height: min(52vw, 42rem);
-    pointer-events: none;
-    background:
-      linear-gradient(
-        135deg,
-        rgba(255, 255, 255, 0.88),
-        rgba(214, 221, 230, 0.14) 54%,
-        rgba(255, 255, 255, 0.72)
-      ),
-      repeating-linear-gradient(112deg, rgba(41, 70, 143, 0.08) 0 1px, transparent 1px 4.5rem);
-    clip-path: polygon(18% 0, 100% 0, 82% 100%, 0 100%);
-    opacity: 0.92;
-  }
-
-  .metal-plane span {
-    position: absolute;
-    display: block;
-    background: rgba(12, 67, 223, 0.34);
-  }
-
-  .metal-plane span:first-child {
-    top: 18%;
-    right: 9%;
-    width: 42%;
-    height: 1px;
-  }
-
-  .metal-plane span:last-child {
-    right: 24%;
-    bottom: 17%;
-    width: 1px;
-    height: 38%;
-  }
-
-  .national-statement h2,
-  .national-statement p,
-  .national-statement a {
-    position: relative;
-    z-index: 1;
+    z-index: 3;
+    padding-left: clamp(2.2rem, 3.35vw, 4.45rem);
+    padding-block: clamp(1.15rem, 2vw, 2.05rem) clamp(0.45rem, 0.8vw, 0.9rem);
   }
 
   .national-statement h2 {
-    max-width: 12ch;
+    max-width: 16.6ch;
     margin: 0;
     color: #111722;
     font-family: "Space Grotesk", var(--font-display);
-    font-size: clamp(3.5rem, 8.2vw, 8.7rem);
-    font-weight: 500;
-    letter-spacing: -0.055em;
-    line-height: 0.88;
-    text-wrap: balance;
+    font-size: clamp(4.1rem, 4.95vw, 5.85rem);
+    font-weight: 530;
+    letter-spacing: 0;
+    line-height: 1.055;
+  }
+
+  .national-title-line {
+    display: block;
+    width: fit-content;
+  }
+
+  .national-title-emphasis {
+    position: relative;
+    display: inline-block;
+  }
+
+  .national-title-emphasis::after {
+    position: absolute;
+    right: 0.01em;
+    bottom: 0.01em;
+    left: 0.03em;
+    height: 0.055em;
+    background: rgb(var(--national-cobalt));
+    content: "";
   }
 
   .national-statement p {
-    max-width: 39rem;
-    margin: clamp(1.6rem, 3vw, 2.4rem) 0 0;
-    color: rgba(16, 23, 34, 0.72);
-    font-size: clamp(1rem, 1.25vw, 1.2rem);
+    max-width: 34.2rem;
+    margin: clamp(1.75rem, 2.05vw, 2.15rem) 0 0;
+    color: rgba(var(--national-ink), 0.7);
+    font-family: "Manrope", var(--font-body);
+    font-size: clamp(1.02rem, 1vw, 1.15rem);
     font-weight: 520;
-    line-height: 1.62;
+    line-height: 1.6;
     text-wrap: pretty;
   }
 
   .home-text-link {
+    position: relative;
     display: inline-flex;
     align-items: center;
     gap: 0.72rem;
-    margin-top: 2rem;
-    color: #0c43df;
+    margin-top: 1.85rem;
+    padding-bottom: 0.52rem;
+    color: rgb(var(--national-cobalt));
     font-family: "Space Grotesk", var(--font-display);
-    font-size: 0.78rem;
+    font-size: 0.8rem;
     font-weight: 700;
     letter-spacing: 0.045em;
     line-height: 1;
     text-decoration: none;
-    text-transform: uppercase;
+  }
+
+  .home-text-link::after {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    height: 1px;
+    background: currentColor;
+    transform: scaleX(0.72);
+    transform-origin: left center;
+    transition: transform 260ms var(--ease-out);
+    content: "";
   }
 
   .home-text-link span:last-child {
     transition: transform 220ms var(--ease-out);
   }
 
+  .home-text-link:hover::after,
+  .home-text-link:focus-visible::after {
+    transform: scaleX(1);
+  }
+
   .home-text-link:hover span:last-child,
   .home-text-link:focus-visible span:last-child {
-    transform: translateX(0.2rem);
+    transform: translateX(0.22rem);
+  }
+
+  .national-visual {
+    position: relative;
+    min-height: clamp(28rem, 35vw, 38.5rem);
+    margin: 0;
+    pointer-events: none;
+  }
+
+  .national-visual__halo,
+  .national-visual__slab,
+  .national-visual__accent,
+  .national-visual__ridge {
+    position: absolute;
+    display: block;
+  }
+
+  .national-visual__halo {
+    inset: -4% -12% -2% -9%;
+    background:
+      radial-gradient(ellipse at 58% 42%, rgba(255, 255, 255, 0.96), transparent 42%),
+      radial-gradient(ellipse at 58% 86%, rgba(117, 132, 150, 0.12), transparent 48%);
+    opacity: 0.78;
+  }
+
+  .national-visual__slab {
+    transform: skewX(-12deg);
+    transform-origin: center;
+  }
+
+  .national-visual__slab--back {
+    inset: 5% 0 -4% 3%;
+    border: 1px solid rgba(255, 255, 255, 0.42);
+    background:
+      linear-gradient(
+        137deg,
+        rgba(255, 255, 255, 0.28),
+        rgba(176, 187, 201, 0.055) 55%,
+        rgba(255, 255, 255, 0.2)
+      ),
+      linear-gradient(180deg, rgba(255, 255, 255, 0.38), rgba(210, 218, 228, 0.08));
+    box-shadow:
+      0 28px 82px rgba(71, 84, 101, 0.075),
+      inset 1px 1px 0 rgba(255, 255, 255, 0.7);
+    opacity: 0.46;
+  }
+
+  .national-visual__slab--front {
+    inset: 11.5% 3% 8.5% 44%;
+    border: 1px solid rgba(255, 255, 255, 0.58);
+    background:
+      linear-gradient(
+        136deg,
+        rgba(255, 255, 255, 0.64),
+        rgba(214, 222, 232, 0.1) 55%,
+        rgba(255, 255, 255, 0.5)
+      ),
+      radial-gradient(circle at 48% 34%, rgba(255, 255, 255, 0.84), transparent 47%);
+    box-shadow:
+      0 24px 74px rgba(79, 92, 109, 0.09),
+      inset 1px 1px 0 rgba(255, 255, 255, 0.84),
+      inset -1px -1px 0 rgba(var(--national-ink), 0.035);
+    opacity: 0.88;
+  }
+
+  .national-visual__slab--front::before,
+  .national-visual__slab--front::after {
+    position: absolute;
+    pointer-events: none;
+    content: "";
+  }
+
+  .national-visual__slab--front::before {
+    inset: 0;
+    background:
+      linear-gradient(
+        115deg,
+        transparent 0 24%,
+        rgba(255, 255, 255, 0.42) 24.4% 43%,
+        transparent 43.2%
+      ),
+      linear-gradient(180deg, rgba(255, 255, 255, 0.38), transparent 56%);
+    opacity: 0.68;
+  }
+
+  .national-visual__slab--front::after {
+    inset: auto 9% 16% 7%;
+    height: 1px;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      rgba(255, 255, 255, 0.7),
+      rgba(var(--national-ink), 0.055),
+      transparent
+    );
+    opacity: 0.68;
+  }
+
+  .national-visual__accent {
+    top: -40%;
+    left: 21%;
+    width: 1px;
+    height: 176%;
+    background: linear-gradient(
+      180deg,
+      transparent 3%,
+      rgba(var(--national-cobalt), 0.28) 42%,
+      rgba(var(--national-cobalt), 0.08) 68%,
+      transparent 100%
+    );
+    box-shadow: 0 0 18px rgba(66, 109, 255, 0.16);
+    transform: skewX(-13deg);
+    opacity: 0.56;
+  }
+
+  .national-visual__ridge {
+    right: 14%;
+    bottom: 15%;
+    height: 1px;
+    background:
+      linear-gradient(
+        90deg,
+        transparent,
+        rgba(255, 255, 255, 0.62) 16%,
+        rgba(123, 137, 154, 0.085) 72%,
+        transparent
+      ),
+      linear-gradient(90deg, transparent, rgba(var(--national-cobalt), 0.055), transparent);
+    transform: skewX(-12deg);
+  }
+
+  .national-visual__ridge--one {
+    width: 58%;
+  }
+
+  .national-visual__ridge--two {
+    right: 5%;
+    bottom: 8%;
+    width: 76%;
+    opacity: 0.48;
+  }
+
+  .national-visual__brand {
+    position: absolute;
+    right: 13%;
+    top: 57%;
+    display: grid;
+    justify-items: center;
+    gap: clamp(1.05rem, 1.45vw, 1.45rem);
+    opacity: 0.2;
+    filter: grayscale(1) brightness(1.26) contrast(0.72)
+      drop-shadow(1px 1px 0 rgba(255, 255, 255, 0.82))
+      drop-shadow(-1px -1px 0 rgba(86, 99, 116, 0.08));
+    mix-blend-mode: luminosity;
+    transform: translateY(-50%) skewX(-4deg);
+  }
+
+  .national-visual__brand-crop {
+    position: relative;
+    display: block;
+    overflow: hidden;
+  }
+
+  .national-visual__brand-crop img {
+    position: absolute;
+    top: 0;
+    max-width: none;
+    height: auto;
+  }
+
+  .national-visual__brand-crop--icon {
+    width: clamp(3.85rem, 5.6vw, 5.9rem);
+    height: clamp(2.25rem, 3.25vw, 3.4rem);
+  }
+
+  .national-visual__brand-crop--icon img {
+    left: 0;
+    width: clamp(16.2rem, 24.5vw, 25.7rem);
+  }
+
+  .national-visual__brand-crop--word {
+    width: clamp(12.8rem, 18.5vw, 19.4rem);
+    height: clamp(2.35rem, 3.2vw, 3.3rem);
+  }
+
+  .national-visual__brand-crop--word img {
+    top: -1.1rem;
+    left: -6.75rem;
+    width: clamp(16.2rem, 24.5vw, 25.7rem);
+  }
+
+  .proof-rail {
+    width: 100vw;
+    margin-left: calc((100% - 100vw) / 2);
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    border-top: 1px solid rgba(var(--national-ink), 0.13);
+    border-bottom: 1px solid rgba(var(--national-ink), 0.075);
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.24), rgba(255, 255, 255, 0.035));
+  }
+
+  .proof-record {
+    display: grid;
+    align-content: start;
+    gap: 0.58rem;
+    min-height: clamp(10.1rem, 12.5vw, 12rem);
+    padding: clamp(1.25rem, 1.55vw, 1.75rem) clamp(3.6rem, 6.8vw, 7.15rem);
+  }
+
+  .proof-record + .proof-record {
+    border-left: 1px solid rgba(var(--national-ink), 0.095);
+  }
+
+  .proof-record__index {
+    color: rgb(var(--national-cobalt));
+    font-family: "Space Grotesk", var(--font-display);
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    line-height: 1;
+  }
+
+  .proof-record h3 {
+    margin: 0;
+    color: rgba(var(--national-ink), 0.9);
+    font-family: "Space Grotesk", var(--font-display);
+    font-size: clamp(0.84rem, 0.78vw, 0.94rem);
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    line-height: 1.15;
+    text-transform: uppercase;
+  }
+
+  .proof-record p {
+    max-width: 19.5rem;
+    margin: 0;
+    color: rgba(var(--national-ink), 0.64);
+    font-family: "Manrope", var(--font-body);
+    font-size: clamp(0.84rem, 0.78vw, 0.93rem);
+    font-weight: 520;
+    line-height: 1.5;
+  }
+
+  @media (max-width: 1180px) {
+    .national-shell {
+      width: min(100% - clamp(2rem, 6vw, 6rem), 108rem);
+    }
+
+    .national-scene {
+      grid-template-columns: minmax(0, 1fr) minmax(20rem, 0.55fr);
+    }
+
+    .national-statement h2 {
+      font-size: clamp(3.95rem, 6.5vw, 5.35rem);
+    }
+
+    .national-visual {
+      min-height: 28rem;
+    }
+
+    .national-visual__brand {
+      right: 6%;
+    }
   }
 
   @media (max-width: 900px) {
     .national-shell {
+      min-height: auto;
+      gap: 2.8rem;
+      padding-block: 6.3rem 6.5rem;
+    }
+
+    .national-meta {
       grid-template-columns: 1fr;
-      gap: 2.25rem;
-      padding-block: 5rem 6.5rem;
+      gap: 0.45rem;
+    }
+
+    .national-scene {
+      grid-template-columns: 1fr;
+      gap: 2.4rem;
+    }
+
+    .national-statement {
+      padding-block: 0;
+      padding-left: 0;
+    }
+
+    .national-statement h2 {
+      max-width: 11.4ch;
+      font-size: clamp(3.12rem, 11.8vw, 4.85rem);
+      letter-spacing: 0;
+      line-height: 0.95;
+    }
+
+    .national-statement p {
+      max-width: 36rem;
+      font-size: 1.04rem;
+    }
+
+    .national-visual {
+      min-height: 15rem;
+      order: 2;
+    }
+
+    .national-visual__slab--back {
+      inset: 0 7% 0 5%;
+    }
+
+    .national-visual__slab--front {
+      inset: 13% 15% 18% 17%;
+    }
+
+    .national-visual__brand {
+      right: 13%;
+      top: 48%;
+      opacity: 0.18;
+    }
+
+    .national-visual__accent {
+      left: 22%;
+      height: 106%;
     }
 
     .proof-rail {
       grid-template-columns: repeat(2, minmax(0, 1fr));
-      order: 2;
-      padding-top: 0;
     }
 
-    .national-statement {
-      min-height: auto;
-      padding-block: 1rem 2rem;
+    .proof-record:nth-child(odd) {
+      border-left: 0;
     }
 
-    .metal-plane {
-      width: 84vw;
-      height: 24rem;
-      opacity: 0.62;
+    .proof-record:nth-child(n + 3) {
+      border-top: 1px solid rgba(var(--national-ink), 0.11);
     }
   }
 
   @media (max-width: 560px) {
+    .national-oem-section {
+      min-height: auto;
+    }
+
+    .national-shell {
+      width: min(100% - 2rem, 108rem);
+      gap: 3rem;
+      padding-block: 5.8rem 6rem;
+    }
+
+    .national-atmosphere__plane--wide {
+      right: -28%;
+      bottom: 40%;
+      width: 24rem;
+      height: 18rem;
+      opacity: 0.5;
+    }
+
+    .national-atmosphere__plane--slim,
+    .national-atmosphere__light {
+      right: 12%;
+      opacity: 0.38;
+    }
+
+    .national-statement h2 {
+      max-width: 10.8ch;
+      font-size: clamp(2.72rem, 12.6vw, 3.6rem);
+      letter-spacing: 0;
+    }
+
+    .national-statement p {
+      font-size: 1rem;
+      line-height: 1.56;
+    }
+
+    .national-visual {
+      min-height: 12.4rem;
+      margin-top: -0.2rem;
+    }
+
+    .national-visual__brand {
+      right: 8%;
+      opacity: 0.12;
+    }
+
+    .national-visual__slab--front {
+      inset: 18% 10% 20% 18%;
+    }
+
+    .national-visual__ridge {
+      opacity: 0.5;
+    }
+
     .proof-rail {
       grid-template-columns: 1fr;
     }
 
-    .national-statement h2 {
-      font-size: clamp(3rem, 15vw, 4.45rem);
-      letter-spacing: -0.045em;
-      line-height: 0.92;
+    .proof-record {
+      min-height: auto;
+      padding: 1.2rem 0;
+      border-left: 0;
+    }
+
+    .proof-record + .proof-record,
+    .proof-record:nth-child(n + 3) {
+      border-top: 1px solid rgba(var(--national-ink), 0.11);
+      border-left: 0;
     }
   }
 </style>

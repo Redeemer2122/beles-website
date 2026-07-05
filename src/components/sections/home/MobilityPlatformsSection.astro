@@ -41,6 +41,15 @@ const ctaHref = getLocalizedPath("/projects/", currentLocale);
             style={`--reveal-delay: ${index * 90}ms`}
           >
             <div class="panel-visual" aria-hidden="true">
+              {index === 0 && (
+                <img
+                  src="/img/hero/beles-hero-desktop.webp"
+                  alt=""
+                  width="2048"
+                  height="1024"
+                  loading="lazy"
+                />
+              )}
               <span />
             </div>
             <div class="panel-copy">
@@ -61,8 +70,9 @@ const ctaHref = getLocalizedPath("/projects/", currentLocale);
 
 <style>
   .platforms-section {
+    position: relative;
     overflow: clip;
-    background: #f7f8fa;
+    background: linear-gradient(180deg, #f7f8fa 0%, #e9eef4 100%), #f7f8fa;
     color: #101722;
   }
 
@@ -73,11 +83,11 @@ const ctaHref = getLocalizedPath("/projects/", currentLocale);
   }
 
   .platforms-heading {
-    max-width: 54rem;
+    max-width: 74rem;
   }
 
   .platforms-heading h2 {
-    max-width: 15ch;
+    max-width: 17ch;
     margin: 0;
     font-family: "Space Grotesk", var(--font-display);
     font-size: clamp(3rem, 6.8vw, 7rem);
@@ -122,20 +132,20 @@ const ctaHref = getLocalizedPath("/projects/", currentLocale);
 
   .platform-board {
     display: grid;
-    grid-template-columns: minmax(0, 1.25fr) minmax(0, 0.8fr);
-    grid-template-rows: auto auto;
-    gap: clamp(1rem, 2vw, 1.5rem);
+    grid-template-columns: minmax(0, 1.35fr) minmax(0, 0.78fr);
+    grid-template-rows: minmax(18rem, 0.8fr) minmax(18rem, 0.8fr);
+    gap: clamp(0.8rem, 1.6vw, 1.25rem);
     margin-top: clamp(3rem, 6vw, 6rem);
   }
 
   .platform-panel {
     position: relative;
     display: grid;
-    align-content: space-between;
-    min-height: clamp(24rem, 34vw, 34rem);
+    grid-template-rows: 1fr auto;
+    min-height: clamp(25rem, 38vw, 39rem);
     overflow: hidden;
     border: 1px solid rgba(37, 43, 50, 0.12);
-    background: #eef2f6;
+    background: #f4f6f9;
     transition:
       border-color 240ms var(--ease-out),
       transform 240ms var(--ease-out);
@@ -143,7 +153,7 @@ const ctaHref = getLocalizedPath("/projects/", currentLocale);
 
   .platform-panel:hover {
     border-color: rgba(12, 67, 223, 0.26);
-    transform: translateY(-0.18rem);
+    transform: translateY(-0.24rem);
   }
 
   .platform-panel-1 {
@@ -152,34 +162,47 @@ const ctaHref = getLocalizedPath("/projects/", currentLocale);
 
   .platform-panel-2,
   .platform-panel-3 {
-    min-height: clamp(18rem, 21vw, 22rem);
+    min-height: clamp(19rem, 24vw, 25rem);
   }
 
   .panel-visual {
     position: absolute;
     inset: 0;
     pointer-events: none;
+    overflow: hidden;
     background:
       linear-gradient(
         145deg,
-        rgba(255, 255, 255, 0.8),
+        rgba(255, 255, 255, 0.92),
         rgba(201, 210, 223, 0.22) 48%,
-        rgba(12, 67, 223, 0.07)
+        rgba(12, 67, 223, 0.09)
       ),
-      repeating-linear-gradient(90deg, rgba(37, 43, 50, 0.05) 0 1px, transparent 1px 4.5rem);
+      repeating-linear-gradient(105deg, rgba(37, 43, 50, 0.06) 0 1px, transparent 1px 3.7rem);
   }
 
   .platform-panel-1 .panel-visual {
     background:
-      linear-gradient(180deg, rgba(247, 248, 250, 0.04), rgba(247, 248, 250, 0.78)),
-      linear-gradient(115deg, rgba(12, 67, 223, 0.12), transparent 38%),
-      url("/img/hero/beles-hero-desktop.webp") center / cover;
+      linear-gradient(180deg, rgba(247, 248, 250, 0.05), rgba(247, 248, 250, 0.84)),
+      linear-gradient(115deg, rgba(12, 67, 223, 0.12), transparent 38%);
+  }
+
+  .panel-visual img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: 55% center;
+    filter: saturate(0.72) contrast(1.03);
+    transition: transform 700ms var(--ease-out);
+  }
+
+  .platform-panel:hover .panel-visual img {
+    transform: scale(1.035);
   }
 
   .panel-visual span {
     position: absolute;
     right: 10%;
-    bottom: 18%;
+    bottom: 20%;
     width: min(42%, 19rem);
     height: 1px;
     background: rgba(12, 67, 223, 0.5);
@@ -211,8 +234,8 @@ const ctaHref = getLocalizedPath("/projects/", currentLocale);
 
   .panel-copy {
     align-self: end;
-    max-width: 31rem;
-    padding: clamp(1.4rem, 3vw, 2.45rem);
+    max-width: 34rem;
+    padding: clamp(1.45rem, 3vw, 2.65rem);
   }
 
   .panel-copy h3 {
@@ -226,7 +249,7 @@ const ctaHref = getLocalizedPath("/projects/", currentLocale);
   }
 
   .panel-copy p {
-    margin: 1rem 0 0;
+    margin: 1.05rem 0 0;
     color: rgba(16, 23, 34, 0.66);
     font-size: 0.98rem;
     font-weight: 520;
@@ -239,14 +262,14 @@ const ctaHref = getLocalizedPath("/projects/", currentLocale);
     gap: 0.5rem;
     align-self: end;
     margin: 0;
-    padding: 0 clamp(1.4rem, 3vw, 2.45rem) clamp(1.35rem, 2.6vw, 2rem);
+    padding: 0 clamp(1.45rem, 3vw, 2.65rem) clamp(1.45rem, 2.6vw, 2.1rem);
     list-style: none;
   }
 
   .platform-panel li {
-    border: 1px solid rgba(12, 67, 223, 0.16);
-    background: rgba(255, 255, 255, 0.5);
-    padding: 0.5rem 0.62rem;
+    border: 1px solid rgba(12, 67, 223, 0.2);
+    background: rgba(255, 255, 255, 0.68);
+    padding: 0.56rem 0.68rem;
     color: rgba(16, 23, 34, 0.7);
     font-size: 0.78rem;
     font-weight: 650;

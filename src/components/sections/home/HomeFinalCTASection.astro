@@ -20,6 +20,7 @@ const capabilitiesHref = getLocalizedPath("/capabilities/", currentLocale);
 <section class="final-cta-section" aria-labelledby="final-cta-title">
   <div class="final-shell">
     <div class="final-surface" aria-hidden="true">
+      <img src="/img/branding/beles-logo.svg" alt="" width="529" height="96" loading="lazy" />
       <span></span>
       <span></span>
     </div>
@@ -58,8 +59,11 @@ const capabilitiesHref = getLocalizedPath("/capabilities/", currentLocale);
 
 <style>
   .final-cta-section {
+    position: relative;
     overflow: clip;
-    background: #f7f8fa;
+    background:
+      radial-gradient(circle at 70% 38%, rgba(12, 67, 223, 0.1), transparent 30rem),
+      linear-gradient(180deg, #f7f8fa 0%, #e9eef4 100%);
     color: #101722;
   }
 
@@ -69,15 +73,15 @@ const capabilitiesHref = getLocalizedPath("/capabilities/", currentLocale);
     grid-template-columns: minmax(0, 1fr) minmax(18rem, 0.42fr);
     gap: clamp(2rem, 5vw, 5rem);
     width: min(100% - (var(--container-gutter) * 2), var(--container-max));
-    min-height: clamp(35rem, 58vw, 50rem);
+    min-height: clamp(38rem, 58vw, 52rem);
     margin-inline: auto;
     padding-block: clamp(5.5rem, 11vw, 11rem);
   }
 
   .final-surface {
     position: absolute;
-    inset: clamp(3rem, 7vw, 7rem) 0 clamp(3rem, 7vw, 7rem) auto;
-    width: min(54vw, 54rem);
+    inset: clamp(2rem, 5vw, 5rem) 0 clamp(2rem, 5vw, 5rem) auto;
+    width: min(58vw, 58rem);
     pointer-events: none;
     background:
       linear-gradient(
@@ -86,8 +90,17 @@ const capabilitiesHref = getLocalizedPath("/capabilities/", currentLocale);
         rgba(221, 228, 237, 0.24) 52%,
         rgba(12, 67, 223, 0.08)
       ),
-      repeating-linear-gradient(115deg, rgba(37, 43, 50, 0.06) 0 1px, transparent 1px 4.2rem);
+      repeating-linear-gradient(115deg, rgba(37, 43, 50, 0.065) 0 1px, transparent 1px 3.8rem);
     clip-path: polygon(22% 0, 100% 0, 78% 100%, 0 100%);
+  }
+
+  .final-surface img {
+    position: absolute;
+    right: 9%;
+    bottom: 14%;
+    width: min(58%, 34rem);
+    opacity: 0.12;
+    filter: grayscale(1);
   }
 
   .final-surface span {
@@ -196,7 +209,7 @@ const capabilitiesHref = getLocalizedPath("/capabilities/", currentLocale);
     position: relative;
     z-index: 1;
     display: grid;
-    align-self: end;
+    align-self: center;
     gap: 0.8rem;
     margin: 0;
     padding: 0;
@@ -204,7 +217,7 @@ const capabilitiesHref = getLocalizedPath("/capabilities/", currentLocale);
   }
 
   .final-proof li {
-    padding-block: 0.95rem;
+    padding: 1.1rem 0;
     border-top: 1px solid rgba(37, 43, 50, 0.14);
     color: rgba(16, 23, 34, 0.7);
     font-size: 0.92rem;

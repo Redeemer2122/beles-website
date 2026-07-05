@@ -20,12 +20,13 @@ const ctaHref = getLocalizedPath("/about/", currentLocale);
 <section class="market-section" aria-labelledby="market-title">
   <div class="market-shell">
     <div class="market-map" aria-label="BELES regional direction">
-      <div class="origin-node" data-reveal>
+      <div class="corridor-title" data-reveal>
         <span>{content.origin}</span>
       </div>
-      <span class="route-line route-line-a" data-reveal="line" aria-hidden="true"></span>
-      <span class="route-line route-line-b" aria-hidden="true"></span>
-      <div class="region-cloud">
+      <div class="corridor-line" aria-hidden="true">
+        <span data-reveal="line"></span>
+      </div>
+      <div class="region-cloud" aria-label="Target regional markets">
         {
           content.regions.map((region, index) => (
             <span
@@ -62,14 +63,17 @@ const ctaHref = getLocalizedPath("/about/", currentLocale);
 
 <style>
   .market-section {
+    position: relative;
     overflow: clip;
-    background: #f4f6f9;
+    background:
+      radial-gradient(circle at 18% 24%, rgba(12, 67, 223, 0.08), transparent 26rem),
+      linear-gradient(180deg, #e9eef4 0%, #f7f8fa 100%);
     color: #101722;
   }
 
   .market-shell {
     display: grid;
-    grid-template-columns: minmax(0, 1.02fr) minmax(22rem, 0.8fr);
+    grid-template-columns: minmax(0, 1fr) minmax(21rem, 0.82fr);
     gap: clamp(2.5rem, 6vw, 6rem);
     width: min(100% - (var(--container-gutter) * 2), var(--container-max));
     margin-inline: auto;
@@ -81,78 +85,62 @@ const ctaHref = getLocalizedPath("/about/", currentLocale);
     min-height: clamp(30rem, 42vw, 42rem);
     border: 1px solid rgba(37, 43, 50, 0.12);
     background:
-      linear-gradient(135deg, rgba(255, 255, 255, 0.74), rgba(217, 224, 234, 0.24)),
-      repeating-linear-gradient(90deg, rgba(37, 43, 50, 0.055) 0 1px, transparent 1px 4rem),
-      repeating-linear-gradient(0deg, rgba(37, 43, 50, 0.045) 0 1px, transparent 1px 4rem);
+      linear-gradient(135deg, rgba(255, 255, 255, 0.78), rgba(217, 224, 234, 0.22)),
+      repeating-linear-gradient(0deg, rgba(37, 43, 50, 0.045) 0 1px, transparent 1px 5.5rem);
   }
 
-  .origin-node {
+  .corridor-title {
     position: absolute;
-    top: 52%;
-    left: 16%;
+    top: clamp(1.4rem, 3vw, 2.4rem);
+    left: clamp(1.4rem, 3vw, 2.4rem);
     z-index: 2;
-    display: grid;
-    place-items: center;
-    width: clamp(8rem, 13vw, 13rem);
-    aspect-ratio: 1;
-    border: 1px solid rgba(12, 67, 223, 0.34);
-    background: rgba(255, 255, 255, 0.62);
-    transform: translateY(-50%);
+    max-width: 16rem;
   }
 
-  .origin-node::before,
-  .origin-node::after {
-    position: absolute;
-    border: 1px solid rgba(12, 67, 223, 0.12);
-    content: "";
-    inset: 12%;
-  }
-
-  .origin-node::after {
-    inset: 25%;
-  }
-
-  .origin-node span {
-    position: relative;
-    z-index: 1;
+  .corridor-title span {
     color: #0c43df;
     font-family: "Space Grotesk", var(--font-display);
-    font-size: clamp(0.92rem, 1.4vw, 1.25rem);
+    font-size: clamp(2.2rem, 4vw, 4.4rem);
     font-weight: 700;
-    letter-spacing: 0.03em;
-    line-height: 1;
+    letter-spacing: -0.055em;
+    line-height: 0.9;
   }
 
-  .route-line {
+  .corridor-line {
     position: absolute;
-    left: 29%;
-    z-index: 1;
+    right: clamp(1.4rem, 3vw, 2.4rem);
+    bottom: 25%;
+    left: clamp(1.4rem, 3vw, 2.4rem);
+    height: 12rem;
+    border-bottom: 1px solid rgba(12, 67, 223, 0.34);
+    border-left: 1px solid rgba(12, 67, 223, 0.16);
+  }
+
+  .corridor-line span {
+    position: absolute;
+    right: 0;
+    bottom: -1px;
+    left: 0;
     height: 1px;
-    background: rgba(12, 67, 223, 0.42);
+    background: rgba(12, 67, 223, 0.55);
     transform-origin: left center;
-  }
-
-  .route-line-a {
-    top: 43%;
-    width: 56%;
-    transform: rotate(-12deg);
-  }
-
-  .route-line-b {
-    top: 59%;
-    width: 63%;
-    transform: rotate(8deg);
   }
 
   .region-cloud {
     position: absolute;
-    inset: 0;
+    right: clamp(1.4rem, 3vw, 2.4rem);
+    bottom: clamp(1.4rem, 3vw, 2.4rem);
+    left: clamp(1.4rem, 3vw, 2.4rem);
+    z-index: 2;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0.6rem;
   }
 
   .region-label {
-    position: absolute;
     display: inline-flex;
-    min-width: 7.5rem;
+    align-items: center;
+    min-height: 3.2rem;
     border: 1px solid rgba(37, 43, 50, 0.12);
     background: rgba(255, 255, 255, 0.68);
     padding: 0.58rem 0.72rem;
@@ -161,36 +149,6 @@ const ctaHref = getLocalizedPath("/about/", currentLocale);
     font-size: clamp(0.72rem, 1vw, 0.9rem);
     font-weight: 650;
     line-height: 1;
-  }
-
-  .region-1 {
-    top: 19%;
-    right: 21%;
-  }
-
-  .region-2 {
-    top: 35%;
-    right: 7%;
-  }
-
-  .region-3 {
-    top: 51%;
-    right: 25%;
-  }
-
-  .region-4 {
-    right: 9%;
-    bottom: 22%;
-  }
-
-  .region-5 {
-    right: 36%;
-    bottom: 12%;
-  }
-
-  .region-6 {
-    top: 12%;
-    right: 43%;
   }
 
   .market-copy {
@@ -279,64 +237,12 @@ const ctaHref = getLocalizedPath("/about/", currentLocale);
       min-height: 34rem;
     }
 
-    .origin-node {
-      top: 23%;
-      left: 50%;
-      transform: translateX(-50%);
+    .corridor-line {
+      height: 8rem;
     }
 
-    .route-line-a,
-    .route-line-b {
-      left: 50%;
-      width: 1px;
-      height: 55%;
-      transform: none;
-    }
-
-    .route-line-a {
-      top: 34%;
-    }
-
-    .route-line-b {
-      display: none;
-    }
-
-    .region-label {
-      min-width: 0;
-      white-space: nowrap;
-    }
-
-    .region-1 {
-      top: 47%;
-      right: auto;
-      left: 7%;
-    }
-
-    .region-2 {
-      top: 55%;
-      right: 6%;
-    }
-
-    .region-3 {
-      top: 64%;
-      right: auto;
-      left: 12%;
-    }
-
-    .region-4 {
-      right: 9%;
-      bottom: 18%;
-    }
-
-    .region-5 {
-      right: auto;
-      bottom: 10%;
-      left: 8%;
-    }
-
-    .region-6 {
-      top: 39%;
-      right: 12%;
+    .region-cloud {
+      grid-template-columns: 1fr 1fr;
     }
   }
 </style>

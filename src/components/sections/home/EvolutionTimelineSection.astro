@@ -43,23 +43,36 @@ const ctaHref = getLocalizedPath("/story/", currentLocale);
       </a>
     </div>
 
-    <div class="evolution-proof">
+    <aside class="evolution-evidence" aria-label="BELES operating evidence" data-reveal>
+      <div class="evidence-media" aria-hidden="true">
+        <img
+          src="/img/hero/beles-hero-desktop.webp"
+          alt=""
+          width="2048"
+          height="1024"
+          loading="lazy"
+        />
+      </div>
       {
         content.proof.map((item, index) => (
-          <article data-reveal style={`--reveal-delay: ${index * 80}ms`}>
+          <article style={`--reveal-delay: ${index * 80}ms`}>
             <strong>{item.value}</strong>
             <span>{item.label}</span>
           </article>
         ))
       }
-    </div>
+    </aside>
 
-    <ol class="timeline" aria-label="BELES evolution timeline">
+    <ol
+      class="timeline"
+      aria-label="BELES evolution timeline"
+      data-reveal
+      style="--reveal-delay: 120ms"
+    >
       {
         content.timeline.map((item, index) => (
           <li
             class:list={["timeline-item", { "is-highlight": index === 3 }]}
-            data-reveal
             style={`--reveal-delay: ${index * 70}ms`}
           >
             <time>{item.year}</time>
@@ -72,25 +85,35 @@ const ctaHref = getLocalizedPath("/story/", currentLocale);
       }
     </ol>
 
-    <aside class="certificate-fragment" aria-label={content.certificate.kicker} data-reveal>
-      <span>{content.certificate.kicker}</span>
-      <strong>{content.certificate.title}</strong>
-      <p>{content.certificate.text}</p>
+    <aside
+      class="certificate-fragment"
+      aria-label={content.certificate.kicker}
+      data-reveal
+      style="--reveal-delay: 180ms"
+    >
+      <div>
+        <span>{content.certificate.kicker}</span>
+        <strong>{content.certificate.title}</strong>
+        <p>{content.certificate.text}</p>
+      </div>
     </aside>
   </div>
 </section>
 
 <style>
   .evolution-section {
+    position: relative;
     overflow: clip;
-    background: #eef2f6;
+    background:
+      radial-gradient(circle at 12% 12%, rgba(12, 67, 223, 0.08), transparent 27rem),
+      linear-gradient(180deg, #e9eef4 0%, #f7f8fa 100%);
     color: #101722;
   }
 
   .evolution-shell {
     display: grid;
-    grid-template-columns: minmax(0, 0.9fr) minmax(18rem, 0.48fr);
-    gap: clamp(2rem, 4vw, 4rem);
+    grid-template-columns: minmax(0, 0.92fr) minmax(20rem, 0.56fr);
+    gap: clamp(2rem, 4vw, 4.5rem);
     width: min(100% - (var(--container-gutter) * 2), var(--container-max));
     margin-inline: auto;
     padding-block: clamp(5rem, 10vw, 10rem);
@@ -144,32 +167,70 @@ const ctaHref = getLocalizedPath("/story/", currentLocale);
     transform: translateX(0.2rem);
   }
 
-  .evolution-proof {
+  .evolution-evidence {
+    position: relative;
     display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
     align-content: start;
-    gap: 1.4rem;
-    padding-top: 0.55rem;
+    gap: 0;
+    overflow: hidden;
+    border: 1px solid rgba(37, 43, 50, 0.13);
+    background: #121821;
+    color: #fff;
   }
 
-  .evolution-proof article {
-    padding-bottom: 1.25rem;
-    border-bottom: 1px solid rgba(37, 43, 50, 0.16);
+  .evidence-media {
+    position: relative;
+    grid-column: 1 / -1;
+    min-height: clamp(12rem, 18vw, 18rem);
+    overflow: hidden;
   }
 
-  .evolution-proof strong {
+  .evidence-media::after {
+    position: absolute;
+    inset: 0;
+    background:
+      linear-gradient(180deg, rgba(18, 24, 33, 0.06), #121821 92%),
+      linear-gradient(90deg, rgba(18, 24, 33, 0.12), rgba(18, 24, 33, 0.72));
+    content: "";
+  }
+
+  .evidence-media img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: 52% center;
+    filter: saturate(0.55) contrast(1.05);
+    opacity: 0.72;
+  }
+
+  .evolution-evidence article {
+    position: relative;
+    display: grid;
+    gap: 0.55rem;
+    min-height: 9rem;
+    padding: 1.15rem;
+    border-top: 1px solid rgba(247, 248, 250, 0.13);
+  }
+
+  .evolution-evidence article + article {
+    border-left: 1px solid rgba(247, 248, 250, 0.13);
+  }
+
+  .evolution-evidence strong {
     display: block;
-    color: #0c43df;
+    color: #8fa6ff;
     font-family: "Space Grotesk", var(--font-display);
-    font-size: clamp(2.35rem, 4vw, 4.4rem);
+    font-size: clamp(2.2rem, 3.7vw, 4rem);
     font-weight: 560;
     letter-spacing: -0.045em;
     line-height: 0.92;
   }
 
-  .evolution-proof span {
+  .evolution-evidence span {
     display: block;
     margin-top: 0.65rem;
-    color: rgba(16, 23, 34, 0.62);
+    color: rgba(247, 248, 250, 0.66);
     font-size: 0.9rem;
     font-weight: 560;
     line-height: 1.42;
@@ -179,8 +240,8 @@ const ctaHref = getLocalizedPath("/story/", currentLocale);
     position: relative;
     grid-column: 1 / -1;
     display: grid;
-    grid-template-columns: repeat(5, minmax(0, 1fr));
-    gap: 0;
+    grid-template-columns: minmax(0, 1.25fr) repeat(4, minmax(0, 0.86fr));
+    gap: clamp(0.75rem, 1.3vw, 1.1rem);
     margin: clamp(2.5rem, 5vw, 5rem) 0 0;
     padding: 0;
     list-style: none;
@@ -188,7 +249,7 @@ const ctaHref = getLocalizedPath("/story/", currentLocale);
 
   .timeline::before {
     position: absolute;
-    top: 4.65rem;
+    top: 5.6rem;
     right: 0;
     left: 0;
     height: 1px;
@@ -200,18 +261,21 @@ const ctaHref = getLocalizedPath("/story/", currentLocale);
     position: relative;
     display: grid;
     align-content: start;
-    min-height: 21rem;
-    padding: 0 clamp(0.8rem, 1.5vw, 1.35rem) 0 0;
+    min-height: 25rem;
+    overflow: hidden;
+    border: 1px solid rgba(37, 43, 50, 0.12);
+    background: rgba(255, 255, 255, 0.42);
+    padding: clamp(1rem, 1.6vw, 1.4rem);
   }
 
   .timeline-item::before {
     position: absolute;
-    top: 4.38rem;
-    left: 0;
+    top: 5.32rem;
+    left: clamp(1rem, 1.6vw, 1.4rem);
     width: 0.62rem;
     height: 0.62rem;
     border: 1px solid rgba(12, 67, 223, 0.72);
-    background: #eef2f6;
+    background: #f7f8fa;
     content: "";
     transform: rotate(45deg);
   }
@@ -219,21 +283,21 @@ const ctaHref = getLocalizedPath("/story/", currentLocale);
   .timeline-item time {
     color: rgba(16, 23, 34, 0.92);
     font-family: "Space Grotesk", var(--font-display);
-    font-size: clamp(1.85rem, 3vw, 3.5rem);
+    font-size: clamp(2.6rem, 4.6vw, 5.4rem);
     font-weight: 560;
     letter-spacing: -0.045em;
     line-height: 1;
   }
 
   .timeline-item div {
-    margin-top: 3.4rem;
+    margin-top: auto;
   }
 
   .timeline-item h3 {
     margin: 0;
     color: #111722;
     font-family: "Space Grotesk", var(--font-display);
-    font-size: 1rem;
+    font-size: clamp(1rem, 1.22vw, 1.22rem);
     font-weight: 650;
     letter-spacing: 0;
     line-height: 1.16;
@@ -249,17 +313,19 @@ const ctaHref = getLocalizedPath("/story/", currentLocale);
   }
 
   .timeline-item.is-highlight {
+    background: linear-gradient(135deg, rgba(12, 67, 223, 0.14), rgba(255, 255, 255, 0.72)), #fff;
     color: #0c43df;
   }
 
   .timeline-item.is-highlight::after {
     position: absolute;
-    inset: 3.05rem 0 auto -0.7rem;
+    inset: auto -10% -18% auto;
     z-index: 0;
-    width: min(17rem, 90%);
-    height: 8.6rem;
+    width: min(20rem, 94%);
+    height: 12rem;
     border: 1px solid rgba(12, 67, 223, 0.18);
-    background: rgba(255, 255, 255, 0.28);
+    background: rgba(12, 67, 223, 0.08);
+    transform: skewX(-18deg);
     content: "";
   }
 
@@ -271,13 +337,20 @@ const ctaHref = getLocalizedPath("/story/", currentLocale);
   .certificate-fragment {
     grid-column: 1 / -1;
     justify-self: end;
-    width: min(100%, 34rem);
-    margin-top: -4rem;
-    padding: clamp(1.4rem, 2.8vw, 2.2rem);
+    width: min(100%, 42rem);
+    margin-top: -2.2rem;
+    padding: 0.6rem;
     border: 1px solid rgba(37, 43, 50, 0.14);
     background:
-      linear-gradient(135deg, rgba(255, 255, 255, 0.72), rgba(220, 227, 236, 0.34)),
-      repeating-linear-gradient(0deg, rgba(37, 43, 50, 0.05) 0 1px, transparent 1px 0.7rem);
+      linear-gradient(135deg, rgba(255, 255, 255, 0.84), rgba(220, 227, 236, 0.52)),
+      repeating-linear-gradient(0deg, rgba(37, 43, 50, 0.05) 0 1px, transparent 1px 0.62rem);
+    box-shadow: 0 1.5rem 4rem rgba(37, 43, 50, 0.1);
+  }
+
+  .certificate-fragment div {
+    padding: clamp(1.35rem, 2.4vw, 2rem);
+    border: 1px solid rgba(37, 43, 50, 0.1);
+    background: rgba(255, 255, 255, 0.34);
   }
 
   .certificate-fragment span {
@@ -311,7 +384,7 @@ const ctaHref = getLocalizedPath("/story/", currentLocale);
       grid-template-columns: 1fr;
     }
 
-    .evolution-proof {
+    .evolution-evidence {
       grid-template-columns: repeat(3, minmax(0, 1fr));
     }
 
@@ -330,7 +403,7 @@ const ctaHref = getLocalizedPath("/story/", currentLocale);
 
     .timeline-item {
       min-height: 0;
-      padding: 0 0 0 2rem;
+      padding: 1.2rem 1.2rem 1.2rem 2rem;
     }
 
     .timeline-item::before {
@@ -355,8 +428,12 @@ const ctaHref = getLocalizedPath("/story/", currentLocale);
   }
 
   @media (max-width: 620px) {
-    .evolution-proof {
+    .evolution-evidence {
       grid-template-columns: 1fr;
+    }
+
+    .evolution-evidence article + article {
+      border-left: 0;
     }
 
     .evolution-intro h2 {
