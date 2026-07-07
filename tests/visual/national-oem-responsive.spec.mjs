@@ -8,6 +8,7 @@ const outputDir = path.resolve("tests/visual/output/responsive");
 
 const cases = [
   { name: "desktop-1920x1080", width: 1920, height: 1080 },
+  { name: "desktop-1920x956", width: 1920, height: 956 },
   { name: "desktop-1440x900", width: 1440, height: 900 },
   { name: "mobile-390x844", width: 390, height: 844 },
 ];
@@ -56,6 +57,12 @@ test.describe("national OEM responsive sanity", () => {
           clientWidth: document.documentElement.clientWidth,
           sectionWidth: Math.round(rect.width),
           sectionHeight: Math.round(rect.height),
+          ctaBottom: Math.round(
+            document.querySelector(".home-text-link").getBoundingClientRect().bottom,
+          ),
+          proofRailTop: Math.round(
+            document.querySelector(".proof-rail").getBoundingClientRect().top,
+          ),
         };
       });
 
@@ -66,6 +73,7 @@ test.describe("national OEM responsive sanity", () => {
 
       expect(metrics.bodyScrollWidth).toBeLessThanOrEqual(viewportCase.width + 1);
       expect(metrics.documentScrollWidth).toBeLessThanOrEqual(viewportCase.width + 1);
+      expect(metrics.ctaBottom).toBeLessThanOrEqual(metrics.proofRailTop);
 
       await section.screenshot({
         path: path.join(outputDir, `${viewportCase.name}.png`),

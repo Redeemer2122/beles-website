@@ -23,23 +23,31 @@ type Props = {
 const { content } = Astro.props;
 const currentLocale = getLocaleFromPathname(Astro.url.pathname);
 const ctaHref = getLocalizedPath("/story/", currentLocale);
+const certificationParts = content.certification.split("K59");
+const proof = content.proof;
 ---
 
 <section class="national-oem-section" aria-labelledby="national-oem-title">
-  <div class="national-atmosphere" aria-hidden="true" data-reveal style="--reveal-delay: 20ms">
-    <span class="national-atmosphere__plane national-atmosphere__plane--wide"></span>
-    <span class="national-atmosphere__plane national-atmosphere__plane--slim"></span>
-    <span class="national-atmosphere__light"></span>
-  </div>
-
   <div class="national-shell">
     <div class="national-meta" data-reveal style="--reveal-delay: 80ms">
       <span class="national-meta__primary">{content.eyebrow}</span>
+      <span class="national-meta__divider" aria-hidden="true"></span>
       <span>{content.origin}</span>
-      <span>{content.certification}</span>
+      <span class="national-meta__divider" aria-hidden="true"></span>
+      <span>
+        {certificationParts[0]}
+        {
+          certificationParts.length > 1 ? (
+            <>
+              <span class="national-blue">K59</span>
+              {certificationParts.slice(1).join("K59")}
+            </>
+          ) : null
+        }
+      </span>
     </div>
 
-    <div class="national-scene">
+    <div class="national-editorial">
       <div class="national-statement">
         <h2 id="national-oem-title" aria-label={content.title}>
           {
@@ -49,19 +57,16 @@ const ctaHref = getLocalizedPath("/story/", currentLocale);
                 data-reveal
                 style={`--reveal-delay: ${180 + index * 90}ms`}
               >
-                {line.includes("OEM") ? (
-                  <>
-                    {line.split("OEM")[0]}
-                    <span class="national-title-emphasis">OEM</span>
-                    {line.split("OEM").slice(1).join("OEM")}
-                  </>
-                ) : (
-                  line
-                )}
+                {index === content.titleLines.length - 1 ? line.replace(/\.$/, "") : line}
+                {index === content.titleLines.length - 1 ? (
+                  <span class="national-title-dot">.</span>
+                ) : null}
               </span>
             ))
           }
         </h2>
+
+        <span class="national-statement__rule" aria-hidden="true"></span>
 
         <p data-reveal style="--reveal-delay: 560ms">{content.body}</p>
 
@@ -71,44 +76,71 @@ const ctaHref = getLocalizedPath("/story/", currentLocale);
         </a>
       </div>
 
-      <figure class="national-visual" aria-hidden="true" data-reveal style="--reveal-delay: 470ms">
-        <span class="national-visual__halo"></span>
-        <span class="national-visual__slab national-visual__slab--back"></span>
-        <span class="national-visual__slab national-visual__slab--front"></span>
-        <span class="national-visual__accent"></span>
-        <span class="national-visual__ridge national-visual__ridge--one"></span>
-        <span class="national-visual__ridge national-visual__ridge--two"></span>
-        <span class="national-visual__brand">
-          <span class="national-visual__brand-crop national-visual__brand-crop--icon">
-            <img
-              src="/img/branding/beles-logo-header.svg"
-              alt=""
-              width="529"
-              height="96"
-              loading="lazy"
-              decoding="async"
-            />
-          </span>
-          <span class="national-visual__brand-crop national-visual__brand-crop--word">
-            <img
-              src="/img/branding/beles-logo-header.svg"
-              alt=""
-              width="529"
-              height="96"
-              loading="lazy"
-              decoding="async"
-            />
-          </span>
-        </span>
-      </figure>
+      <div class="national-data" aria-label="National OEM certification details">
+        <div class="national-ghost" aria-hidden="true">
+          <span>BELES</span>
+          <span class="national-dot-grid"></span>
+        </div>
+
+        <div class="national-wmi" data-reveal style="--reveal-delay: 420ms">
+          <span class="national-panel-label">WMI</span>
+          <strong aria-label="K59">
+            <span class="national-wmi__letter">K</span>
+            <span class="national-wmi__digits">59</span>
+          </strong>
+          <span class="national-wmi__rule" aria-hidden="true"></span>
+          <span class="national-wmi__assigned">Assigned by</span>
+          <span class="national-wmi__issuer">SAE International</span>
+        </div>
+
+        <div class="national-spec-grid" data-reveal style="--reveal-delay: 500ms">
+          <article>
+            <span class="national-panel-label">Founded</span>
+            <strong>2012</strong>
+          </article>
+          <article>
+            <span class="national-panel-label">Region</span>
+            <strong>Central Asia / EAEU</strong>
+          </article>
+          <article>
+            <span class="national-panel-label">Status</span>
+            <strong>National OEM</strong>
+          </article>
+          <div class="national-mark" aria-hidden="true">
+            <svg viewBox="0 0 220 220" role="img">
+              <circle cx="110" cy="110" r="84"></circle>
+              <circle cx="110" cy="110" r="100"></circle>
+              <path d="M12 110H208"></path>
+              <path d="M208 98V122"></path>
+              <path
+                class="national-mark__mountain"
+                d="M48 150L80 110L95 132L111 96L142 150M73 133L88 116L101 138M105 122L116 136L126 120L168 150M130 118L142 99L173 150M143 120L154 132L160 121"
+              ></path>
+            </svg>
+          </div>
+        </div>
+      </div>
     </div>
 
     <div class="proof-rail" aria-label={content.proofLabel}>
       {
-        content.proof.map((item, index) => (
+        proof.map((item, index) => (
           <article class="proof-record" data-reveal style={`--reveal-delay: ${760 + index * 90}ms`}>
             <span class="proof-record__index">{String(index + 1).padStart(2, "0")}</span>
-            <h3>{item.title}</h3>
+            <h3 aria-label={item.title}>
+              {item.title.includes("K59") ? (
+                <>
+                  {item.title.split("K59")[0]}
+                  <span class="national-proof-k59" aria-hidden="true">
+                    <span>K</span>
+                    <span>59</span>
+                  </span>
+                  {item.title.split("K59").slice(1).join("K59")}
+                </>
+              ) : (
+                item.title
+              )}
+            </h3>
             <p>{item.text}</p>
           </article>
         ))
@@ -124,14 +156,16 @@ const ctaHref = getLocalizedPath("/story/", currentLocale);
     overflow: clip;
     isolation: isolate;
     min-height: 100dvh;
-    --national-cobalt: 33 92 220;
-    --national-ink: 17 23 34;
+    --national-blue: 0 77 190;
+    --national-ink: 12 24 43;
+    --national-muted: 74 78 88;
+    --national-line: 198 202 207;
+    --national-serif: Georgia, "Times New Roman", Times, serif;
     background:
-      radial-gradient(circle at 76% 32%, rgba(123, 143, 173, 0.11), transparent 32rem),
-      radial-gradient(circle at 82% 76%, rgba(190, 198, 210, 0.16), transparent 40rem),
-      radial-gradient(circle at 19% 18%, rgba(255, 255, 255, 0.98), transparent 28rem),
-      linear-gradient(118deg, #fcfcfb 0%, #f7f8f9 46%, #eef2f5 100%);
-    color: var(--color-brand-graphite);
+      radial-gradient(circle at 25% 18%, rgb(255 255 255 / 0.92), transparent 30rem),
+      radial-gradient(circle at 74% 44%, rgb(224 224 222 / 0.28), transparent 38rem),
+      linear-gradient(118deg, #fbfaf8 0%, #f7f6f3 58%, #f3f2ef 100%);
+    color: rgb(var(--national-ink));
   }
 
   .national-oem-section::before,
@@ -145,194 +179,123 @@ const ctaHref = getLocalizedPath("/story/", currentLocale);
 
   .national-oem-section::before {
     background:
-      linear-gradient(180deg, rgba(255, 255, 255, 0.92), transparent 34%),
-      linear-gradient(
-        90deg,
-        rgba(var(--national-ink), 0.026),
-        transparent 22%,
-        transparent 78%,
-        rgba(var(--national-ink), 0.028)
-      );
-    opacity: 0.78;
+      linear-gradient(180deg, rgb(255 255 255 / 0.72), transparent 38%),
+      linear-gradient(90deg, rgb(255 255 255 / 0.42), transparent 48%, rgb(0 0 0 / 0.025));
   }
 
   .national-oem-section::after {
-    background:
-      linear-gradient(
-        115deg,
-        transparent 0 59.2%,
-        rgba(var(--national-cobalt), 0.18) 59.34% 59.42%,
-        rgba(255, 255, 255, 0.76) 59.5% 59.68%,
-        transparent 59.86%
-      ),
-      linear-gradient(
-        115deg,
-        transparent 0 51.4%,
-        rgba(var(--national-ink), 0.055) 51.52% 51.6%,
-        transparent 51.76%
-      ),
-      linear-gradient(180deg, transparent 0 72%, rgba(255, 255, 255, 0.72) 100%);
-    opacity: 0.66;
-  }
-
-  .national-atmosphere {
-    position: absolute;
-    inset: 0;
-    z-index: 1;
-    pointer-events: none;
-  }
-
-  .national-atmosphere__plane {
-    position: absolute;
-    display: block;
-    transform: skewX(-14deg);
-    transform-origin: center;
-  }
-
-  .national-atmosphere__plane--wide {
-    right: 1%;
-    bottom: 17%;
-    width: min(40vw, 46rem);
-    height: min(45vw, 34rem);
-    border: 1px solid rgba(255, 255, 255, 0.64);
-    background:
-      linear-gradient(
-        132deg,
-        rgba(255, 255, 255, 0.74),
-        rgba(207, 216, 226, 0.14) 52%,
-        rgba(255, 255, 255, 0.54)
-      ),
-      radial-gradient(circle at 50% 36%, rgba(255, 255, 255, 0.78), transparent 44%);
-    box-shadow:
-      0 30px 84px rgba(77, 88, 104, 0.08),
-      inset 1px 1px 0 rgba(255, 255, 255, 0.86),
-      inset -1px -1px 0 rgba(92, 105, 121, 0.05);
-    opacity: 0.56;
-  }
-
-  .national-atmosphere__plane--slim {
-    right: 34.8%;
-    top: -10%;
-    width: min(8.2vw, 9rem);
-    height: 110%;
-    border-inline: 1px solid rgba(91, 105, 124, 0.16);
-    background: linear-gradient(
-      90deg,
-      rgba(255, 255, 255, 0.52),
-      rgba(182, 193, 207, 0.16),
-      rgba(255, 255, 255, 0.7)
-    );
-    box-shadow:
-      0 0 42px rgba(115, 129, 146, 0.12),
-      inset 1px 0 0 rgba(255, 255, 255, 0.82);
-    opacity: 0.5;
-  }
-
-  .national-atmosphere__light {
-    position: absolute;
-    top: -10%;
-    right: 36.4%;
-    width: 1px;
-    height: 112%;
-    background: linear-gradient(
-      180deg,
-      transparent 2%,
-      rgba(var(--national-cobalt), 0.26) 42%,
-      rgba(var(--national-cobalt), 0.07) 66%,
-      transparent 100%
-    );
-    box-shadow: 0 0 18px rgba(66, 109, 255, 0.13);
-    transform: skewX(-14deg);
-    opacity: 0.48;
+    background-image:
+      linear-gradient(rgb(var(--national-line) / 0.2) 1px, transparent 1px),
+      linear-gradient(90deg, rgb(var(--national-line) / 0.16) 1px, transparent 1px);
+    background-size:
+      100% 24.4rem,
+      24.2rem 100%;
+    opacity: 0.11;
   }
 
   .national-shell {
     position: relative;
-    z-index: 2;
-    box-sizing: border-box;
+    z-index: 1;
     display: grid;
-    grid-template-rows: auto auto auto;
-    gap: clamp(1rem, 1.25vw, 1.45rem);
-    width: min(100% - clamp(2rem, 7vw, 9rem), 108rem);
+    grid-template-rows: auto minmax(0, 1fr) auto;
+    width: 100%;
     min-height: 100dvh;
-    margin-inline: auto;
-    padding-block: clamp(3.25rem, 3.35vw, 3.65rem) 0;
   }
 
   .national-meta {
     display: grid;
-    grid-template-columns: minmax(0, 1fr) auto auto;
-    gap: clamp(1rem, 3vw, 3rem);
+    grid-template-columns: minmax(0, 1.55fr) auto minmax(0, 0.75fr) auto minmax(0, 1.45fr);
     align-items: center;
-    padding-bottom: 1rem;
-    border-bottom: 1px solid rgba(var(--national-ink), 0.14);
-    color: rgba(var(--national-ink), 0.62);
+    min-height: clamp(4.2rem, 5vw, 4.85rem);
+    padding-inline: clamp(2rem, 3.45vw, 3.65rem);
+    border-bottom: 1px solid rgb(var(--national-line) / 0.72);
+    color: rgb(var(--national-ink) / 0.72);
     font-family: "Space Grotesk", var(--font-display);
-    font-size: clamp(0.64rem, 0.68vw, 0.72rem);
+    font-size: clamp(0.64rem, 0.72vw, 0.78rem);
     font-weight: 700;
-    letter-spacing: 0.16em;
-    line-height: 1.25;
+    letter-spacing: 0.22em;
+    line-height: 1.2;
     text-transform: uppercase;
   }
 
-  .national-meta__primary {
-    color: rgb(var(--national-cobalt));
+  .national-meta > span:nth-child(3) {
+    justify-self: center;
   }
 
-  .national-scene {
-    position: relative;
+  .national-meta > span:last-child {
+    justify-self: end;
+  }
+
+  .national-meta__primary {
+    justify-self: start;
+  }
+
+  .national-meta__primary,
+  .national-blue {
+    color: rgb(var(--national-blue));
+  }
+
+  .national-meta__divider {
+    display: block;
+    width: 1px;
+    height: 1.8rem;
+    background: rgb(var(--national-line) / 0.9);
+  }
+
+  .national-editorial {
     display: grid;
-    grid-template-columns: minmax(0, 0.9fr) minmax(34rem, 0.82fr);
-    gap: clamp(1.25rem, 2.15vw, 3rem);
+    grid-template-columns: minmax(30rem, 0.96fr) minmax(37rem, 1.04fr);
     align-items: center;
+    gap: clamp(3rem, 4vw, 5.9rem);
+    padding: clamp(2.05rem, 3.45vw, 3.25rem) clamp(2rem, 4.2vw, 4.55rem)
+      clamp(2.35rem, 3.15vw, 3.15rem);
   }
 
   .national-statement {
-    position: relative;
-    z-index: 3;
-    padding-left: clamp(2.2rem, 3.35vw, 4.45rem);
-    padding-block: clamp(1.15rem, 2vw, 2.05rem) clamp(0.45rem, 0.8vw, 0.9rem);
+    max-width: 45rem;
   }
 
   .national-statement h2 {
-    max-width: 16.6ch;
+    overflow: visible;
+    padding-bottom: 0.14em;
     margin: 0;
-    color: #111722;
-    font-family: "Space Grotesk", var(--font-display);
-    font-size: clamp(4.1rem, 4.95vw, 5.85rem);
-    font-weight: 530;
-    letter-spacing: 0;
-    line-height: 1.055;
+    color: rgb(var(--national-ink));
+    font-family: var(--national-serif);
+    font-size: clamp(4.38rem, 5.2vw, 6.42rem);
+    font-weight: 400;
+    letter-spacing: -0.052em;
+    line-height: 0.96;
   }
 
   .national-title-line {
     display: block;
-    width: fit-content;
+    overflow: visible;
+    padding-bottom: 0.13em;
+    margin-bottom: -0.13em;
+    line-height: inherit;
   }
 
-  .national-title-emphasis {
-    position: relative;
-    display: inline-block;
+  .national-title-dot {
+    color: rgb(var(--national-blue));
   }
 
-  .national-title-emphasis::after {
-    position: absolute;
-    right: 0.01em;
-    bottom: 0.01em;
-    left: 0.03em;
-    height: 0.055em;
-    background: rgb(var(--national-cobalt));
-    content: "";
+  .national-statement__rule {
+    display: block;
+    width: 4.1rem;
+    height: 1px;
+    margin-top: clamp(1.55rem, 2.2vw, 2.3rem);
+    background: rgb(var(--national-blue));
   }
 
   .national-statement p {
-    max-width: 34.2rem;
-    margin: clamp(1.75rem, 2.05vw, 2.15rem) 0 0;
-    color: rgba(var(--national-ink), 0.7);
+    max-width: 37.5rem;
+    margin: clamp(1.6rem, 2vw, 2rem) 0 0;
+    color: rgb(var(--national-muted) / 0.94);
     font-family: "Manrope", var(--font-body);
-    font-size: clamp(1.02rem, 1vw, 1.15rem);
-    font-weight: 520;
-    line-height: 1.6;
+    font-size: clamp(1.02rem, 1.12vw, 1.22rem);
+    font-weight: 500;
+    letter-spacing: 0.012em;
+    line-height: 1.43;
     text-wrap: pretty;
   }
 
@@ -340,22 +303,21 @@ const ctaHref = getLocalizedPath("/story/", currentLocale);
     position: relative;
     display: inline-flex;
     align-items: center;
-    gap: 0.72rem;
-    margin-top: 1.85rem;
-    padding-bottom: 0.52rem;
-    color: rgb(var(--national-cobalt));
-    font-family: "Space Grotesk", var(--font-display);
-    font-size: 0.8rem;
-    font-weight: 700;
-    letter-spacing: 0.045em;
+    gap: 1.1rem;
+    margin-top: clamp(2rem, 2.6vw, 2.55rem);
+    color: rgb(var(--national-blue));
+    font-family: "Manrope", var(--font-body);
+    font-size: clamp(1rem, 1vw, 1.15rem);
+    font-weight: 650;
+    letter-spacing: 0.012em;
     line-height: 1;
     text-decoration: none;
   }
 
   .home-text-link::after {
     position: absolute;
-    right: 0;
-    bottom: 0;
+    right: 2.05rem;
+    bottom: -0.45rem;
     left: 0;
     height: 1px;
     background: currentColor;
@@ -366,6 +328,7 @@ const ctaHref = getLocalizedPath("/story/", currentLocale);
   }
 
   .home-text-link span:last-child {
+    font-family: "Space Grotesk", var(--font-display);
     transition: transform 220ms var(--ease-out);
   }
 
@@ -379,329 +342,342 @@ const ctaHref = getLocalizedPath("/story/", currentLocale);
     transform: translateX(0.22rem);
   }
 
-  .national-visual {
+  .national-data {
     position: relative;
-    min-height: clamp(28rem, 35vw, 38.5rem);
-    margin: 0;
-    pointer-events: none;
-  }
-
-  .national-visual__halo,
-  .national-visual__slab,
-  .national-visual__accent,
-  .national-visual__ridge {
-    position: absolute;
-    display: block;
-  }
-
-  .national-visual__halo {
-    inset: -4% -12% -2% -9%;
-    background:
-      radial-gradient(ellipse at 58% 42%, rgba(255, 255, 255, 0.96), transparent 42%),
-      radial-gradient(ellipse at 58% 86%, rgba(117, 132, 150, 0.12), transparent 48%);
-    opacity: 0.78;
-  }
-
-  .national-visual__slab {
-    transform: skewX(-12deg);
-    transform-origin: center;
-  }
-
-  .national-visual__slab--back {
-    inset: 5% 0 -4% 3%;
-    border: 1px solid rgba(255, 255, 255, 0.42);
-    background:
-      linear-gradient(
-        137deg,
-        rgba(255, 255, 255, 0.28),
-        rgba(176, 187, 201, 0.055) 55%,
-        rgba(255, 255, 255, 0.2)
-      ),
-      linear-gradient(180deg, rgba(255, 255, 255, 0.38), rgba(210, 218, 228, 0.08));
-    box-shadow:
-      0 28px 82px rgba(71, 84, 101, 0.075),
-      inset 1px 1px 0 rgba(255, 255, 255, 0.7);
-    opacity: 0.46;
-  }
-
-  .national-visual__slab--front {
-    inset: 11.5% 3% 8.5% 44%;
-    border: 1px solid rgba(255, 255, 255, 0.58);
-    background:
-      linear-gradient(
-        136deg,
-        rgba(255, 255, 255, 0.64),
-        rgba(214, 222, 232, 0.1) 55%,
-        rgba(255, 255, 255, 0.5)
-      ),
-      radial-gradient(circle at 48% 34%, rgba(255, 255, 255, 0.84), transparent 47%);
-    box-shadow:
-      0 24px 74px rgba(79, 92, 109, 0.09),
-      inset 1px 1px 0 rgba(255, 255, 255, 0.84),
-      inset -1px -1px 0 rgba(var(--national-ink), 0.035);
-    opacity: 0.88;
-  }
-
-  .national-visual__slab--front::before,
-  .national-visual__slab--front::after {
-    position: absolute;
-    pointer-events: none;
-    content: "";
-  }
-
-  .national-visual__slab--front::before {
-    inset: 0;
-    background:
-      linear-gradient(
-        115deg,
-        transparent 0 24%,
-        rgba(255, 255, 255, 0.42) 24.4% 43%,
-        transparent 43.2%
-      ),
-      linear-gradient(180deg, rgba(255, 255, 255, 0.38), transparent 56%);
-    opacity: 0.68;
-  }
-
-  .national-visual__slab--front::after {
-    inset: auto 9% 16% 7%;
-    height: 1px;
-    background: linear-gradient(
-      90deg,
-      transparent,
-      rgba(255, 255, 255, 0.7),
-      rgba(var(--national-ink), 0.055),
-      transparent
-    );
-    opacity: 0.68;
-  }
-
-  .national-visual__accent {
-    top: -40%;
-    left: 21%;
-    width: 1px;
-    height: 176%;
-    background: linear-gradient(
-      180deg,
-      transparent 3%,
-      rgba(var(--national-cobalt), 0.28) 42%,
-      rgba(var(--national-cobalt), 0.08) 68%,
-      transparent 100%
-    );
-    box-shadow: 0 0 18px rgba(66, 109, 255, 0.16);
-    transform: skewX(-13deg);
-    opacity: 0.56;
-  }
-
-  .national-visual__ridge {
-    right: 14%;
-    bottom: 15%;
-    height: 1px;
-    background:
-      linear-gradient(
-        90deg,
-        transparent,
-        rgba(255, 255, 255, 0.62) 16%,
-        rgba(123, 137, 154, 0.085) 72%,
-        transparent
-      ),
-      linear-gradient(90deg, transparent, rgba(var(--national-cobalt), 0.055), transparent);
-    transform: skewX(-12deg);
-  }
-
-  .national-visual__ridge--one {
-    width: 58%;
-  }
-
-  .national-visual__ridge--two {
-    right: 5%;
-    bottom: 8%;
-    width: 76%;
-    opacity: 0.48;
-  }
-
-  .national-visual__brand {
-    position: absolute;
-    right: 13%;
-    top: 57%;
     display: grid;
-    justify-items: center;
-    gap: clamp(1.05rem, 1.45vw, 1.45rem);
-    opacity: 0.2;
-    filter: grayscale(1) brightness(1.26) contrast(0.72)
-      drop-shadow(1px 1px 0 rgba(255, 255, 255, 0.82))
-      drop-shadow(-1px -1px 0 rgba(86, 99, 116, 0.08));
-    mix-blend-mode: luminosity;
-    transform: translateY(-50%) skewX(-4deg);
+    grid-template-columns: minmax(12.5rem, 0.68fr) minmax(29rem, 1.32fr);
+    align-items: end;
+    min-height: clamp(20rem, 23vw, 24rem);
+    padding-top: clamp(8rem, 9vw, 9rem);
   }
 
-  .national-visual__brand-crop {
-    position: relative;
-    display: block;
-    overflow: hidden;
-  }
-
-  .national-visual__brand-crop img {
+  .national-ghost {
     position: absolute;
-    top: 0;
-    max-width: none;
-    height: auto;
+    top: -1.65rem;
+    right: 0.3rem;
+    left: 0.6rem;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: start;
+    gap: 2rem;
+    pointer-events: none;
   }
 
-  .national-visual__brand-crop--icon {
-    width: clamp(3.85rem, 5.6vw, 5.9rem);
-    height: clamp(2.25rem, 3.25vw, 3.4rem);
+  .national-ghost > span:first-child {
+    color: rgb(var(--national-ink) / 0.055);
+    font-family: "Space Grotesk", var(--font-display);
+    font-size: clamp(7rem, 11.45vw, 13.2rem);
+    font-weight: 800;
+    letter-spacing: 0.034em;
+    line-height: 0.82;
+    text-transform: uppercase;
+    transform: scaleX(1.09);
+    transform-origin: left center;
   }
 
-  .national-visual__brand-crop--icon img {
-    left: 0;
-    width: clamp(16.2rem, 24.5vw, 25.7rem);
+  .national-dot-grid {
+    width: clamp(4.25rem, 4.5vw, 4.75rem);
+    height: clamp(4.25rem, 4.5vw, 4.75rem);
+    margin-top: 2rem;
+    background-image: radial-gradient(
+      circle,
+      rgb(var(--national-ink) / 0.28) 1.55px,
+      transparent 1.65px
+    );
+    background-size: 0.73rem 0.73rem;
+    opacity: 0.5;
   }
 
-  .national-visual__brand-crop--word {
-    width: clamp(12.8rem, 18.5vw, 19.4rem);
-    height: clamp(2.35rem, 3.2vw, 3.3rem);
+  .national-wmi {
+    align-self: center;
+    padding-top: clamp(0.2rem, 0.65vw, 0.85rem);
+    padding-left: 1rem;
   }
 
-  .national-visual__brand-crop--word img {
-    top: -1.1rem;
-    left: -6.75rem;
-    width: clamp(16.2rem, 24.5vw, 25.7rem);
+  .national-panel-label,
+  .national-wmi__assigned,
+  .national-wmi__issuer {
+    display: block;
+    color: rgb(var(--national-blue));
+    font-family: "Space Grotesk", var(--font-display);
+    font-size: clamp(0.68rem, 0.74vw, 0.82rem);
+    font-weight: 700;
+    letter-spacing: 0.22em;
+    line-height: 1.25;
+    text-transform: uppercase;
+  }
+
+  .national-wmi strong {
+    display: flex;
+    align-items: baseline;
+    margin-top: 0.65rem;
+    color: rgb(var(--national-blue));
+    font-family: var(--national-serif);
+    font-size: clamp(5rem, 6.95vw, 8.25rem);
+    font-weight: 400;
+    font-variant-numeric: lining-nums;
+    font-feature-settings: "lnum" 1;
+    letter-spacing: -0.065em;
+    line-height: 0.82;
+  }
+
+  .national-wmi__letter,
+  .national-wmi__digits {
+    display: inline-block;
+    line-height: 0.82;
+  }
+
+  .national-wmi__digits {
+    --national-wmi-digit-lift: -0.018em;
+    margin-left: 0.018em;
+    transform: translateY(var(--national-wmi-digit-lift));
+  }
+
+  .national-wmi__rule {
+    display: block;
+    width: min(7.8rem, 64%);
+    height: 1px;
+    margin-block: clamp(1.5rem, 2.05vw, 2.05rem);
+    background: rgb(var(--national-blue));
+  }
+
+  .national-wmi__assigned {
+    margin-bottom: 0.85rem;
+    color: rgb(var(--national-blue));
+  }
+
+  .national-wmi__issuer {
+    color: rgb(var(--national-blue));
+    font-size: clamp(0.62rem, 0.66vw, 0.72rem);
+    letter-spacing: 0.24em;
+  }
+
+  .national-spec-grid {
+    position: relative;
+    display: grid;
+    grid-template-columns: 1fr;
+    align-self: end;
+    border-left: 1px solid rgb(var(--national-line) / 0.9);
+    transform: translateY(1.7rem);
+  }
+
+  .national-spec-grid article {
+    min-height: clamp(6.1rem, 6.25vw, 6.6rem);
+    padding: clamp(1.25rem, 1.45vw, 1.55rem) clamp(1.55rem, 2.2vw, 2.35rem);
+    border-bottom: 1px solid rgb(var(--national-line) / 0.95);
+  }
+
+  .national-spec-grid article:first-child {
+    min-height: clamp(7.9rem, 8vw, 8.45rem);
+  }
+
+  .national-spec-grid article:first-child {
+    border-top: 0;
+  }
+
+  .national-spec-grid article:last-of-type {
+    border-bottom: 0;
+  }
+
+  .national-spec-grid strong {
+    display: block;
+    margin-top: 0.85rem;
+    color: rgb(var(--national-blue));
+    font-family: "Space Grotesk", var(--font-display);
+    font-size: clamp(1rem, 1.15vw, 1.28rem);
+    font-weight: 600;
+    letter-spacing: 0.11em;
+    line-height: 1.2;
+    text-transform: uppercase;
+  }
+
+  .national-spec-grid article:first-child strong {
+    font-family: var(--national-serif);
+    font-size: clamp(2.6rem, 3.15vw, 3.6rem);
+    font-weight: 400;
+    letter-spacing: -0.045em;
+    line-height: 0.9;
+    text-transform: none;
+  }
+
+  .national-mark {
+    position: absolute;
+    right: clamp(-1.05rem, -0.75vw, -0.25rem);
+    top: clamp(-0.2rem, 0.25vw, 0.45rem);
+    width: clamp(14.4rem, 16.2vw, 17rem);
+    aspect-ratio: 1;
+    color: rgb(var(--national-ink) / 0.105);
+    pointer-events: none;
+  }
+
+  .national-mark svg {
+    display: block;
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+  }
+
+  .national-mark circle,
+  .national-mark path {
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 0.8;
+    vector-effect: non-scaling-stroke;
+  }
+
+  .national-mark__mountain {
+    stroke-width: 2.25;
+    opacity: 0.85;
   }
 
   .proof-rail {
-    width: 100vw;
-    margin-left: calc((100% - 100vw) / 2);
     display: grid;
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-    border-top: 1px solid rgba(var(--national-ink), 0.13);
-    border-bottom: 1px solid rgba(var(--national-ink), 0.075);
-    background: linear-gradient(180deg, rgba(255, 255, 255, 0.24), rgba(255, 255, 255, 0.035));
+    grid-template-columns: minmax(0, 1.02fr) minmax(0, 1fr) minmax(0, 0.91fr) minmax(0, 1.07fr);
+    height: 12.45rem;
+    border-top: 1px solid rgb(var(--national-line) / 0.9);
+    background: rgb(255 255 255 / 0.12);
   }
 
   .proof-record {
+    position: relative;
+    box-sizing: border-box;
     display: grid;
     align-content: start;
-    gap: 0.58rem;
-    min-height: clamp(10.1rem, 12.5vw, 12rem);
-    padding: clamp(1.25rem, 1.55vw, 1.75rem) clamp(3.6rem, 6.8vw, 7.15rem);
+    gap: 0.62rem;
+    min-height: 0;
+    padding: clamp(1.8rem, 2.15vw, 2.35rem) clamp(2rem, 4.7vw, 4.9rem);
   }
 
   .proof-record + .proof-record {
-    border-left: 1px solid rgba(var(--national-ink), 0.095);
+    border-left: 1px solid rgb(var(--national-line) / 0.9);
   }
 
   .proof-record__index {
-    color: rgb(var(--national-cobalt));
+    color: rgb(var(--national-blue));
     font-family: "Space Grotesk", var(--font-display);
-    font-size: 0.72rem;
+    font-size: clamp(0.68rem, 0.72vw, 0.78rem);
     font-weight: 700;
-    letter-spacing: 0.14em;
+    letter-spacing: 0.18em;
     line-height: 1;
   }
 
   .proof-record h3 {
     margin: 0;
-    color: rgba(var(--national-ink), 0.9);
-    font-family: "Space Grotesk", var(--font-display);
-    font-size: clamp(0.84rem, 0.78vw, 0.94rem);
-    font-weight: 700;
-    letter-spacing: 0.08em;
-    line-height: 1.15;
-    text-transform: uppercase;
+    color: rgb(var(--national-ink));
+    font-family: var(--national-serif);
+    font-size: clamp(1.7rem, 1.85vw, 2.15rem);
+    font-weight: 400;
+    font-variant-numeric: lining-nums;
+    font-feature-settings: "lnum" 1;
+    letter-spacing: -0.035em;
+    line-height: 1.05;
+  }
+
+  .national-proof-k59 {
+    display: inline-flex;
+    align-items: baseline;
+  }
+
+  .national-proof-k59 span:last-child {
+    margin-left: 0.035em;
   }
 
   .proof-record p {
-    max-width: 19.5rem;
+    max-width: 18rem;
     margin: 0;
-    color: rgba(var(--national-ink), 0.64);
+    color: rgb(var(--national-muted) / 0.86);
     font-family: "Manrope", var(--font-body);
-    font-size: clamp(0.84rem, 0.78vw, 0.93rem);
-    font-weight: 520;
-    line-height: 1.5;
+    font-size: clamp(0.84rem, 0.86vw, 0.98rem);
+    font-weight: 500;
+    line-height: 1.42;
   }
 
   @media (max-width: 1180px) {
-    .national-shell {
-      width: min(100% - clamp(2rem, 6vw, 6rem), 108rem);
-    }
-
-    .national-scene {
-      grid-template-columns: minmax(0, 1fr) minmax(20rem, 0.55fr);
+    .national-editorial {
+      grid-template-columns: minmax(0, 0.95fr) minmax(28rem, 1.05fr);
+      gap: 2.6rem;
     }
 
     .national-statement h2 {
-      font-size: clamp(3.95rem, 6.5vw, 5.35rem);
+      font-size: clamp(4.05rem, 6.4vw, 5.65rem);
     }
 
-    .national-visual {
-      min-height: 28rem;
-    }
-
-    .national-visual__brand {
-      right: 6%;
+    .national-data {
+      grid-template-columns: 0.82fr 1.18fr;
+      min-height: 29rem;
     }
   }
 
   @media (max-width: 900px) {
     .national-shell {
       min-height: auto;
-      gap: 2.8rem;
-      padding-block: 6.3rem 6.5rem;
+    }
+
+    .national-oem-section {
+      min-height: auto;
     }
 
     .national-meta {
       grid-template-columns: 1fr;
-      gap: 0.45rem;
+      gap: 0.55rem;
+      align-items: start;
+      padding-block: 1.3rem;
     }
 
-    .national-scene {
+    .national-meta > span:nth-child(3),
+    .national-meta > span:last-child {
+      justify-self: start;
+    }
+
+    .national-meta__divider {
+      display: none;
+    }
+
+    .national-editorial {
       grid-template-columns: 1fr;
-      gap: 2.4rem;
-    }
-
-    .national-statement {
-      padding-block: 0;
-      padding-left: 0;
+      gap: 3.2rem;
+      padding-block: 4.5rem 3rem;
     }
 
     .national-statement h2 {
-      max-width: 11.4ch;
-      font-size: clamp(3.12rem, 11.8vw, 4.85rem);
-      letter-spacing: 0;
-      line-height: 0.95;
+      max-width: 11.8ch;
+      font-size: clamp(3.45rem, 11.8vw, 5rem);
+      line-height: 0.99;
     }
 
     .national-statement p {
       max-width: 36rem;
-      font-size: 1.04rem;
     }
 
-    .national-visual {
-      min-height: 15rem;
-      order: 2;
+    .national-data {
+      grid-template-columns: 1fr;
+      min-height: auto;
+      padding-top: 5.6rem;
     }
 
-    .national-visual__slab--back {
-      inset: 0 7% 0 5%;
+    .national-ghost {
+      justify-content: flex-start;
     }
 
-    .national-visual__slab--front {
-      inset: 13% 15% 18% 17%;
+    .national-wmi {
+      padding-top: 2rem;
+      padding-bottom: 2.2rem;
     }
 
-    .national-visual__brand {
-      right: 13%;
-      top: 48%;
-      opacity: 0.18;
+    .national-spec-grid {
+      border-top: 1px solid rgb(var(--national-line) / 0.9);
+      border-left: 0;
+      transform: none;
     }
 
-    .national-visual__accent {
-      left: 22%;
-      height: 106%;
+    .national-mark {
+      right: 0;
+      opacity: 0.72;
     }
 
     .proof-rail {
       grid-template-columns: repeat(2, minmax(0, 1fr));
+      height: auto;
     }
 
     .proof-record:nth-child(odd) {
@@ -709,62 +685,42 @@ const ctaHref = getLocalizedPath("/story/", currentLocale);
     }
 
     .proof-record:nth-child(n + 3) {
-      border-top: 1px solid rgba(var(--national-ink), 0.11);
+      border-top: 1px solid rgb(var(--national-line) / 0.9);
     }
   }
 
   @media (max-width: 560px) {
-    .national-oem-section {
-      min-height: auto;
+    .national-editorial,
+    .national-meta {
+      padding-inline: 1.25rem;
     }
 
-    .national-shell {
-      width: min(100% - 2rem, 108rem);
-      gap: 3rem;
-      padding-block: 5.8rem 6rem;
-    }
-
-    .national-atmosphere__plane--wide {
-      right: -28%;
-      bottom: 40%;
-      width: 24rem;
-      height: 18rem;
-      opacity: 0.5;
-    }
-
-    .national-atmosphere__plane--slim,
-    .national-atmosphere__light {
-      right: 12%;
-      opacity: 0.38;
+    .national-editorial {
+      padding-block: 3.7rem 2.4rem;
     }
 
     .national-statement h2 {
-      max-width: 10.8ch;
-      font-size: clamp(2.72rem, 12.6vw, 3.6rem);
-      letter-spacing: 0;
+      max-width: 11.6ch;
+      font-size: clamp(3rem, 12.4vw, 3.85rem);
+      line-height: 1;
     }
 
-    .national-statement p {
-      font-size: 1rem;
-      line-height: 1.56;
+    .national-ghost > span:first-child {
+      font-size: clamp(3.9rem, 19vw, 5.4rem);
     }
 
-    .national-visual {
-      min-height: 12.4rem;
-      margin-top: -0.2rem;
+    .national-dot-grid {
+      display: none;
     }
 
-    .national-visual__brand {
-      right: 8%;
-      opacity: 0.12;
+    .national-wmi strong {
+      font-size: clamp(4.3rem, 22vw, 6.4rem);
     }
 
-    .national-visual__slab--front {
-      inset: 18% 10% 20% 18%;
-    }
-
-    .national-visual__ridge {
-      opacity: 0.5;
+    .national-mark {
+      width: 11rem;
+      top: 2rem;
+      opacity: 0.48;
     }
 
     .proof-rail {
@@ -773,13 +729,13 @@ const ctaHref = getLocalizedPath("/story/", currentLocale);
 
     .proof-record {
       min-height: auto;
-      padding: 1.2rem 0;
+      padding: 1.35rem 1.25rem;
       border-left: 0;
     }
 
     .proof-record + .proof-record,
     .proof-record:nth-child(n + 3) {
-      border-top: 1px solid rgba(var(--national-ink), 0.11);
+      border-top: 1px solid rgb(var(--national-line) / 0.9);
       border-left: 0;
     }
   }

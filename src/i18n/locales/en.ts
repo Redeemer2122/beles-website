@@ -6,13 +6,13 @@ const en = {
       certification: "WMI K59 / SAE International",
       title: "Kyrgyzstan's first national OEM for commercial mobility.",
       titleLines: ["Kyrgyzstan's", "first national OEM", "for commercial", "mobility."],
-      body: "BELES is building the foundation for a new automotive industry — connecting engineering, manufacturing and regional export potential from the Kyrgyz Republic.",
+      body: "BELES is building the foundation for a new automotive industry in Kyrgyzstan — connecting engineering, manufacturing and regional export potential.",
       cta: "Read the Story",
       proofLabel: "BELES national OEM proof points",
       proof: [
         {
           title: "National OEM",
-          text: "First national OEM manufacturer of commercial vehicles in the Kyrgyz Republic.",
+          text: "Kyrgyzstan's first national OEM for commercial mobility.",
         },
         {
           title: "WMI K59",
@@ -20,11 +20,11 @@ const en = {
         },
         {
           title: "Founded 2012",
-          text: "More than a decade of commercial transport and logistics experience.",
+          text: "Built on a long-term vision and industrial expertise.",
         },
         {
           title: "Central Asia / EAEU",
-          text: "Built with regional export potential across Central Asia and the EAEU.",
+          text: "Strategically positioned to serve the region and global export markets.",
         },
       ],
     },

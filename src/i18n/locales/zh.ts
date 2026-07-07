@@ -6,7 +6,7 @@ const zh = {
       certification: "WMI K59 / SAE International",
       title: "吉尔吉斯共和国首个国家级商用出行 OEM。",
       titleLines: ["吉尔吉斯首个", "国家级 OEM", "面向商用", "出行。"],
-      body: "BELES 正在为吉尔吉斯共和国的新汽车产业奠定基础，连接工程能力、制造体系和区域出口潜力。",
+      body: "BELES 正在为吉尔吉斯斯坦的新汽车产业奠定基础，连接工程能力、制造体系和区域出口潜力。",
       cta: "阅读故事",
       proofLabel: "BELES 国家级 OEM 关键事实",
       proof: [
