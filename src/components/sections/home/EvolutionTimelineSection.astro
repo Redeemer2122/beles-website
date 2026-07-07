@@ -14,10 +14,19 @@ type ProofItem = {
 
 type Props = {
   content: {
+    meta: {
+      index: string;
+      label: string;
+      years: string;
+      direction: string;
+    };
     title: string;
     body: string;
     cta: string;
+    imageAlt: string;
+    proofLabel: string;
     proof: ProofItem[];
+    timelineLabel: string;
     timeline: TimelineItem[];
     certificate: {
       kicker: string;
@@ -30,34 +39,86 @@ type Props = {
 const { content } = Astro.props;
 const currentLocale = getLocaleFromPathname(Astro.url.pathname);
 const ctaHref = getLocalizedPath("/story/", currentLocale);
+const certificateParts = content.certificate.title.split(" / ");
+const certificateLead = certificateParts[0] ?? content.certificate.title;
+const certificateSpec =
+  certificateParts.length > 1 ? certificateParts.slice(1).join(" / ") : content.certificate.kicker;
 ---
 
 <section class="evolution-section" aria-labelledby="evolution-title">
   <div class="evolution-shell">
-    <div class="evolution-intro">
-      <h2 id="evolution-title" data-reveal>{content.title}</h2>
-      <p data-reveal style="--reveal-delay: 90ms">{content.body}</p>
-      <a class="home-text-link" href={ctaHref} data-reveal style="--reveal-delay: 160ms">
-        <span>{content.cta}</span>
-        <span aria-hidden="true">→</span>
-      </a>
+    <div class="evolution-meta" aria-label={content.meta.label} data-reveal>
+      <span><strong>{content.meta.index}</strong> / {content.meta.label}</span>
+      <span>{content.meta.years}</span>
+      <span>{content.meta.direction}</span>
     </div>
 
-    <aside class="evolution-evidence" aria-label="BELES operating evidence" data-reveal>
-      <div class="evidence-media" aria-hidden="true">
-        <img
-          src="/img/hero/beles-hero-desktop.webp"
-          alt=""
-          width="2048"
-          height="1024"
-          loading="lazy"
-        />
+    <div class="evolution-editorial">
+      <div class="evolution-copy">
+        <span class="evolution-accent" aria-hidden="true"></span>
+        <h2 id="evolution-title" data-reveal style="--reveal-delay: 70ms">
+          {content.title}
+        </h2>
+        <p data-reveal style="--reveal-delay: 130ms">{content.body}</p>
+        <a class="home-text-link" href={ctaHref} data-reveal style="--reveal-delay: 190ms">
+          <span>{content.cta}</span>
+          <span aria-hidden="true">→</span>
+        </a>
       </div>
+
+      <figure class="evolution-image-stack" data-reveal style="--reveal-delay: 110ms">
+        <div class="evolution-image-frame">
+          <!-- Placeholder image. Replace with client-approved BELES imagery. -->
+          <picture>
+            <source srcset="/img/evolution/evolution-main.webp" type="image/webp" />
+            <img
+              src="/img/evolution/evolution-main.png"
+              alt={content.imageAlt}
+              width="2048"
+              height="1024"
+              loading="lazy"
+            />
+          </picture>
+        </div>
+        <figcaption class="certification-plate" aria-label={content.certificate.kicker}>
+          <span>{certificateLead}</span>
+          <strong>{certificateSpec}</strong>
+          <p>{content.certificate.text}</p>
+        </figcaption>
+      </figure>
+    </div>
+
+    <aside
+      class="proof-band"
+      aria-label={content.proofLabel}
+      data-reveal
+      style="--reveal-delay: 150ms"
+    >
       {
         content.proof.map((item, index) => (
-          <article style={`--reveal-delay: ${index * 80}ms`}>
-            <strong>{item.value}</strong>
-            <span>{item.label}</span>
+          <article class:list={[`proof-item-${index}`]} style={`--reveal-delay: ${index * 70}ms`}>
+            <svg viewBox="0 0 28 28" focusable="false" aria-hidden="true">
+              {index === 0 ? (
+                <>
+                  <path d="M4.5 17.6h2.2m14.6 0h2.2M6.7 17.6V10h9.7v7.6M16.4 12.5h3.3l2.1 2.7v2.4" />
+                  <path d="M8.8 20.2a2 2 0 1 0 0-4 2 2 0 0 0 0 4Zm10.4 0a2 2 0 1 0 0-4 2 2 0 0 0 0 4Z" />
+                </>
+              ) : index === 1 ? (
+                <>
+                  <path d="m14 4.8 8 4.4v9.5l-8 4.5-8-4.5V9.2l8-4.4Z" />
+                  <path d="m6.4 9.4 7.6 4.3 7.6-4.3M14 13.7v8.8" />
+                </>
+              ) : (
+                <>
+                  <path d="M14 4.5 22 8v5.9c0 4.4-3 7.8-8 9.6-5-1.8-8-5.2-8-9.6V8l8-3.5Z" />
+                  <path d="m10.6 14 2.4 2.4 4.6-5" />
+                </>
+              )}
+            </svg>
+            <div>
+              <strong>{item.value}</strong>
+              <span>{item.label}</span>
+            </div>
           </article>
         ))
       }
@@ -65,101 +126,204 @@ const ctaHref = getLocalizedPath("/story/", currentLocale);
 
     <ol
       class="timeline"
-      aria-label="BELES evolution timeline"
+      aria-label={content.timelineLabel}
       data-reveal
-      style="--reveal-delay: 120ms"
+      style="--reveal-delay: 190ms"
     >
       {
         content.timeline.map((item, index) => (
-          <li
-            class:list={["timeline-item", { "is-highlight": index === 3 }]}
-            style={`--reveal-delay: ${index * 70}ms`}
-          >
+          <li class:list={["timeline-item", { "is-highlight": index === 2 || index === 3 }]}>
+            <span class="timeline-marker" aria-hidden="true" />
             <time>{item.year}</time>
-            <div>
-              <h3>{item.title}</h3>
-              <p>{item.text}</p>
-            </div>
+            <h3>{item.title}</h3>
+            <p>{item.text}</p>
           </li>
         ))
       }
     </ol>
-
-    <aside
-      class="certificate-fragment"
-      aria-label={content.certificate.kicker}
-      data-reveal
-      style="--reveal-delay: 180ms"
-    >
-      <div>
-        <span>{content.certificate.kicker}</span>
-        <strong>{content.certificate.title}</strong>
-        <p>{content.certificate.text}</p>
-      </div>
-    </aside>
   </div>
 </section>
 
 <style>
   .evolution-section {
+    --evolution-cobalt: #063db6;
+    --evolution-cobalt-soft: rgba(6, 61, 182, 0.72);
     position: relative;
     overflow: clip;
+    border-top: 1px solid rgba(25, 34, 45, 0.105);
     background:
-      radial-gradient(circle at 12% 12%, rgba(12, 67, 223, 0.08), transparent 27rem),
-      linear-gradient(180deg, #e9eef4 0%, #f7f8fa 100%);
-    color: #101722;
+      radial-gradient(ellipse at 72% 0%, rgba(6, 61, 182, 0.032), transparent 34rem),
+      linear-gradient(180deg, rgba(255, 255, 255, 0.78) 0%, rgba(255, 255, 255, 0) 14rem),
+      linear-gradient(180deg, #f8faf9 0%, #f5f7f7 54%, #f6f8f8 100%);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.72);
+    color: #111722;
+  }
+
+  .evolution-section::before,
+  .evolution-section::after {
+    position: absolute;
+    pointer-events: none;
+    content: "";
+  }
+
+  .evolution-section::before {
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(17, 23, 34, 0.006) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(17, 23, 34, 0.005) 1px, transparent 1px);
+    background-size: 9.5rem 9.5rem;
+    mask-image: linear-gradient(180deg, rgba(0, 0, 0, 0.09), transparent 55%);
+  }
+
+  .evolution-section::after {
+    top: 8.8rem;
+    left: 35.4%;
+    z-index: 0;
+    width: 1px;
+    height: min(25rem, 40vw);
+    background: rgba(17, 23, 34, 0.042);
+    transform: skewX(-17deg);
+    transform-origin: top;
   }
 
   .evolution-shell {
-    display: grid;
-    grid-template-columns: minmax(0, 0.92fr) minmax(20rem, 0.56fr);
-    gap: clamp(2rem, 4vw, 4.5rem);
-    width: min(100% - (var(--container-gutter) * 2), var(--container-max));
+    position: relative;
+    z-index: 1;
+    box-sizing: border-box;
+    width: 100%;
     margin-inline: auto;
-    padding-block: clamp(5rem, 10vw, 10rem);
+    padding-inline: clamp(2rem, 4.2vw, 4.55rem);
+    padding-block: 2.35rem 3.45rem;
   }
 
-  .evolution-intro {
-    max-width: 52rem;
-  }
-
-  .evolution-intro h2 {
-    max-width: 13ch;
-    margin: 0;
+  .evolution-meta {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(11rem, 0.62fr) minmax(0, 1fr);
+    min-height: clamp(3.75rem, 4.45vw, 4.25rem);
+    border-bottom: 1px solid rgba(17, 23, 34, 0.125);
+    color: rgba(17, 23, 34, 0.7);
     font-family: "Space Grotesk", var(--font-display);
-    font-size: clamp(3rem, 6.5vw, 6.8rem);
-    font-weight: 500;
-    letter-spacing: -0.048em;
-    line-height: 0.94;
-    text-wrap: balance;
+    font-size: clamp(0.64rem, 0.66vw, 0.74rem);
+    font-weight: 620;
+    letter-spacing: 0.22em;
+    line-height: 1.25;
+    text-transform: uppercase;
   }
 
-  .evolution-intro p {
+  .evolution-meta span {
+    display: flex;
+    align-items: center;
+    min-width: 0;
+    min-height: inherit;
+    padding: 0.72rem 0;
+    overflow-wrap: anywhere;
+  }
+
+  .evolution-meta span + span {
+    border-left: 1px solid rgba(17, 23, 34, 0.115);
+  }
+
+  .evolution-meta span:nth-child(2) {
+    justify-content: center;
+    padding-inline: 1rem;
+    color: rgba(17, 23, 34, 0.72);
+  }
+
+  .evolution-meta span:nth-child(3) {
+    justify-content: flex-end;
+    text-align: right;
+  }
+
+  .evolution-meta strong {
+    color: var(--evolution-cobalt);
+    font-weight: 560;
+  }
+
+  .evolution-editorial {
+    display: grid;
+    grid-template-columns: minmax(20rem, 0.43fr) minmax(0, 1fr);
+    gap: 0;
+    align-items: stretch;
+    min-height: 31.6rem;
+    padding-top: 0.15rem;
+  }
+
+  .evolution-copy {
+    position: relative;
+    z-index: 3;
     max-width: 43rem;
-    margin: 1.6rem 0 0;
-    color: rgba(16, 23, 34, 0.68);
-    font-size: clamp(1rem, 1.15vw, 1.14rem);
+    padding: 3.65rem 2rem 2.35rem 0;
+  }
+
+  .evolution-accent {
+    display: block;
+    width: 4.1rem;
+    height: 1px;
+    margin: 0 0 0.95rem;
+    background: var(--evolution-cobalt-soft);
+  }
+
+  .evolution-copy h2 {
+    max-width: 29.5rem;
+    padding-bottom: 0.08em;
+    margin: 0;
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: clamp(3.35rem, 3.68vw, 4.05rem);
+    font-weight: 400;
+    letter-spacing: -0.035em;
+    line-height: 1;
+    overflow-wrap: normal;
+    text-wrap: normal;
+    word-break: normal;
+  }
+
+  .evolution-copy p {
+    max-width: 32rem;
+    margin: 1.55rem 0 0;
+    color: rgba(17, 23, 34, 0.72);
+    font-family: "Manrope", var(--font-body);
+    font-size: clamp(0.98rem, 0.98vw, 1.08rem);
     font-weight: 520;
-    line-height: 1.62;
+    letter-spacing: 0.006em;
+    line-height: 1.48;
+    text-wrap: pretty;
   }
 
   .home-text-link {
+    position: relative;
     display: inline-flex;
     align-items: center;
-    gap: 0.72rem;
-    margin-top: 1.75rem;
-    color: #0c43df;
-    font-family: "Space Grotesk", var(--font-display);
-    font-size: 0.78rem;
-    font-weight: 700;
-    letter-spacing: 0.045em;
+    gap: 0.95rem;
+    margin-top: 1.72rem;
+    color: var(--evolution-cobalt);
+    font-family: "Manrope", var(--font-body);
+    font-size: clamp(0.98rem, 0.92vw, 1.06rem);
+    font-weight: 560;
+    letter-spacing: 0.01em;
     line-height: 1;
     text-decoration: none;
-    text-transform: uppercase;
+  }
+
+  .home-text-link::after {
+    position: absolute;
+    right: 1.85rem;
+    bottom: -0.45rem;
+    left: 0;
+    height: 1px;
+    background: currentColor;
+    transform: scaleX(0.72);
+    transform-origin: left center;
+    transition: transform 260ms var(--ease-out);
+    content: "";
   }
 
   .home-text-link span:last-child {
     transition: transform 220ms var(--ease-out);
+  }
+
+  .home-text-link:hover::after,
+  .home-text-link:focus-visible::after {
+    transform: scaleX(1);
   }
 
   .home-text-link:hover span:last-child,
@@ -167,277 +331,529 @@ const ctaHref = getLocalizedPath("/story/", currentLocale);
     transform: translateX(0.2rem);
   }
 
-  .evolution-evidence {
+  .evolution-image-stack {
     position: relative;
-    display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    align-content: start;
-    gap: 0;
-    overflow: hidden;
-    border: 1px solid rgba(37, 43, 50, 0.13);
-    background: #121821;
-    color: #fff;
+    z-index: 1;
+    align-self: start;
+    margin: 0;
+    min-width: 0;
   }
 
-  .evidence-media {
+  .evolution-image-frame {
     position: relative;
-    grid-column: 1 / -1;
-    min-height: clamp(12rem, 18vw, 18rem);
+    height: 32.7rem;
+    min-height: 32.7rem;
     overflow: hidden;
+    border-top: 1px solid rgba(17, 23, 34, 0.16);
+    border-bottom: 1px solid rgba(17, 23, 34, 0.13);
+    border-left: 0;
+    border-right: 0;
+    background: #151b24;
+    clip-path: polygon(17.8% 0, 100% 0, 100% 100%, 0 100%);
+    box-shadow: none;
   }
 
-  .evidence-media::after {
+  .evolution-image-frame::before,
+  .evolution-image-frame::after {
     position: absolute;
     inset: 0;
-    background:
-      linear-gradient(180deg, rgba(18, 24, 33, 0.06), #121821 92%),
-      linear-gradient(90deg, rgba(18, 24, 33, 0.12), rgba(18, 24, 33, 0.72));
+    z-index: 1;
+    pointer-events: none;
     content: "";
   }
 
-  .evidence-media img {
+  .evolution-image-frame::before {
+    background:
+      linear-gradient(90deg, rgba(248, 250, 251, 0.22), rgba(18, 24, 33, 0.01) 28%),
+      linear-gradient(180deg, transparent 58%, rgba(18, 24, 33, 0.36));
+  }
+
+  .evolution-image-frame::after {
+    background:
+      linear-gradient(
+        105deg,
+        rgba(255, 255, 255, 0.82) 0 12.2%,
+        rgba(255, 255, 255, 0.045) 12.35%,
+        transparent 12.66%
+      ),
+      repeating-linear-gradient(90deg, rgba(255, 255, 255, 0.048) 0 1px, transparent 1px 8.5rem);
+    opacity: 0.34;
+  }
+
+  .evolution-image-frame picture,
+  .evolution-image-frame img {
+    display: block;
     width: 100%;
     height: 100%;
+  }
+
+  .evolution-image-frame img {
     object-fit: cover;
-    object-position: 52% center;
-    filter: saturate(0.55) contrast(1.05);
-    opacity: 0.72;
+    object-position: 53% 52%;
+    filter: saturate(0.78) contrast(1.03) brightness(1.045);
   }
 
-  .evolution-evidence article {
-    position: relative;
+  .certification-plate {
+    position: absolute;
+    right: clamp(1.45rem, 1.9vw, 2.4rem);
+    bottom: clamp(0.75rem, 1.45vw, 1.42rem);
+    z-index: 2;
     display: grid;
-    gap: 0.55rem;
-    min-height: 9rem;
-    padding: 1.15rem;
-    border-top: 1px solid rgba(247, 248, 250, 0.13);
+    grid-template-columns: minmax(0, 1fr) 1px minmax(0, 1fr);
+    align-items: center;
+    column-gap: clamp(0.78rem, 0.92vw, 1.08rem);
+    width: clamp(17.4rem, 19.2vw, 21.3rem);
+    max-width: calc(100% - 3rem);
+    padding: clamp(0.7rem, 0.72vw, 0.82rem) clamp(0.78rem, 0.84vw, 0.95rem)
+      clamp(0.68rem, 0.7vw, 0.8rem);
+    border: 1px solid rgba(247, 248, 250, 0.58);
+    background:
+      linear-gradient(180deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.015)),
+      rgba(12, 17, 24, 0.38);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.13),
+      0 0.35rem 0.9rem rgba(0, 0, 0, 0.11);
+    color: #f7f8fa;
+    backdrop-filter: blur(6px) saturate(1.08);
   }
 
-  .evolution-evidence article + article {
-    border-left: 1px solid rgba(247, 248, 250, 0.13);
-  }
-
-  .evolution-evidence strong {
+  .certification-plate::before {
     display: block;
-    color: #8fa6ff;
+    width: 1px;
+    height: 1.72rem;
+    background: rgba(247, 248, 250, 0.28);
+    content: "";
+    grid-column: 2;
+    grid-row: 1;
+  }
+
+  .certification-plate span {
+    display: block;
+    grid-column: 1;
+    justify-self: end;
+    color: #f7f8fa;
+    font-family: var(--font-mono);
+    font-size: clamp(0.84rem, 0.82vw, 0.94rem);
+    font-weight: 560;
+    letter-spacing: 0.055em;
+    line-height: 1.1;
+    text-align: right;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+
+  .certification-plate strong {
+    display: block;
+    grid-column: 3;
+    justify-self: start;
+    margin-top: 0;
+    color: #f7f8fa;
     font-family: "Space Grotesk", var(--font-display);
-    font-size: clamp(2.2rem, 3.7vw, 4rem);
+    font-size: clamp(0.9rem, 0.88vw, 1rem);
     font-weight: 560;
-    letter-spacing: -0.045em;
-    line-height: 0.92;
+    letter-spacing: 0.015em;
+    line-height: 1.05;
+    overflow-wrap: anywhere;
+    text-align: left;
+    white-space: nowrap;
   }
 
-  .evolution-evidence span {
-    display: block;
-    margin-top: 0.65rem;
-    color: rgba(247, 248, 250, 0.66);
-    font-size: 0.9rem;
+  .certification-plate p {
+    grid-column: 1 / -1;
+    justify-self: center;
+    margin: 0.62rem 0 0;
+    color: rgba(247, 248, 250, 0.82);
+    font-family: var(--font-mono);
+    font-size: clamp(0.62rem, 0.62vw, 0.7rem);
     font-weight: 560;
-    line-height: 1.42;
+    letter-spacing: 0.085em;
+    line-height: 1.22;
+    text-align: center;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+
+  .proof-band {
+    position: relative;
+    z-index: 4;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    margin-left: calc(-1 * clamp(2rem, 4.2vw, 4.55rem));
+    width: min(58.5vw, calc(100% - clamp(25rem, 29vw, 33rem)));
+    max-width: 61.1rem;
+    margin-top: 0;
+    border-top: 1px solid rgba(17, 23, 34, 0.105);
+    border-bottom: 1px solid rgba(17, 23, 34, 0.105);
+    background: linear-gradient(
+      90deg,
+      rgba(255, 255, 255, 0.55),
+      rgba(255, 255, 255, 0.34) 82%,
+      rgba(255, 255, 255, 0)
+    );
+    mask-image: linear-gradient(90deg, #000 0 91%, transparent 100%);
+  }
+
+  .proof-band article {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.72rem;
+    min-width: 0;
+    min-height: 3.54rem;
+    padding: 0.6rem 0.92rem;
+  }
+
+  .proof-band article + article {
+    border-left: 1px solid rgba(17, 23, 34, 0.105);
+  }
+
+  .proof-band svg {
+    flex: 0 0 1.68rem;
+    width: 1.68rem;
+    height: 1.68rem;
+    fill: none;
+    stroke: rgba(17, 23, 34, 0.52);
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    stroke-width: 1.25;
+  }
+
+  .proof-band div {
+    min-width: 0;
+  }
+
+  .proof-band strong {
+    display: inline;
+    color: var(--evolution-cobalt);
+    font-family: "Space Grotesk", var(--font-display);
+    font-size: 1.36rem;
+    font-weight: 480;
+    letter-spacing: 0;
+    line-height: 0.95;
+  }
+
+  .proof-band span {
+    display: inline;
+    margin-left: 0.65rem;
+    margin-top: 0;
+    color: rgba(17, 23, 34, 0.56);
+    font-family: "Manrope", var(--font-body);
+    font-size: 0.84rem;
+    font-weight: 500;
+    letter-spacing: 0.018em;
+    line-height: 1.2;
+    overflow-wrap: anywhere;
+    text-transform: uppercase;
   }
 
   .timeline {
     position: relative;
-    grid-column: 1 / -1;
     display: grid;
-    grid-template-columns: minmax(0, 1.25fr) repeat(4, minmax(0, 0.86fr));
-    gap: clamp(0.75rem, 1.3vw, 1.1rem);
-    margin: clamp(2.5rem, 5vw, 5rem) 0 0;
-    padding: 0;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 0;
+    margin: 1.65rem 0 0;
+    padding: 1.72rem 0 0;
     list-style: none;
   }
 
   .timeline::before {
     position: absolute;
-    top: 5.6rem;
-    right: 0;
+    top: 0.38rem;
+    right: 2.45rem;
     left: 0;
     height: 1px;
-    background: linear-gradient(90deg, rgba(12, 67, 223, 0.42), rgba(37, 43, 50, 0.12));
+    background: linear-gradient(90deg, rgba(6, 61, 182, 0.34), rgba(17, 23, 34, 0.095));
     content: "";
   }
 
-  .timeline-item {
-    position: relative;
-    display: grid;
-    align-content: start;
-    min-height: 25rem;
-    overflow: hidden;
-    border: 1px solid rgba(37, 43, 50, 0.12);
-    background: rgba(255, 255, 255, 0.42);
-    padding: clamp(1rem, 1.6vw, 1.4rem);
-  }
-
-  .timeline-item::before {
+  .timeline::after {
     position: absolute;
-    top: 5.32rem;
-    left: clamp(1rem, 1.6vw, 1.4rem);
+    top: 0.12rem;
+    right: 2.25rem;
     width: 0.62rem;
     height: 0.62rem;
-    border: 1px solid rgba(12, 67, 223, 0.72);
-    background: #f7f8fa;
+    border-top: 1px solid rgba(17, 23, 34, 0.18);
+    border-right: 1px solid rgba(17, 23, 34, 0.18);
     content: "";
     transform: rotate(45deg);
   }
 
-  .timeline-item time {
-    color: rgba(16, 23, 34, 0.92);
-    font-family: "Space Grotesk", var(--font-display);
-    font-size: clamp(2.6rem, 4.6vw, 5.4rem);
-    font-weight: 560;
-    letter-spacing: -0.045em;
-    line-height: 1;
+  .timeline-item {
+    position: relative;
+    min-width: 0;
+    padding: 0 2.15rem 0 0;
   }
 
-  .timeline-item div {
-    margin-top: auto;
+  .timeline-item + .timeline-item {
+    padding-left: 1.85rem;
+  }
+
+  .timeline-item:not(:last-child)::after {
+    position: absolute;
+    top: 3.9rem;
+    right: 1.9rem;
+    width: 0.8rem;
+    height: 0.8rem;
+    border-top: 1px solid rgba(17, 23, 34, 0.17);
+    border-right: 1px solid rgba(17, 23, 34, 0.17);
+    content: "";
+    transform: rotate(45deg);
+  }
+
+  .timeline-marker {
+    position: absolute;
+    top: -1.65rem;
+    left: 0;
+    width: 0.62rem;
+    height: 0.62rem;
+    border: 1px solid var(--evolution-cobalt);
+    border-radius: 999px;
+    background: var(--evolution-cobalt-soft);
+    outline: 2px solid #f4f7f8;
+    box-shadow: 0 0 0 0.28rem rgba(6, 61, 182, 0.045);
+  }
+
+  .timeline-item + .timeline-item .timeline-marker {
+    left: 1.85rem;
+  }
+
+  .timeline-item time {
+    display: block;
+    color: var(--evolution-cobalt);
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: 1.76rem;
+    font-weight: 500;
+    letter-spacing: -0.008em;
+    line-height: 0.95;
   }
 
   .timeline-item h3 {
-    margin: 0;
+    margin: 0.45rem 0 0;
     color: #111722;
     font-family: "Space Grotesk", var(--font-display);
-    font-size: clamp(1rem, 1.22vw, 1.22rem);
-    font-weight: 650;
+    font-size: 0.94rem;
+    font-weight: 620;
     letter-spacing: 0;
     line-height: 1.16;
+    overflow-wrap: anywhere;
   }
 
   .timeline-item p {
-    max-width: 18rem;
-    margin: 0.72rem 0 0;
-    color: rgba(16, 23, 34, 0.62);
-    font-size: 0.88rem;
-    font-weight: 520;
-    line-height: 1.52;
+    max-width: 16.2rem;
+    margin: 0.52rem 0 0;
+    color: rgba(17, 23, 34, 0.64);
+    font-family: "Manrope", var(--font-body);
+    font-size: 0.82rem;
+    font-weight: 500;
+    line-height: 1.48;
+    overflow-wrap: anywhere;
   }
 
-  .timeline-item.is-highlight {
-    background: linear-gradient(135deg, rgba(12, 67, 223, 0.14), rgba(255, 255, 255, 0.72)), #fff;
-    color: #0c43df;
-  }
-
-  .timeline-item.is-highlight::after {
-    position: absolute;
-    inset: auto -10% -18% auto;
-    z-index: 0;
-    width: min(20rem, 94%);
-    height: 12rem;
-    border: 1px solid rgba(12, 67, 223, 0.18);
-    background: rgba(12, 67, 223, 0.08);
-    transform: skewX(-18deg);
-    content: "";
-  }
-
-  .timeline-item.is-highlight > * {
-    position: relative;
-    z-index: 1;
-  }
-
-  .certificate-fragment {
-    grid-column: 1 / -1;
-    justify-self: end;
-    width: min(100%, 42rem);
-    margin-top: -2.2rem;
-    padding: 0.6rem;
-    border: 1px solid rgba(37, 43, 50, 0.14);
-    background:
-      linear-gradient(135deg, rgba(255, 255, 255, 0.84), rgba(220, 227, 236, 0.52)),
-      repeating-linear-gradient(0deg, rgba(37, 43, 50, 0.05) 0 1px, transparent 1px 0.62rem);
-    box-shadow: 0 1.5rem 4rem rgba(37, 43, 50, 0.1);
-  }
-
-  .certificate-fragment div {
-    padding: clamp(1.35rem, 2.4vw, 2rem);
-    border: 1px solid rgba(37, 43, 50, 0.1);
-    background: rgba(255, 255, 255, 0.34);
-  }
-
-  .certificate-fragment span {
-    display: block;
-    color: rgba(16, 23, 34, 0.48);
-    font-family: var(--font-mono);
-    font-size: 0.72rem;
-    line-height: 1;
-  }
-
-  .certificate-fragment strong {
-    display: block;
-    margin-top: 1.2rem;
-    color: #111722;
-    font-family: "Space Grotesk", var(--font-display);
-    font-size: clamp(1.35rem, 2vw, 2rem);
-    font-weight: 600;
-    letter-spacing: -0.025em;
-    line-height: 1.08;
-  }
-
-  .certificate-fragment p {
-    margin: 0.95rem 0 0;
-    color: rgba(16, 23, 34, 0.64);
-    font-size: 0.92rem;
-    line-height: 1.52;
-  }
-
-  @media (max-width: 1000px) {
+  @media (min-width: 1600px) {
     .evolution-shell {
+      padding-block: 2.35rem 3.55rem;
+    }
+
+    .evolution-image-frame {
+      height: 33rem;
+      min-height: 33rem;
+    }
+  }
+
+  @media (max-width: 1180px) {
+    .evolution-editorial {
+      grid-template-columns: minmax(18rem, 0.5fr) minmax(0, 1fr);
+    }
+
+    .evolution-copy h2 {
+      font-size: 3.85rem;
+    }
+
+    .evolution-image-frame {
+      height: 30rem;
+      min-height: 30rem;
+    }
+
+    .timeline-item time {
+      font-size: 1.9rem;
+    }
+  }
+
+  @media (max-width: 900px) {
+    .evolution-shell {
+      padding-inline: clamp(1.25rem, 5vw, 2rem);
+      padding-block: 4.5rem 5.25rem;
+    }
+
+    .evolution-meta {
       grid-template-columns: 1fr;
     }
 
-    .evolution-evidence {
-      grid-template-columns: repeat(3, minmax(0, 1fr));
+    .evolution-meta span {
+      min-height: 3rem;
+    }
+
+    .evolution-meta span + span {
+      border-top: 1px solid rgba(17, 23, 34, 0.16);
+      border-left: 0;
+    }
+
+    .evolution-meta span:nth-child(2),
+    .evolution-meta span:nth-child(3) {
+      justify-content: flex-start;
+      text-align: left;
+    }
+
+    .evolution-editorial {
+      grid-template-columns: 1fr;
+      gap: 2.5rem;
+      min-height: 0;
+      padding-top: 2.8rem;
+    }
+
+    .evolution-copy {
+      padding: 0;
+    }
+
+    .evolution-copy h2 {
+      max-width: 11ch;
+      font-size: 3.85rem;
+      line-height: 0.94;
+      overflow-wrap: anywhere;
+    }
+
+    .evolution-image-frame {
+      height: clamp(22rem, 62vw, 30rem);
+      min-height: 26rem;
+      clip-path: polygon(6% 0, 100% 0, 100% 100%, 0 100%, 0 11%);
+    }
+
+    .certification-plate {
+      position: relative;
+      right: auto;
+      bottom: auto;
+      display: block;
+      width: auto;
+      margin-top: 0;
+      border-color: rgba(17, 23, 34, 0.16);
+      background: rgba(17, 23, 34, 0.9);
+      box-shadow: none;
+      clip-path: none;
+    }
+
+    .certification-plate::before {
+      display: none;
+    }
+
+    .certification-plate span,
+    .certification-plate strong {
+      font-size: 0.98rem;
+    }
+
+    .certification-plate strong {
+      margin-top: 0.7rem;
+    }
+
+    .proof-band {
+      grid-template-columns: 1fr;
+      margin-left: 0;
+      margin-top: 2.4rem;
+      width: 100%;
+      mask-image: none;
+    }
+
+    .proof-band article + article {
+      border-top: 1px solid rgba(17, 23, 34, 0.16);
+      border-left: 0;
     }
 
     .timeline {
       grid-template-columns: 1fr;
-      gap: 1.2rem;
+      gap: 1.6rem;
+      margin-top: 3.8rem;
+      padding: 0 0 0 1.6rem;
     }
 
     .timeline::before {
-      top: 0;
-      bottom: 0;
-      left: 0.18rem;
+      top: 0.25rem;
+      right: auto;
+      bottom: 0.25rem;
+      left: 0;
       width: 1px;
       height: auto;
     }
 
-    .timeline-item {
-      min-height: 0;
-      padding: 1.2rem 1.2rem 1.2rem 2rem;
+    .timeline::after {
+      display: none;
     }
 
-    .timeline-item::before {
-      top: 0.45rem;
-      left: 0;
-    }
-
-    .timeline-item div {
-      margin-top: 0.9rem;
-    }
-
-    .timeline-item.is-highlight::after {
-      inset: -0.75rem 0 -0.75rem 1.1rem;
-      width: auto;
-      height: auto;
-    }
-
-    .certificate-fragment {
-      justify-self: stretch;
-      margin-top: 1rem;
-    }
-  }
-
-  @media (max-width: 620px) {
-    .evolution-evidence {
-      grid-template-columns: 1fr;
-    }
-
-    .evolution-evidence article + article {
+    .timeline-item,
+    .timeline-item + .timeline-item {
+      padding: 0 0 0 1rem;
       border-left: 0;
     }
 
-    .evolution-intro h2 {
-      font-size: clamp(2.75rem, 13vw, 4.2rem);
+    .timeline-item:not(:last-child)::after {
+      display: none;
+    }
+
+    .timeline-marker,
+    .timeline-item + .timeline-item .timeline-marker {
+      top: 0.08rem;
+      left: -1.98rem;
+    }
+
+    .timeline-item p {
+      max-width: 42rem;
+    }
+  }
+
+  @media (max-width: 520px) {
+    .evolution-shell {
+      padding-inline: 1rem;
+      padding-block: 3.8rem 4.5rem;
+    }
+
+    .evolution-meta {
+      font-size: 0.68rem;
+    }
+
+    .evolution-copy h2 {
+      max-width: 10.5ch;
+      font-size: 3rem;
+      line-height: 0.98;
+    }
+
+    .evolution-copy p {
+      font-size: 1rem;
+    }
+
+    .evolution-image-frame {
+      height: 20.5rem;
+      min-height: 20.5rem;
+      clip-path: polygon(7% 0, 100% 0, 100% 100%, 0 100%, 0 12%);
+    }
+
+    .certification-plate {
+      padding: 1.1rem;
+    }
+
+    .proof-band article {
+      padding: 1.05rem 0.95rem;
+    }
+
+    .proof-band strong {
+      font-size: 1.8rem;
+    }
+
+    .timeline-item time {
+      font-size: 2.25rem;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .home-text-link span:last-child {
+      transition: none;
     }
   }
 </style>
