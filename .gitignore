@@ -28,3 +28,4 @@ pnpm-debug.log*
 tests/visual/output/
 tests/visual/test-results/
 test-results/
+.playwright-cli/

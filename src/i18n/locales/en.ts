@@ -75,26 +75,39 @@ const en = {
       },
     },
     platforms: {
+      meta: {
+        index: "03",
+        label: "Mobility Platforms",
+      },
       title: "Commercial mobility platforms for cities, fleets and industry.",
-      body: "BELES develops passenger and cargo directions across buses, electric vehicles and commercial trucks, using proven powertrain and component ecosystems.",
+      body: "BELES develops passenger and cargo directions across buses, trucks, electric vehicles and commercial transport platforms.",
       cta: "View Projects",
       panels: [
         {
           title: "Urban Mobility",
-          text: "Urban buses in 8m, 10m and 12m formats, including the BELES UMUT 12 direction.",
-          facts: ["8m / 10m / 12m buses", "BELES UMUT 12", "Passenger transport"],
+          text: "8m / 10m / 12m city buses. BELES UMUT 12.",
+          tags: ["8m / 10m / 12m", "Passenger transport", "Low floor", "Urban routes"],
+          imageAlt: "Modern electric city bus operating on an urban route.",
         },
         {
           title: "Electric Platforms",
-          text: "Electric buses and electric trucks for the next stage of clean commercial mobility.",
-          facts: ["EV buses", "Electric trucks", "Future clean platforms"],
+          text: "Electric buses and EV trucks.",
+          tags: ["EV", "Scalable", "Future-ready", "Electric mobility"],
+          imageAlt: "Electric vehicle chassis platform displayed as a technical mobility system.",
         },
         {
           title: "Commercial Transport",
-          text: "Trucks up to 5 tons, heavy trucks and diesel, CNG and electric powertrain directions.",
-          facts: ["Up to 5 tons", "Heavy trucks", "Diesel / CNG / electric"],
+          text: "Trucks up to 5 tons, heavy trucks, diesel / CNG / electric.",
+          tags: ["Up to 5 tons", "Heavy trucks", "Diesel / CNG / Electric"],
+          imageAlt: "White commercial cargo truck shown from the front side.",
         },
       ],
+      taxonomy: [
+        "Diesel / CNG / Electric",
+        "Passenger / Cargo / Urban / Industrial",
+        "8m / 10m / 12m",
+      ],
+      taxonomyLabel: "BELES mobility platform taxonomy",
     },
     manufacturing: {
       title: "Industrial scale with a full production cycle.",
