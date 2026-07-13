@@ -1,328 +1,429 @@
 ---
-import { getLocaleFromPathname, getLocalizedPath } from "../../../lib/navigation";
+import phosphorIcons from "@iconify-json/ph/icons.json";
+
+type Metric = { value: string; label: string; text: string };
 
 type Props = {
   content: {
+    eyebrow: string;
+    label: string;
     title: string;
     body: string;
-    cta: string;
-    primaryMetric: {
-      value: string;
-      label: string;
-    };
-    secondaryMetric: {
-      value: string;
-      label: string;
-    };
+    metrics: { territory: Metric; workshops: Metric };
+    processLabel: string;
     process: string[];
+    imageAlt: string;
   };
 };
 
 const { content } = Astro.props;
-const currentLocale = getLocaleFromPathname(Astro.url.pathname);
-const ctaHref = getLocalizedPath("/capabilities/", currentLocale);
+const processIconNames = ["bus", "robot", "car-profile", "factory", "truck"] as const;
+const processIcons = processIconNames.map((name) => phosphorIcons.icons[name]);
 ---
 
-<section class="manufacturing-section" aria-labelledby="manufacturing-title">
-  <div class="manufacturing-atmosphere" aria-hidden="true">
-    <img src="/img/hero/beles-hero-desktop.webp" alt="" width="2048" height="1024" loading="lazy" />
+<section class="manufacturing" aria-labelledby="manufacturing-title">
+  <div class="image-layer" aria-hidden="true">
+    <img
+      src="/img/manufacturing/manufacturing-floor.webp"
+      alt=""
+      width="2048"
+      height="1152"
+      loading="lazy"
+    />
   </div>
-  <div class="manufacturing-shell">
-    <div class="scale-block">
-      <strong data-reveal>{content.primaryMetric.value}</strong>
-      <span data-reveal style="--reveal-delay: 80ms">{content.primaryMetric.label}</span>
-    </div>
+  <div class="blueprint" aria-hidden="true"></div>
 
-    <div class="manufacturing-copy">
-      <h2 id="manufacturing-title" data-reveal>{content.title}</h2>
-      <p data-reveal style="--reveal-delay: 90ms">{content.body}</p>
-      <div class="secondary-metric" data-reveal style="--reveal-delay: 150ms">
-        <strong>{content.secondaryMetric.value}</strong>
-        <span>{content.secondaryMetric.label}</span>
+  <div class="shell">
+    <header class="chapter" data-reveal>
+      <p>{content.eyebrow}</p><span></span><p>{content.label}</p>
+    </header>
+
+    <div class="main-copy">
+      <h2 id="manufacturing-title" data-reveal style="--reveal-delay: 60ms">{content.title}</h2>
+      <p class="intro" data-reveal style="--reveal-delay: 120ms">{content.body}</p>
+      <div class="metrics">
+        {
+          [content.metrics.territory, content.metrics.workshops].map((metric, index) => (
+            <article data-reveal style={`--reveal-delay: ${180 + index * 70}ms`}>
+              <>
+                <strong>{metric.value}</strong>
+                <h3>{metric.label}</h3>
+                <p>{metric.text}</p>
+              </>
+            </article>
+          ))
+        }
       </div>
-      <a class="home-text-link" href={ctaHref} data-reveal style="--reveal-delay: 210ms">
-        <span>{content.cta}</span>
-        <span aria-hidden="true">→</span>
-      </a>
     </div>
 
-    <div class="process-flow" aria-label="BELES production flow">
-      <span class="process-axis" aria-hidden="true"></span>
-      {
-        content.process.map((step, index) => (
-          <article data-reveal style={`--reveal-delay: ${index * 60}ms`}>
-            <span>{String(index + 1).padStart(2, "0")}</span>
-            <strong>{step}</strong>
-          </article>
-        ))
-      }
+    <figure class="mobile-image" data-reveal>
+      <img
+        src="/img/manufacturing/manufacturing-floor.webp"
+        alt={content.imageAlt}
+        width="2048"
+        height="1152"
+        loading="lazy"
+      />
+    </figure>
+
+    <div class="process" data-reveal style="--reveal-delay: 260ms">
+      <ol aria-label={content.processLabel}>
+        {
+          content.process.map((step, index) => (
+            <li>
+              <span class="number">{String(index + 1).padStart(2, "0")}</span>
+              <div class="step-content">
+                <svg viewBox="0 0 256 256" aria-hidden="true" set:html={processIcons[index].body} />
+                <strong>{step}</strong>
+              </div>
+            </li>
+          ))
+        }
+      </ol>
     </div>
   </div>
 </section>
 
 <style>
-  .manufacturing-section {
+  .manufacturing {
     position: relative;
-    overflow: clip;
     isolation: isolate;
-    background:
-      radial-gradient(circle at 78% 16%, rgba(66, 109, 255, 0.22), transparent 28rem),
-      linear-gradient(180deg, #080c13 0%, #151b25 100%), var(--color-bg-secondary);
-    color: #f7f8fa;
+    overflow: clip;
+    min-height: clamp(52rem, 58vw, 64rem);
+    color: #f5f7fb;
+    background: linear-gradient(180deg, #0b111b, #070b12);
   }
-
-  .manufacturing-atmosphere {
+  .manufacturing::before {
     position: absolute;
     inset: 0;
-    z-index: -2;
-    pointer-events: none;
-    opacity: 0.16;
-  }
-
-  .manufacturing-atmosphere::after {
-    position: absolute;
-    inset: 0;
+    z-index: -1;
     background:
-      linear-gradient(90deg, #080c13 0%, rgba(8, 12, 19, 0.74) 38%, #080c13 100%),
-      linear-gradient(180deg, rgba(8, 12, 19, 0.12), #151b25 82%);
+      linear-gradient(180deg, rgba(25, 45, 76, 0.22), transparent 18rem),
+      radial-gradient(circle at 18% 45%, rgba(18, 83, 255, 0.09), transparent 25rem);
     content: "";
   }
-
-  .manufacturing-atmosphere img {
+  .image-layer {
+    position: absolute;
+    inset: 0 0 0 34%;
+    z-index: -2;
+  }
+  .image-layer::after {
+    position: absolute;
+    inset: 0;
+    background:
+      linear-gradient(
+        90deg,
+        #0a1019 0%,
+        rgba(8, 13, 21, 0.96) 14%,
+        rgba(8, 13, 21, 0.78) 29%,
+        rgba(8, 13, 21, 0.42) 48%,
+        rgba(8, 13, 21, 0.12) 68%,
+        transparent 82%
+      ),
+      linear-gradient(180deg, rgba(5, 9, 15, 0.58), transparent 24%, transparent 64%, #070b12 100%);
+    content: "";
+  }
+  .image-layer img {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    object-position: center;
-    filter: grayscale(0.45) contrast(1.12);
+    object-position: right center;
+    filter: saturate(0.75) contrast(1.08) brightness(0.78);
   }
-
-  .manufacturing-shell {
-    display: grid;
-    grid-template-columns: minmax(0, 1.05fr) minmax(22rem, 0.78fr);
-    gap: clamp(2rem, 5vw, 5rem);
-    width: min(100% - (var(--container-gutter) * 2), var(--container-max));
-    margin-inline: auto;
-    padding-block: clamp(6rem, 12vw, 13rem);
-  }
-
-  .scale-block {
-    position: relative;
-    min-height: clamp(24rem, 42vw, 39rem);
-    overflow: hidden;
-    border: 1px solid rgba(247, 248, 250, 0.13);
-    background:
-      linear-gradient(
-        145deg,
-        rgba(66, 109, 255, 0.18),
-        rgba(255, 255, 255, 0.03) 45%,
-        rgba(255, 255, 255, 0.09)
-      ),
-      repeating-linear-gradient(112deg, rgba(247, 248, 250, 0.08) 0 1px, transparent 1px 4.2rem);
-  }
-
-  .scale-block::after {
+  .blueprint {
     position: absolute;
-    right: 8%;
-    bottom: 12%;
-    width: 44%;
-    height: 42%;
-    border-right: 1px solid rgba(143, 166, 255, 0.46);
-    border-bottom: 1px solid rgba(143, 166, 255, 0.46);
-    content: "";
+    inset: 0;
+    z-index: -1;
+    opacity: 0.28;
+    background-image:
+      linear-gradient(rgba(126, 159, 210, 0.07) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(126, 159, 210, 0.07) 1px, transparent 1px);
+    background-size: 4rem 4rem;
+    mask-image: linear-gradient(90deg, #000, transparent 55%);
   }
-
-  .scale-block strong {
-    display: block;
-    padding: clamp(1.4rem, 3vw, 2.5rem);
-    color: #fff;
-    font-family: "Space Grotesk", var(--font-display);
-    font-size: clamp(4.3rem, 12vw, 12.5rem);
-    font-weight: 520;
-    letter-spacing: -0.075em;
-    line-height: 0.82;
+  .shell {
+    box-sizing: border-box;
+    width: 100%;
+    margin: auto;
+    padding: clamp(6.5rem, 7.5vw, 9rem) clamp(2rem, 4.4vw, 5.5rem) clamp(5rem, 6.25vw, 7.5rem);
   }
-
-  .scale-block span {
-    position: absolute;
-    right: clamp(1.4rem, 3vw, 2.5rem);
-    bottom: clamp(1.4rem, 3vw, 2.5rem);
-    max-width: 19rem;
-    color: rgba(247, 248, 250, 0.72);
-    font-size: clamp(1rem, 1.3vw, 1.22rem);
-    font-weight: 560;
-    line-height: 1.45;
-  }
-
-  .manufacturing-copy {
-    align-self: center;
-  }
-
-  .manufacturing-copy h2 {
-    max-width: 12ch;
-    margin: 0;
-    color: #fff;
-    font-family: "Space Grotesk", var(--font-display);
-    font-size: clamp(2.8rem, 5.8vw, 6rem);
-    font-weight: 500;
-    letter-spacing: -0.052em;
-    line-height: 0.94;
-    text-wrap: balance;
-  }
-
-  .manufacturing-copy p {
-    max-width: 36rem;
-    margin: 1.55rem 0 0;
-    color: rgba(247, 248, 250, 0.7);
-    font-size: clamp(1rem, 1.12vw, 1.12rem);
-    font-weight: 500;
-    line-height: 1.62;
-  }
-
-  .secondary-metric {
+  .chapter {
     display: grid;
-    gap: 0.45rem;
-    max-width: 22rem;
-    margin-top: 2rem;
-    padding-top: 1.1rem;
-    border-top: 1px solid rgba(247, 248, 250, 0.18);
-  }
-
-  .secondary-metric strong {
-    color: #8fa6ff;
-    font-family: "Space Grotesk", var(--font-display);
-    font-size: clamp(2rem, 3vw, 3.25rem);
-    font-weight: 560;
-    letter-spacing: -0.045em;
-    line-height: 1;
-  }
-
-  .secondary-metric span {
-    color: rgba(247, 248, 250, 0.64);
-    font-size: 0.9rem;
-    font-weight: 540;
-    line-height: 1.4;
-  }
-
-  .home-text-link {
-    display: inline-flex;
+    grid-template-columns: auto minmax(3rem, 1fr) auto;
     align-items: center;
-    gap: 0.72rem;
-    margin-top: 2rem;
-    color: #9fb2ff;
+    gap: 1.4rem;
+  }
+  .chapter p {
+    margin: 0;
+    color: #407bff;
     font-family: "Space Grotesk", var(--font-display);
-    font-size: 0.78rem;
-    font-weight: 700;
-    letter-spacing: 0.045em;
-    line-height: 1;
-    text-decoration: none;
+    font-size: clamp(0.7rem, 0.68vw, 0.82rem);
+    font-weight: 750;
+    letter-spacing: 0.18em;
+    line-height: 1.2;
     text-transform: uppercase;
   }
-
-  .home-text-link span:last-child {
-    transition: transform 220ms var(--ease-out);
+  .chapter p:last-child {
+    color: rgba(239, 244, 252, 0.54);
   }
-
-  .home-text-link:hover span:last-child,
-  .home-text-link:focus-visible span:last-child {
-    transform: translateX(0.2rem);
-  }
-
-  .process-flow {
-    position: relative;
-    grid-column: 1 / -1;
-    display: grid;
-    grid-template-columns: repeat(7, minmax(0, 1fr));
-    gap: 0;
-    margin-top: clamp(2.5rem, 5vw, 4rem);
-  }
-
-  .process-axis {
-    position: absolute;
-    top: 1.05rem;
-    right: 0;
-    left: 0;
+  .chapter > span {
     height: 1px;
-    background: linear-gradient(90deg, rgba(143, 166, 255, 0.8), rgba(247, 248, 250, 0.16));
+    background: linear-gradient(90deg, #2868ff 0 3.5rem, rgba(220, 231, 248, 0.18) 3.5rem);
   }
-
-  .process-flow article {
+  .main-copy {
+    width: min(47rem, 58%);
+    margin-top: clamp(4rem, 5.25vw, 6.25rem);
+  }
+  h2 {
+    max-width: 12ch;
+    margin: 0 0 -0.08em;
+    padding-bottom: 0.08em;
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: clamp(3.8rem, 5.25vw, 6.6rem);
+    font-weight: 400;
+    letter-spacing: -0.04em;
+    line-height: 0.96;
+    text-wrap: balance;
+  }
+  .intro {
+    max-width: 40rem;
+    margin: clamp(2rem, 2vw, 2.5rem) 0 0;
+    color: rgba(233, 239, 248, 0.7);
+    font-family: "Manrope", var(--font-body);
+    font-size: clamp(1rem, 1vw, 1.18rem);
+    font-weight: 500;
+    line-height: 1.58;
+  }
+  .metrics {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    margin-top: clamp(3rem, 3.75vw, 4.5rem);
+    border-top: 1px solid rgba(210, 225, 248, 0.2);
+  }
+  .metrics article {
+    min-width: 0;
+    padding: clamp(1.65rem, 1.75vw, 2rem) 1.8rem 0 0;
+  }
+  .metrics article + article {
+    padding-left: 1.6rem;
+    border-left: 1px solid rgba(210, 225, 248, 0.2);
+  }
+  .metrics strong {
+    display: block;
+    color: #fff;
+    font-family: "Space Grotesk", var(--font-display);
+    font-size: clamp(2.8rem, 3.75vw, 4.8rem);
+    font-weight: 500;
+    letter-spacing: -0.04em;
+    line-height: 1;
+    white-space: nowrap;
+  }
+  .metrics article:first-child strong {
+    color: #3978ff;
+    text-shadow: 0 0 2.5rem rgba(39, 103, 255, 0.24);
+  }
+  .metrics h3 {
+    margin: 0.8rem 0 0;
+    font:
+      700 0.76rem/1.2 "Space Grotesk",
+      var(--font-display);
+    letter-spacing: 0.13em;
+    text-transform: uppercase;
+  }
+  .metrics p {
+    max-width: 19rem;
+    margin: 0.65rem 0 0;
+    color: rgba(233, 239, 248, 0.56);
+    font:
+      500 0.86rem/1.45 "Manrope",
+      var(--font-body);
+  }
+  .mobile-image {
+    display: none;
+  }
+  .process {
+    margin-top: clamp(3.75rem, 4.5vw, 5.5rem);
+    border: 1px solid rgba(207, 222, 244, 0.2);
+    background: rgba(6, 11, 18, 0.84);
+    backdrop-filter: blur(12px);
+  }
+  .process ol {
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .process li {
     position: relative;
     display: grid;
-    gap: 1.15rem;
-    min-height: 9rem;
-    padding: 2.55rem 1rem 1rem 0;
-    border-top: 1px solid rgba(247, 248, 250, 0.12);
+    grid-template-columns: 2.5rem minmax(0, 1fr);
+    align-items: center;
+    gap: clamp(0.75rem, 1vw, 1.2rem);
+    min-width: 0;
+    min-height: clamp(10rem, 9vw, 11.5rem);
+    padding: clamp(1.4rem, 1.6vw, 1.8rem) clamp(1rem, 1.35vw, 1.6rem);
   }
-
-  .process-flow article::before {
+  .process li + li {
+    border-left: 1px solid rgba(207, 222, 244, 0.14);
+  }
+  .number {
+    align-self: start;
+    padding-top: 0.2rem;
+    color: #3978ff;
+    font:
+      500 clamp(0.9rem, 1vw, 1.12rem) / 1 "Space Grotesk",
+      var(--font-display);
+  }
+  .step-content {
+    display: grid;
+    justify-items: center;
+    gap: 0.85rem;
+    min-width: 0;
+  }
+  .step-content svg {
+    width: clamp(3.75rem, 4vw, 4.75rem);
+    height: clamp(3.75rem, 4vw, 4.75rem);
+    color: rgba(224, 228, 232, 0.78);
+    fill: none;
+  }
+  .process strong {
+    width: 100%;
+    min-width: 0;
+    max-width: 12rem;
+    color: rgba(245, 248, 252, 0.82);
+    font:
+      500 clamp(0.82rem, 0.82vw, 0.96rem) / 1.35 "Manrope",
+      var(--font-body);
+    text-align: center;
+    overflow-wrap: anywhere;
+  }
+  .process li:not(:last-child)::after {
     position: absolute;
-    top: 0.73rem;
-    left: 0;
-    width: 0.64rem;
-    height: 0.64rem;
-    border: 1px solid rgba(143, 166, 255, 0.8);
-    background: #171d27;
+    top: 50%;
+    right: -0.27rem;
+    z-index: 1;
+    width: 0.48rem;
+    height: 0.48rem;
+    border-top: 1px solid rgba(217, 225, 237, 0.42);
+    border-right: 1px solid rgba(217, 225, 237, 0.42);
+    background: #080d15;
     content: "";
-    transform: rotate(45deg);
+    transform: translateY(-50%) rotate(45deg);
   }
-
-  .process-flow span {
-    color: rgba(247, 248, 250, 0.38);
-    font-family: var(--font-mono);
-    font-size: 0.72rem;
+  @media (max-width: 900px) {
+    .image-layer {
+      inset-left: 24%;
+    }
+    .main-copy {
+      width: min(42rem, 72%);
+    }
   }
-
-  .process-flow strong {
-    color: rgba(247, 248, 250, 0.82);
-    font-family: "Space Grotesk", var(--font-display);
-    font-size: clamp(0.92rem, 1.08vw, 1.08rem);
-    font-weight: 600;
-    line-height: 1.18;
-  }
-
-  @media (max-width: 1000px) {
-    .manufacturing-shell {
-      grid-template-columns: 1fr;
+  @media (max-width: 760px) {
+    .manufacturing {
+      min-height: 0;
     }
-
-    .scale-block {
-      min-height: 24rem;
-    }
-
-    .process-flow {
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 1.35rem 1rem;
-    }
-
-    .process-axis {
+    .image-layer {
       display: none;
     }
-
-    .process-flow article {
-      border-top: 1px solid rgba(247, 248, 250, 0.14);
+    .blueprint {
+      mask-image: linear-gradient(180deg, #000, transparent 46%);
     }
-
-    .process-flow article::before {
-      content: none;
+    .shell {
+      padding: 5.75rem clamp(1.25rem, 5.5vw, 2rem) 5rem;
     }
-  }
-
-  @media (max-width: 560px) {
-    .manufacturing-copy h2 {
-      font-size: clamp(2.55rem, 12vw, 4rem);
-    }
-
-    .scale-block strong {
-      font-size: clamp(3.65rem, 18vw, 5.4rem);
-    }
-
-    .scale-block span {
-      right: 1.3rem;
-      left: 1.3rem;
-    }
-
-    .process-flow {
+    .chapter {
       grid-template-columns: 1fr;
+      gap: 0.85rem;
+    }
+    .chapter p:last-child {
+      display: none;
+    }
+    .chapter > span {
+      width: 100%;
+    }
+    .main-copy {
+      width: 100%;
+      margin-top: 3rem;
+    }
+    h2 {
+      font-size: clamp(2.85rem, 12vw, 4.35rem);
+      overflow-wrap: anywhere;
+    }
+    .metrics {
+      grid-template-columns: 1fr;
+      gap: 1.15rem;
+      margin-top: 2.75rem;
+      border: 0;
+    }
+    .metrics article,
+    .metrics article + article {
+      padding: 1.5rem;
+      border: 1px solid rgba(210, 225, 248, 0.18);
+      background: rgba(255, 255, 255, 0.025);
+    }
+    .metrics strong {
+      font-size: clamp(2.55rem, 12vw, 3.8rem);
+    }
+    .mobile-image {
+      position: relative;
+      display: block;
+      overflow: hidden;
+      height: clamp(14rem, 68vw, 19rem);
+      margin: 1.25rem 0 0;
+      border: 1px solid rgba(210, 225, 248, 0.18);
+    }
+    .mobile-image::after {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(
+        180deg,
+        rgba(5, 9, 15, 0.15),
+        transparent 55%,
+        rgba(5, 9, 15, 0.55)
+      );
+      content: "";
+    }
+    .mobile-image img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: right center;
+      filter: saturate(0.78) contrast(1.05);
+    }
+    .process {
+      margin-top: 1.75rem;
+    }
+    .process ol {
+      grid-template-columns: 1fr;
+    }
+    .process li {
+      grid-template-columns: 2.25rem 3rem minmax(0, 1fr);
+      align-items: center;
+      min-height: 5rem;
+      padding: 1rem 1.15rem;
+    }
+    .process li + li {
+      border-top: 1px solid rgba(207, 222, 244, 0.14);
+      border-left: 0;
+    }
+    .number {
+      align-self: center;
+      padding-top: 0;
+    }
+    .step-content {
+      display: contents;
+    }
+    .step-content svg {
+      width: 2.5rem;
+      height: 2.5rem;
+    }
+    .process strong {
+      max-width: none;
+      text-align: left;
+    }
+    .process li::after {
+      display: none;
     }
   }
 </style>

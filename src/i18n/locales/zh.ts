@@ -106,12 +106,25 @@ const zh = {
       taxonomyLabel: "BELES 出行平台分类",
     },
     manufacturing: {
+      eyebrow: "04 / 制造规模",
+      label: "生产基地",
       title: "具备完整生产周期的工业规模。",
-      body: "BELES 结合覆盖式车间、工业场地和端到端制造能力，支持商用车辆生产。",
-      cta: "探索能力",
-      primaryMetric: { value: "50,000 m²", label: "覆盖式生产设施和车间" },
-      secondaryMetric: { value: "111,000 m²", label: "工业场地总面积" },
-      process: ["驾驶室生产", "焊接", "涂装", "底盘装配", "车身生产", "公交车装配", "卡车装配"],
+      body: "BELES 拥有大型生产基地，涵盖室内车间、车辆装配及商用出行平台的核心生产流程。",
+      metrics: {
+        territory: {
+          value: "111,000 m²",
+          label: "总占地面积",
+          text: "用于车辆装配的大型生产基地。",
+        },
+        workshops: {
+          value: "50,000 m²",
+          label: "室内车间",
+          text: "用于装配和生产流程的室内设施。",
+        },
+      },
+      processLabel: "完整周期",
+      process: ["驾驶室生产", "焊接与涂装", "底盘装配", "车身生产", "客车与卡车装配"],
+      imageAlt: "BELES 制造基地内的客车装配线",
     },
     market: {
       title: "设计源自吉尔吉斯斯坦，面向中亚和 EAEU。",
