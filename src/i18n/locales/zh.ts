@@ -166,13 +166,22 @@ const zh = {
       ],
       cta: "了解 BELES",
     },
-    finalCta: {
-      title: "与 BELES 共建下一代出行平台。",
-      body: "与这支 OEM 团队合作，从吉尔吉斯斯坦打造面向区域和国际市场的商用出行平台。",
-      primaryCta: "联系",
-      secondaryCta: "探索能力",
-      proof: ["OEM 制造基础", "Tier-1 组件生态", "区域市场方向"],
+  },
+  footer: {
+    positioning: "为新工业时代打造出行工程。",
+    navigationLabel: "导航",
+    contactsLabel: "联系方式",
+    socialLabel: "社交媒体",
+    languageLabel: "语言",
+    nav: {
+      story: "品牌故事",
+      projects: "项目",
+      capabilities: "能力",
+      about: "关于",
+      contact: "联系",
     },
+    copyright: "© 2026 BELES。保留所有权利。",
+    platformLabel: "工业出行平台",
   },
 };
 

@@ -176,17 +176,22 @@ const en = {
       ],
       cta: "Explore BELES",
     },
-    finalCta: {
-      title: "Build the next mobility platform with BELES.",
-      body: "Partner with an OEM team building commercial mobility platforms from Kyrgyzstan for regional and international markets.",
-      primaryCta: "Contact",
-      secondaryCta: "Explore Capabilities",
-      proof: [
-        "OEM manufacturing foundation",
-        "Tier-1 component ecosystem",
-        "Regional market direction",
-      ],
+  },
+  footer: {
+    positioning: "Engineering mobility for a new industrial era.",
+    navigationLabel: "Navigation",
+    contactsLabel: "Contacts",
+    socialLabel: "Social",
+    languageLabel: "Language",
+    nav: {
+      story: "Story",
+      projects: "Projects",
+      capabilities: "Capabilities",
+      about: "About",
+      contact: "Contact",
     },
+    copyright: "© 2026 BELES. All rights reserved.",
+    platformLabel: "Industrial Mobility Platform",
   },
 };
 

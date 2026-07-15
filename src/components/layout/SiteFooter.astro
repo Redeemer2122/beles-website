@@ -1,4 +1,9 @@
 ---
+import en from "../../i18n/locales/en";
+import ky from "../../i18n/locales/ky";
+import ru from "../../i18n/locales/ru";
+import zh from "../../i18n/locales/zh";
+import type { Locale } from "../../i18n";
 import {
   getLocaleFromPathname,
   getLocalizedPath,
@@ -7,23 +12,27 @@ import {
   navItems,
 } from "../../lib/navigation";
 
+const translations = { en, ru, zh, ky } satisfies Record<Locale, typeof en>;
 const currentLocale = getLocaleFromPathname(Astro.url.pathname);
 const currentPath = getPathWithoutLocalePrefix(Astro.url.pathname);
-const currentYear = new Date().getFullYear();
+const footer = translations[currentLocale].footer;
 
 const localizedNavItems = navItems.map((item) => ({
   ...item,
+  label: footer.nav[item.key],
   href: getLocalizedPath(item.href, currentLocale),
   isCurrent: currentPath === item.href,
 }));
 
-const contactHref = getLocalizedPath("/contact/", currentLocale);
-const inquiryItems = ["Partnerships", "Commercial inquiries", "Engineering programs"];
+const footerLocaleOrder: Locale[] = ["en", "ru", "ky", "zh"];
+const footerLocaleItems = footerLocaleOrder.map((locale) =>
+  localeItems.find((item) => item.locale === locale)!,
+);
 ---
 
 <footer class="site-footer" aria-labelledby="footer-title">
   <div class="footer-shell">
-    <div class="footer-brand">
+    <div class="footer-top">
       <a
         class="footer-wordmark"
         href={getLocalizedPath("/", currentLocale)}
@@ -31,319 +40,365 @@ const inquiryItems = ["Partnerships", "Commercial inquiries", "Engineering progr
       >
         BELES
       </a>
-      <p id="footer-title">Engineering mobility for a new industrial era.</p>
-      <a class="footer-cta" href={contactHref}>Start a conversation</a>
+      <p id="footer-title" class="footer-positioning">{footer.positioning}</p>
     </div>
 
-    <div class="footer-grid">
-      <nav class="footer-nav" aria-label="Footer navigation">
-        <p>Explore</p>
-        {
-          localizedNavItems.map((item) => (
-            <a href={item.href} aria-current={item.isCurrent ? "page" : undefined}>
-              {item.label}
-            </a>
-          ))
-        }
+    <div class="footer-middle">
+      <nav class="footer-column footer-navigation" aria-label={footer.navigationLabel}>
+        <p class="footer-label">{footer.navigationLabel}</p>
+        <div class="footer-nav-links">
+          {
+            localizedNavItems.map((item) => (
+              <a href={item.href} aria-current={item.isCurrent ? "page" : undefined}>
+                {item.label}
+              </a>
+            ))
+          }
+        </div>
       </nav>
 
-      <div class="footer-inquiries" aria-label="Inquiry categories">
-        <p>Inquiries</p>
-        <ul>
-          {inquiryItems.map((item) => <li>{item}</li>)}
-        </ul>
+      <div class="footer-column footer-contacts">
+        <p class="footer-label">{footer.contactsLabel}</p>
+        <a href="tel:+996312906090">
+          <svg class="footer-icon" viewBox="0 0 24 24" aria-hidden="true">
+            <path
+              d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6A19.79 19.79 0 0 1 2.12 4.18 2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"
+            ></path>
+          </svg>
+          <span>+996 312 90 60 90</span>
+        </a>
+        <a href="mailto:info@beles.group">
+          <svg class="footer-icon" viewBox="0 0 24 24" aria-hidden="true">
+            <rect x="3" y="5" width="18" height="14" rx="1"></rect>
+            <path d="m3 7 9 6 9-6"></path>
+          </svg>
+          <span>info@beles.group</span>
+        </a>
       </div>
 
-      <nav class="footer-locales" aria-label="Footer language navigation">
-        <p>Language</p>
-        {
-          localeItems.map((item) => (
-            <a
-              href={getLocalizedPath(currentPath, item.locale)}
-              aria-current={item.locale === currentLocale ? "true" : undefined}
-            >
-              <span>{item.shortLabel}</span>
-              {item.label}
-            </a>
-          ))
-        }
+      <div class="footer-column footer-social">
+        <p class="footer-label">{footer.socialLabel}</p>
+        <!-- TODO: Replace with the confirmed official BELES Instagram URL. -->
+        <a href="#">
+          <svg class="footer-icon" viewBox="0 0 24 24" aria-hidden="true">
+            <rect x="3" y="3" width="18" height="18" rx="5"></rect>
+            <circle cx="12" cy="12" r="4"></circle>
+            <circle class="footer-icon-dot" cx="17.5" cy="6.5" r="0.75"></circle>
+          </svg>
+          <span>Instagram</span>
+        </a>
+      </div>
+
+      <nav class="footer-column footer-languages" aria-label={footer.languageLabel}>
+        <p class="footer-label">{footer.languageLabel}</p>
+        <div class="footer-language-links">
+          {
+            footerLocaleItems.map((item) => (
+              <a
+                href={getLocalizedPath(currentPath, item.locale)}
+                lang={item.locale}
+                aria-current={item.locale === currentLocale ? "true" : undefined}
+              >
+                {item.shortLabel}
+              </a>
+            ))
+          }
+        </div>
       </nav>
     </div>
 
     <div class="footer-bottom">
-      <p>© {currentYear} BELES. All rights reserved.</p>
-      <p>Industrial mobility platform</p>
+      <p>{footer.copyright}</p>
+      <p>{footer.platformLabel}</p>
     </div>
   </div>
 </footer>
 
 <style>
   .site-footer {
-    padding: clamp(4rem, 10vw, 8rem) var(--container-gutter) clamp(1.5rem, 4vw, 3rem);
+    width: 100%;
+    border-top: 1px solid rgba(66, 109, 255, 0.22);
     background:
-      radial-gradient(circle at 18% 0%, rgba(41, 70, 143, 0.22), transparent 32rem),
-      linear-gradient(180deg, rgba(8, 11, 16, 0), var(--color-bg-secondary) 18%),
-      var(--color-bg-primary);
+      linear-gradient(90deg, rgba(41, 70, 143, 0.07), transparent 26%),
+      linear-gradient(180deg, rgba(16, 22, 32, 0.34), rgba(7, 10, 16, 0) 48%), #070a10;
     color: var(--color-text-primary);
   }
 
   .footer-shell {
     width: min(100%, var(--container-max));
     margin-inline: auto;
-    padding: clamp(1.25rem, 3vw, 2rem);
-    border: 1px solid var(--color-border-subtle);
-    border-radius: var(--radius-xl);
-    background:
-      linear-gradient(145deg, rgba(16, 22, 32, 0.82), rgba(3, 4, 6, 0.94)),
-      var(--color-bg-secondary);
-    box-shadow:
-      inset 0 1px 0 rgba(247, 248, 250, 0.08),
-      0 2rem 5rem rgba(3, 4, 6, 0.34);
+    padding: clamp(2.25rem, 3.2vw, 3rem) var(--container-gutter) clamp(1.25rem, 2vw, 1.75rem);
   }
 
-  .footer-brand {
+  .footer-top {
+    position: relative;
     display: grid;
-    grid-template-columns: minmax(0, 1fr) auto;
-    gap: clamp(1.5rem, 4vw, 3rem);
-    align-items: end;
-    padding-bottom: clamp(2.5rem, 6vw, 5rem);
+    grid-template-columns: minmax(0, 1fr) minmax(20rem, 0.72fr);
+    gap: clamp(2rem, 4vw, 4.5rem);
+    align-items: center;
+    padding-bottom: clamp(1.5rem, 2.2vw, 2rem);
     border-bottom: 1px solid var(--color-border-subtle);
   }
 
+  .footer-top::after {
+    position: absolute;
+    bottom: -1px;
+    left: 0;
+    width: 4rem;
+    height: 1px;
+    background: var(--color-brand-blue-bright);
+    content: "";
+  }
+
   .footer-wordmark {
-    display: inline-flex;
+    display: block;
     width: fit-content;
-    background: linear-gradient(
-      110deg,
-      var(--color-text-primary) 0%,
-      var(--color-brand-silver) 34%,
-      var(--color-brand-steel) 58%,
-      var(--color-paper) 100%
-    );
+    padding-bottom: 0.06em;
+    background: linear-gradient(110deg, #f7f8fa 8%, #aab2bc 50%, #eef0f3 86%);
     background-clip: text;
     color: var(--color-text-primary);
     font-family: var(--font-display);
-    font-size: clamp(3.25rem, 13vw, 11rem);
-    font-weight: 950;
-    letter-spacing: 0.16em;
-    line-height: 0.88;
+    font-size: clamp(3.5rem, 6.5vw, 6rem);
+    font-weight: 800;
+    letter-spacing: 0.14em;
+    line-height: 0.94;
     text-decoration: none;
-    text-transform: uppercase;
     -webkit-text-fill-color: transparent;
   }
 
-  .footer-brand p {
-    max-width: 38rem;
-    margin: 1.25rem 0 0;
-    color: var(--color-text-secondary);
-    font-size: clamp(1.125rem, 2vw, 1.75rem);
-    letter-spacing: -0.01em;
-    line-height: var(--leading-tight);
+  .footer-positioning {
+    position: relative;
+    max-width: 34rem;
+    padding-left: 1.5rem;
+    margin: 0;
+    color: var(--color-paper-muted);
+    font-size: clamp(1rem, 1.5vw, 1.25rem);
+    line-height: 1.45;
   }
 
-  .footer-cta {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    min-height: 3rem;
-    padding-inline: 1.125rem;
-    border: 1px solid rgba(66, 109, 255, 0.5);
-    border-radius: var(--radius-full);
-    background:
-      linear-gradient(180deg, rgba(66, 109, 255, 0.2), rgba(23, 44, 102, 0.3)),
-      var(--color-brand-blue);
-    color: var(--color-text-primary);
-    font-family: var(--font-display);
-    font-size: 0.75rem;
-    font-weight: 800;
-    letter-spacing: var(--tracking-label);
-    line-height: 1;
-    text-decoration: none;
-    text-transform: uppercase;
-    transition:
-      border-color var(--duration-fast) var(--ease-out),
-      background var(--duration-fast) var(--ease-out),
-      transform var(--duration-fast) var(--ease-out);
+  .footer-positioning::before {
+    position: absolute;
+    top: 0.15rem;
+    bottom: 0.15rem;
+    left: 0;
+    width: 2px;
+    background: var(--color-brand-blue-bright);
+    content: "";
   }
 
-  .footer-grid {
+  .footer-middle {
     display: grid;
-    grid-template-columns: 1.2fr 1fr 1fr;
-    gap: clamp(2rem, 6vw, 5rem);
-    padding-block: clamp(2rem, 5vw, 4rem);
+    grid-template-columns: 1.2fr 1.25fr 0.9fr 1fr;
+    gap: clamp(2rem, 4vw, 4rem);
+    padding-block: clamp(1.5rem, 2.5vw, 2rem);
   }
 
-  .footer-nav,
-  .footer-inquiries,
-  .footer-locales {
-    display: grid;
-    align-content: start;
-    gap: 0.75rem;
+  .footer-column {
+    min-width: 0;
   }
 
-  .footer-nav p,
-  .footer-inquiries p,
-  .footer-locales p,
+  .footer-label,
   .footer-bottom p {
     margin: 0;
   }
 
-  .footer-nav p,
-  .footer-inquiries p,
-  .footer-locales p {
-    margin-bottom: 0.35rem;
-    color: var(--color-brand-steel);
+  .footer-label {
+    margin-bottom: 0.875rem;
+    color: var(--color-brand-blue-bright);
     font-family: var(--font-display);
     font-size: 0.6875rem;
-    font-weight: 800;
+    font-weight: 700;
     letter-spacing: var(--tracking-label);
     line-height: 1;
     text-transform: uppercase;
   }
 
-  .footer-nav a,
-  .footer-locales a {
+  .footer-nav-links,
+  .footer-contacts,
+  .footer-social {
+    display: grid;
+    align-content: start;
+    gap: 0.5rem;
+  }
+
+  .footer-nav-links a,
+  .footer-contacts a,
+  .footer-social a,
+  .footer-language-links a {
     width: fit-content;
     color: var(--color-text-secondary);
     font-size: 0.9375rem;
-    line-height: 1.25;
+    line-height: 1.35;
     text-decoration: none;
-    transition:
-      color var(--duration-fast) var(--ease-out),
-      transform var(--duration-fast) var(--ease-out);
+    transition: color var(--duration-fast) var(--ease-out);
   }
 
-  .footer-locales a {
+  .footer-contacts a,
+  .footer-social a {
     display: inline-flex;
-    gap: 0.75rem;
-    align-items: baseline;
+    gap: 0.625rem;
+    align-items: center;
   }
 
-  .footer-locales span {
-    color: var(--color-brand-steel);
-    font-family: var(--font-display);
-    font-size: 0.6875rem;
-    font-weight: 800;
-    letter-spacing: var(--tracking-label);
+  .footer-icon {
+    width: 1rem;
+    height: 1rem;
+    flex: 0 0 1rem;
+    fill: none;
+    stroke: var(--color-brand-steel);
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    stroke-width: 1.5;
+    transition: stroke var(--duration-fast) var(--ease-out);
   }
 
-  .footer-inquiries ul {
-    display: grid;
-    gap: 0.75rem;
-    padding: 0;
-    margin: 0;
-    color: var(--color-text-secondary);
-    font-size: 0.9375rem;
-    line-height: 1.25;
-    list-style: none;
+  .footer-icon-dot {
+    fill: var(--color-brand-steel);
+    stroke: none;
+    transition: fill var(--duration-fast) var(--ease-out);
   }
 
-  .footer-inquiries li {
+  .footer-contacts a:hover .footer-icon,
+  .footer-contacts a:focus-visible .footer-icon,
+  .footer-social a:hover .footer-icon,
+  .footer-social a:focus-visible .footer-icon {
+    stroke: var(--color-brand-blue-bright);
+  }
+
+  .footer-social a:hover .footer-icon-dot,
+  .footer-social a:focus-visible .footer-icon-dot {
+    fill: var(--color-brand-blue-bright);
+  }
+
+  .footer-nav-links a:hover,
+  .footer-nav-links a:focus-visible,
+  .footer-nav-links a[aria-current="page"],
+  .footer-contacts a:hover,
+  .footer-contacts a:focus-visible,
+  .footer-social a:hover,
+  .footer-social a:focus-visible,
+  .footer-language-links a:hover,
+  .footer-language-links a:focus-visible,
+  .footer-language-links a[aria-current="true"] {
+    color: var(--color-text-primary);
+  }
+
+  .footer-language-links {
+    display: flex;
+    flex-wrap: nowrap;
+    gap: 0;
+    align-items: center;
+  }
+
+  .footer-language-links a {
     position: relative;
-    padding-left: 1rem;
+    padding-inline: 0.875rem;
+    color: var(--color-text-muted);
+    font-family: var(--font-display);
+    font-size: 0.8125rem;
+    font-weight: 700;
   }
 
-  .footer-inquiries li::before {
+  .footer-language-links a:first-child {
+    padding-left: 0;
+  }
+
+  .footer-language-links a + a::before {
     position: absolute;
-    top: 0.5em;
+    top: 50%;
     left: 0;
-    width: 0.375rem;
-    height: 0.375rem;
-    border: 1px solid var(--color-brand-blue-bright);
-    border-radius: var(--radius-full);
+    width: 1px;
+    height: 1rem;
+    background: var(--color-border-strong);
+    content: "";
+    transform: translateY(-50%);
+  }
+
+  .footer-language-links a[aria-current="true"]::after {
+    position: absolute;
+    right: 0.875rem;
+    bottom: -0.5rem;
+    left: 0.875rem;
+    height: 2px;
+    background: var(--color-brand-blue-bright);
     content: "";
   }
 
-  .footer-wordmark:focus-visible,
-  .footer-cta:focus-visible,
-  .footer-nav a:focus-visible,
-  .footer-locales a:focus-visible {
-    outline: 2px solid var(--color-brand-blue-bright);
-    outline-offset: 4px;
-  }
-
-  .footer-cta:hover,
-  .footer-cta:focus-visible {
-    border-color: var(--color-brand-blue-bright);
-    background:
-      linear-gradient(180deg, rgba(66, 109, 255, 0.3), rgba(23, 44, 102, 0.4)),
-      var(--color-brand-blue);
-    transform: translateY(-1px);
-  }
-
-  .footer-nav a:hover,
-  .footer-nav a:focus-visible,
-  .footer-nav a[aria-current="page"],
-  .footer-locales a:hover,
-  .footer-locales a:focus-visible,
-  .footer-locales a[aria-current="true"] {
-    color: var(--color-text-primary);
-    transform: translateX(0.125rem);
+  .footer-language-links a:first-child[aria-current="true"]::after {
+    left: 0;
   }
 
   .footer-bottom {
     display: flex;
     justify-content: space-between;
-    gap: 1rem;
-    padding-top: 1.25rem;
+    gap: 2rem;
+    padding-top: 1.125rem;
     border-top: 1px solid var(--color-border-subtle);
     color: var(--color-text-muted);
     font-family: var(--font-display);
     font-size: 0.6875rem;
-    font-weight: 700;
+    font-weight: 600;
     letter-spacing: var(--tracking-label);
     line-height: 1.4;
     text-transform: uppercase;
   }
 
   @media (max-width: 900px) {
-    .footer-brand {
+    .footer-top {
       grid-template-columns: 1fr;
+      gap: 1.5rem;
       align-items: start;
     }
 
-    .footer-cta {
-      width: fit-content;
-    }
-
-    .footer-grid {
+    .footer-middle {
       grid-template-columns: 1fr 1fr;
+      row-gap: 1.75rem;
     }
   }
 
-  @media (max-width: 640px) {
-    .site-footer {
-      padding-top: 3rem;
-    }
-
+  @media (max-width: 560px) {
     .footer-shell {
-      padding: 1rem;
-      border-radius: var(--radius-lg);
+      padding-top: 2rem;
     }
 
     .footer-wordmark {
+      font-size: clamp(3.25rem, 17vw, 4.25rem);
       letter-spacing: 0.1em;
     }
 
-    .footer-grid,
-    .footer-bottom {
+    .footer-positioning {
+      max-width: 21rem;
+      padding-left: 1rem;
+      font-size: 0.9375rem;
+    }
+
+    .footer-middle {
       grid-template-columns: 1fr;
+      gap: 1.25rem;
+      padding-block: 1.5rem;
     }
 
-    .footer-grid {
-      display: grid;
-      gap: 2rem;
+    .footer-nav-links {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      column-gap: 1.5rem;
+    }
+
+    .footer-label {
+      margin-bottom: 0.875rem;
     }
 
     .footer-bottom {
       display: grid;
+      gap: 0.625rem;
+      padding-top: 1rem;
     }
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .footer-cta,
-    .footer-nav a,
-    .footer-locales a {
+    .footer-nav-links a,
+    .footer-contacts a,
+    .footer-social a,
+    .footer-language-links a {
       transition-duration: 1ms;
     }
   }
