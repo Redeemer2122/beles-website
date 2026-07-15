@@ -1,248 +1,1075 @@
 ---
+import phosphorIcons from "@iconify-json/ph/icons.json";
+import { geoMercator, geoPath } from "d3-geo";
+import { feature } from "topojson-client";
+import type { FeatureCollection } from "geojson";
+import type { Topology } from "topojson-specification";
+import countriesAtlas from "world-atlas/countries-110m.json";
 import { getLocaleFromPathname, getLocalizedPath } from "../../../lib/navigation";
+
+type ProofPoint = { title: string; text: string };
+type Market = { name: string; code: string };
+type MapPoint = { code: string; name: string; x: number; y: number };
 
 type Props = {
   content: {
-    title: string;
+    eyebrow: string;
+    title: {
+      lead: string;
+      accent: string;
+      second: string;
+      third: string;
+    };
     body: string;
-    cta: string;
+    proofLabel: string;
+    proof: ProofPoint[];
+    mapLabel: string;
+    originLabel: string;
     origin: string;
-    regions: string[];
-    proof: string[];
+    directionLabel: string;
+    coordinates: string;
+    context: {
+      china: string;
+      turkmenistan: string;
+      iran: string;
+    };
+    legend: {
+      routes: string;
+      origin: string;
+    };
+    marketsLabel: string;
+    markets: Market[];
+    cta: string;
   };
 };
 
 const { content } = Astro.props;
 const currentLocale = getLocaleFromPathname(Astro.url.pathname);
 const ctaHref = getLocalizedPath("/about/", currentLocale);
+
+const proofIconNames = [
+  "globe-hemisphere-west",
+  "shield-check",
+  "handshake",
+  "chart-line-up",
+] as const;
+const proofIcons = proofIconNames.map((name) => phosphorIcons.icons[name]);
+
+const topology = countriesAtlas as unknown as Topology;
+const countries = feature(topology, topology.objects.countries) as unknown as FeatureCollection;
+const visibleCountryIds = new Set([
+  "004",
+  "031",
+  "051",
+  "112",
+  "156",
+  "268",
+  "356",
+  "364",
+  "398",
+  "417",
+  "496",
+  "586",
+  "643",
+  "762",
+  "792",
+  "795",
+  "804",
+  "860",
+]);
+const projection = geoMercator().center([76, 45]).scale(900).translate([800, 420]);
+const path = geoPath(projection);
+const mapCountries = countries.features
+  .filter((country) => visibleCountryIds.has(String(country.id).padStart(3, "0")))
+  .map((country) => ({
+    id: String(country.id).padStart(3, "0"),
+    d: path(country) ?? "",
+  }))
+  .filter((country) => country.d)
+  .sort((a, b) => Number(a.id === "417") - Number(b.id === "417"));
+
+const projectPoint = (coordinates: [number, number]) => {
+  const point = projection(coordinates);
+  return point ?? [0, 0];
+};
+
+const origin = projectPoint([74.6, 42.87]);
+const destinationCoordinates: [number, number][] = [
+  [68, 48],
+  [63, 41.3],
+  [69, 38.5],
+  [75, 58],
+];
+const destinations: MapPoint[] = content.markets.map((market, index) => {
+  const [x, y] = projectPoint(destinationCoordinates[index]);
+  return { ...market, x, y };
+});
+const contextPoints = [
+  { name: content.context.china, coordinates: [96, 38] as [number, number], className: "china" },
+  {
+    name: content.context.turkmenistan,
+    coordinates: [59.2, 39.1] as [number, number],
+    className: "turkmenistan",
+  },
+  { name: content.context.iran, coordinates: [54, 33] as [number, number], className: "iran" },
+].map((item) => {
+  const [x, y] = projectPoint(item.coordinates);
+  return { ...item, x, y };
+});
+
+const routePath = (destination: MapPoint, index: number) => {
+  const [startX, startY] = origin;
+  const dx = destination.x - startX;
+  const dy = destination.y - startY;
+  const distance = Math.hypot(dx, dy);
+  const unitX = dx / distance;
+  const unitY = dy / distance;
+  const endX = destination.x - unitX * 14;
+  const endY = destination.y - unitY * 14;
+  const normalX = -unitY;
+  const normalY = unitX;
+  const bends = [0.11, -0.08, 0.08, 0.13];
+  const bend = distance * bends[index];
+  const firstX = startX + dx * 0.34 + normalX * bend;
+  const firstY = startY + dy * 0.34 + normalY * bend;
+  const secondX = startX + dx * 0.76 + normalX * bend;
+  const secondY = startY + dy * 0.76 + normalY * bend;
+
+  return `M${startX.toFixed(1)} ${startY.toFixed(1)}C${firstX.toFixed(1)} ${firstY.toFixed(1)} ${secondX.toFixed(1)} ${secondY.toFixed(1)} ${endX.toFixed(1)} ${endY.toFixed(1)}`;
+};
 ---
 
-<section class="market-section" aria-labelledby="market-title">
-  <div class="market-shell">
-    <div class="market-map" aria-label="BELES regional direction">
-      <div class="corridor-title" data-reveal>
-        <span>{content.origin}</span>
-      </div>
-      <div class="corridor-line" aria-hidden="true">
-        <span data-reveal="line"></span>
-      </div>
-      <div class="region-cloud" aria-label="Target regional markets">
-        {
-          content.regions.map((region, index) => (
-            <span
-              class={`region-label region-${index + 1}`}
-              data-reveal
-              style={`--reveal-delay: ${index * 70}ms`}
-            >
-              {region}
-            </span>
-          ))
-        }
-      </div>
-    </div>
+<section class="market-direction" aria-labelledby="market-direction-title">
+  <div class="transition-line" aria-hidden="true"></div>
 
-    <div class="market-copy">
-      <h2 id="market-title" data-reveal>{content.title}</h2>
-      <p data-reveal style="--reveal-delay: 90ms">{content.body}</p>
-      <ul aria-label="Market direction proof points">
-        {
-          content.proof.map((item, index) => (
-            <li data-reveal style={`--reveal-delay: ${150 + index * 60}ms`}>
-              {item}
-            </li>
-          ))
-        }
-      </ul>
-      <a class="home-text-link" href={ctaHref} data-reveal style="--reveal-delay: 320ms">
-        <span>{content.cta}</span>
-        <span aria-hidden="true">→</span>
-      </a>
+  <div class="market-shell">
+    <header class="chapter" data-reveal>
+      <p>{content.eyebrow}</p>
+      <span aria-hidden="true"></span>
+      <p>{content.directionLabel}</p>
+    </header>
+
+    <div class="market-scene">
+      <div class="market-copy">
+        <h2 id="market-direction-title" data-reveal style="--reveal-delay: 70ms">
+          <span class="title-line title-origin">
+            {content.title.lead && <span>{content.title.lead}&nbsp;</span>}
+            <em>{content.title.accent}</em>
+          </span>
+          <span class="title-line">{content.title.second}</span>
+          <span class="title-line">{content.title.third}</span>
+        </h2>
+
+        <p class="intro" data-reveal style="--reveal-delay: 130ms">{content.body}</p>
+
+        <ol class="proof-row" aria-label={content.proofLabel}>
+          {
+            content.proof.map((item, index) => (
+              <li data-reveal style={`--reveal-delay: ${190 + index * 55}ms`}>
+                <svg
+                  class="proof-icon"
+                  viewBox="0 0 256 256"
+                  aria-hidden="true"
+                  set:html={proofIcons[index].body}
+                />
+                <h3>{item.title}</h3>
+                <p>{item.text}</p>
+                <span class="card-arrow" aria-hidden="true">
+                  →
+                </span>
+              </li>
+            ))
+          }
+        </ol>
+
+        <a class="market-cta" href={ctaHref} data-reveal style="--reveal-delay: 390ms">
+          <span>{content.cta}</span>
+          <span aria-hidden="true">→</span>
+        </a>
+      </div>
+
+      <div class="map-column" data-reveal style="--reveal-delay: 120ms">
+        <div class="map-meta" aria-hidden="true">
+          <span>{content.coordinates}</span>
+          <span>01 — 04</span>
+        </div>
+
+        <div class="map-surface" role="img" aria-label={content.mapLabel}>
+          <div class="map-canvas" aria-hidden="true">
+            <svg class="territory" viewBox="0 0 1200 780" preserveAspectRatio="xMidYMid meet">
+              <defs>
+                <pattern id="market-grid" width="24" height="24" patternUnits="userSpaceOnUse">
+                  <circle cx="1.2" cy="1.2" r="1" fill="currentColor"></circle>
+                </pattern>
+                <filter id="origin-glow" x="-200%" y="-200%" width="400%" height="400%">
+                  <feGaussianBlur stdDeviation="13"></feGaussianBlur>
+                </filter>
+                <marker
+                  id="route-arrow"
+                  viewBox="0 0 8 8"
+                  refX="7"
+                  refY="4"
+                  markerWidth="5.5"
+                  markerHeight="5.5"
+                  orient="auto"
+                >
+                  <path d="M0 0l8 4-8 4 2-4z"></path>
+                </marker>
+              </defs>
+
+              <rect class="dot-field" width="1200" height="780"></rect>
+              <g class="countries">
+                {
+                  mapCountries.map((country) => (
+                    <path
+                      class:list={[
+                        "country",
+                        country.id === "417" && "origin-country",
+                        ["398", "860", "762", "643"].includes(country.id) && "destination-country",
+                      ]}
+                      d={country.d}
+                    />
+                  ))
+                }
+              </g>
+
+              <g class="routes">
+                {
+                  destinations.map((destination, index) => (
+                    <path
+                      class={`route route-${index + 1}`}
+                      d={routePath(destination, index)}
+                      pathLength="1"
+                    />
+                  ))
+                }
+              </g>
+
+              <g class="destination-markers">
+                {
+                  destinations.map((destination, index) => (
+                    <g>
+                      <circle class="marker-ring" cx={destination.x} cy={destination.y} r="9" />
+                      <circle class="marker-core" cx={destination.x} cy={destination.y} r="4" />
+                      <text class="marker-index" x={destination.x + 13} y={destination.y - 12}>
+                        {String(index + 1).padStart(2, "0")}
+                      </text>
+                    </g>
+                  ))
+                }
+              </g>
+
+              <circle class="origin-halo" cx={origin[0]} cy={origin[1]} r="34"></circle>
+              <circle class="origin-ring" cx={origin[0]} cy={origin[1]} r="14"></circle>
+              <circle class="origin-dot" cx={origin[0]} cy={origin[1]} r="7"></circle>
+            </svg>
+
+            <div class="map-labels">
+              {
+                destinations.map((destination) => (
+                  <span
+                    class={`destination-label label-${destination.code.toLowerCase()}`}
+                    style={`--label-x: ${(destination.x / 12).toFixed(3)}%; --label-y: ${(destination.y / 7.8).toFixed(3)}%`}
+                  >
+                    {destination.name}
+                  </span>
+                ))
+              }
+              {
+                contextPoints.map((point) => (
+                  <span
+                    class={`context-label context-${point.className}`}
+                    style={`--label-x: ${(point.x / 12).toFixed(3)}%; --label-y: ${(point.y / 7.8).toFixed(3)}%`}
+                  >
+                    {point.name}
+                  </span>
+                ))
+              }
+              <span
+                class="origin-label"
+                style={`--label-x: ${(origin[0] / 12).toFixed(3)}%; --label-y: ${(origin[1] / 7.8).toFixed(3)}%`}
+              >
+                <small>{content.originLabel}</small>
+                {content.origin}
+              </span>
+            </div>
+          </div>
+
+          <div class="map-legend" aria-hidden="true">
+            <span><i class="legend-route"></i>{content.legend.routes}</span>
+            <span><i class="legend-origin"></i>{content.legend.origin}</span>
+          </div>
+        </div>
+
+        <div class="market-list" aria-label={content.marketsLabel}>
+          <p>{content.marketsLabel}</p>
+          <ul>
+            {
+              content.markets.map((market) => (
+                <li>
+                  <span>{market.code}</span>
+                  {market.name}
+                </li>
+              ))
+            }
+          </ul>
+        </div>
+      </div>
     </div>
   </div>
 </section>
 
 <style>
-  .market-section {
+  .market-direction {
     position: relative;
+    isolation: isolate;
     overflow: clip;
+    background: #f7f4ef;
+    color: #17191e;
+  }
+
+  .market-direction::before,
+  .market-direction::after {
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    content: "";
+    pointer-events: none;
+  }
+
+  .market-direction::before {
+    opacity: 0.34;
+    background-image:
+      radial-gradient(circle, rgba(29, 55, 98, 0.12) 0.65px, transparent 0.75px),
+      linear-gradient(rgba(36, 56, 88, 0.026) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(36, 56, 88, 0.026) 1px, transparent 1px);
+    background-size:
+      9px 9px,
+      5rem 5rem,
+      5rem 5rem;
+    mask-image: linear-gradient(90deg, transparent 4%, transparent 34%, #000 68%);
+  }
+
+  .market-direction::after {
     background:
-      radial-gradient(circle at 18% 24%, rgba(12, 67, 223, 0.08), transparent 26rem),
-      linear-gradient(180deg, #e9eef4 0%, #f7f8fa 100%);
-    color: #101722;
+      radial-gradient(circle at 74% 42%, rgba(255, 255, 255, 0.78), transparent 35rem),
+      linear-gradient(90deg, #f7f4ef 0%, rgba(247, 244, 239, 0.92) 34%, transparent 56%);
+  }
+
+  .transition-line {
+    position: absolute;
+    inset: 0 0 auto;
+    height: 1px;
+    background: linear-gradient(90deg, #1e5ee8, rgba(30, 94, 232, 0.09) 45%, transparent);
   }
 
   .market-shell {
+    --market-gutter: clamp(2rem, 4.4vw, 5.5rem);
+    width: 100%;
+    padding: clamp(4.5rem, 5.2vw, 6.25rem) var(--market-gutter) clamp(5rem, 6.3vw, 7.5rem);
+  }
+
+  .chapter {
     display: grid;
-    grid-template-columns: minmax(0, 1fr) minmax(21rem, 0.82fr);
-    gap: clamp(2.5rem, 6vw, 6rem);
-    width: min(100% - (var(--container-gutter) * 2), var(--container-max));
-    margin-inline: auto;
-    padding-block: clamp(5.5rem, 11vw, 11rem);
-  }
-
-  .market-map {
-    position: relative;
-    min-height: clamp(30rem, 42vw, 42rem);
-    border: 1px solid rgba(37, 43, 50, 0.12);
-    background:
-      linear-gradient(135deg, rgba(255, 255, 255, 0.78), rgba(217, 224, 234, 0.22)),
-      repeating-linear-gradient(0deg, rgba(37, 43, 50, 0.045) 0 1px, transparent 1px 5.5rem);
-  }
-
-  .corridor-title {
-    position: absolute;
-    top: clamp(1.4rem, 3vw, 2.4rem);
-    left: clamp(1.4rem, 3vw, 2.4rem);
-    z-index: 2;
-    max-width: 16rem;
-  }
-
-  .corridor-title span {
-    color: #0c43df;
-    font-family: "Space Grotesk", var(--font-display);
-    font-size: clamp(2.2rem, 4vw, 4.4rem);
-    font-weight: 700;
-    letter-spacing: -0.055em;
-    line-height: 0.9;
-  }
-
-  .corridor-line {
-    position: absolute;
-    right: clamp(1.4rem, 3vw, 2.4rem);
-    bottom: 25%;
-    left: clamp(1.4rem, 3vw, 2.4rem);
-    height: 12rem;
-    border-bottom: 1px solid rgba(12, 67, 223, 0.34);
-    border-left: 1px solid rgba(12, 67, 223, 0.16);
-  }
-
-  .corridor-line span {
-    position: absolute;
-    right: 0;
-    bottom: -1px;
-    left: 0;
-    height: 1px;
-    background: rgba(12, 67, 223, 0.55);
-    transform-origin: left center;
-  }
-
-  .region-cloud {
-    position: absolute;
-    right: clamp(1.4rem, 3vw, 2.4rem);
-    bottom: clamp(1.4rem, 3vw, 2.4rem);
-    left: clamp(1.4rem, 3vw, 2.4rem);
-    z-index: 2;
-    display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 0.6rem;
-  }
-
-  .region-label {
-    display: inline-flex;
+    grid-template-columns: auto minmax(3rem, 1fr) auto;
     align-items: center;
-    min-height: 3.2rem;
-    border: 1px solid rgba(37, 43, 50, 0.12);
-    background: rgba(255, 255, 255, 0.68);
-    padding: 0.58rem 0.72rem;
-    color: rgba(16, 23, 34, 0.74);
-    font-family: "Space Grotesk", var(--font-display);
-    font-size: clamp(0.72rem, 1vw, 0.9rem);
-    font-weight: 650;
-    line-height: 1;
+    gap: 1.5rem;
+  }
+
+  .chapter p {
+    margin: 0;
+    color: #1554dd;
+    font:
+      750 clamp(0.7rem, 0.68vw, 0.82rem) / 1.2 "Space Grotesk",
+      var(--font-display);
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+  }
+
+  .chapter p:last-child {
+    color: rgba(23, 25, 30, 0.52);
+  }
+
+  .chapter > span {
+    height: 1px;
+    background: linear-gradient(90deg, #2764e8 0 3.5rem, rgba(37, 48, 65, 0.16) 3.5rem);
+  }
+
+  .market-scene {
+    position: relative;
+    min-height: clamp(52rem, 47vw, 56rem);
+    margin-top: clamp(3.25rem, 4.2vw, 5rem);
   }
 
   .market-copy {
-    align-self: center;
+    position: relative;
+    z-index: 2;
+    width: min(54%, 58rem);
   }
 
-  .market-copy h2 {
-    max-width: 12ch;
+  h2 {
+    max-width: none;
     margin: 0;
-    color: #111722;
-    font-family: "Space Grotesk", var(--font-display);
-    font-size: clamp(2.85rem, 5.7vw, 5.9rem);
-    font-weight: 500;
-    letter-spacing: -0.052em;
-    line-height: 0.94;
-    text-wrap: balance;
+    padding-block: 0.08em 0.12em;
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: clamp(4rem, 5vw, 6rem);
+    font-weight: 400;
+    letter-spacing: -0.045em;
+    line-height: 1.02;
   }
 
-  .market-copy p {
-    max-width: 37rem;
-    margin: 1.55rem 0 0;
-    color: rgba(16, 23, 34, 0.68);
-    font-size: clamp(1rem, 1.12vw, 1.12rem);
-    font-weight: 520;
-    line-height: 1.62;
+  .title-line {
+    display: block;
+    white-space: nowrap;
   }
 
-  .market-copy ul {
+  .title-origin {
+    display: flex;
+  }
+
+  .title-line em {
+    color: #1757d8;
+    font-style: normal;
+  }
+
+  .intro {
+    max-width: 39rem;
+    margin: clamp(2rem, 2.4vw, 2.75rem) 0 0;
+    color: rgba(23, 25, 30, 0.66);
+    font:
+      520 clamp(1rem, 1vw, 1.16rem) / 1.62 "Manrope",
+      var(--font-body);
+  }
+
+  .proof-row {
     display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    margin: clamp(2.5rem, 3vw, 3.5rem) 0 0;
+    padding: 0;
+    border: 1px solid rgba(36, 46, 61, 0.18);
+    background: rgba(255, 255, 255, 0.3);
+    list-style: none;
+  }
+
+  .proof-row li {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    min-height: clamp(15rem, 14vw, 17rem);
+    padding: clamp(1.15rem, 1.3vw, 1.55rem);
+  }
+
+  .proof-row li + li {
+    border-left: 1px solid rgba(36, 46, 61, 0.18);
+  }
+
+  .proof-icon {
+    width: clamp(2.25rem, 2.35vw, 2.8rem);
+    height: clamp(2.25rem, 2.35vw, 2.8rem);
+    color: #1d60ed;
+    fill: none;
+  }
+
+  .proof-row h3 {
+    margin: 1.5rem 0 0;
+    font:
+      750 clamp(0.7rem, 0.72vw, 0.84rem) / 1.25 "Space Grotesk",
+      var(--font-display);
+    text-transform: uppercase;
+    overflow-wrap: anywhere;
+  }
+
+  .proof-row p {
+    margin: 0.68rem 0 0;
+    color: rgba(23, 25, 30, 0.58);
+    font:
+      520 clamp(0.75rem, 0.74vw, 0.86rem) / 1.48 "Manrope",
+      var(--font-body);
+  }
+
+  .card-arrow {
+    margin-top: auto;
+    padding-top: 1rem;
+    color: #1d60ed;
+    font-size: 1.2rem;
+    line-height: 1;
+  }
+
+  .market-cta {
+    display: inline-flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 2rem;
+    min-width: 18rem;
+    min-height: 3.85rem;
+    margin-top: 1.5rem;
+    padding: 0 1.15rem 0 1.4rem;
+    border: 1px solid #1c5ce0;
+    color: #1554d8;
+    font:
+      750 0.78rem/1 "Space Grotesk",
+      var(--font-display);
+    letter-spacing: 0.08em;
+    text-decoration: none;
+    text-transform: uppercase;
+    transition:
+      background 180ms var(--ease-out),
+      color 180ms var(--ease-out);
+  }
+
+  .market-cta:hover,
+  .market-cta:focus-visible {
+    background: #1554d8;
+    color: #fff;
+  }
+
+  .map-column {
+    position: absolute;
+    inset: -3.5rem calc(var(--market-gutter) * -1) 0 39%;
+    z-index: 1;
+    display: grid;
+    grid-template-rows: auto minmax(0, 1fr) auto;
+    min-width: 0;
+  }
+
+  .map-meta {
+    display: flex;
+    justify-content: space-between;
+    padding: 0 var(--market-gutter) 0 11%;
+    color: rgba(23, 25, 30, 0.38);
+    font:
+      650 0.64rem/1.2 "Space Grotesk",
+      var(--font-display);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  .map-surface {
+    position: relative;
+    overflow: clip;
+    min-height: 0;
+  }
+
+  .map-canvas {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    mask-image: linear-gradient(90deg, transparent 0%, rgba(0, 0, 0, 0.28) 11%, #000 28%);
+  }
+
+  .territory {
+    width: 100%;
+    height: 100%;
+    color: rgba(31, 68, 130, 0.1);
+  }
+
+  .dot-field {
+    fill: url(#market-grid);
+    opacity: 0.45;
+  }
+
+  .country {
+    fill: rgba(246, 245, 241, 0.3);
+    stroke: rgba(43, 57, 77, 0.22);
+    stroke-width: 1;
+    vector-effect: non-scaling-stroke;
+  }
+
+  .destination-country {
+    fill: rgba(238, 240, 241, 0.38);
+  }
+
+  .origin-country {
+    fill: rgba(35, 96, 231, 0.22);
+    stroke: rgba(25, 82, 212, 0.72);
+    stroke-width: 1.4;
+  }
+
+  .route {
+    fill: none;
+    stroke: #2365ed;
+    stroke-width: 1.65;
+    marker-end: url(#route-arrow);
+    vector-effect: non-scaling-stroke;
+  }
+
+  #route-arrow path {
+    fill: #2365ed;
+  }
+
+  .marker-ring {
+    fill: #f8f5ef;
+    stroke: #2365ed;
+    stroke-width: 1.8;
+    vector-effect: non-scaling-stroke;
+  }
+
+  .marker-core {
+    fill: rgba(35, 101, 237, 0.2);
+    stroke: none;
+  }
+
+  .marker-index {
+    fill: rgba(23, 25, 30, 0.42);
+    font:
+      650 9px/1 "Space Grotesk",
+      var(--font-display);
+    letter-spacing: 0.08em;
+  }
+
+  .origin-halo {
+    fill: #1f62ef;
+    filter: url(#origin-glow);
+    opacity: 0.34;
+  }
+
+  .origin-ring {
+    fill: #f8f5ef;
+    stroke: #1554dd;
+    stroke-width: 2.2;
+    vector-effect: non-scaling-stroke;
+  }
+
+  .origin-dot {
+    fill: #1554dd;
+  }
+
+  .map-labels {
+    position: absolute;
+    inset: 0;
+  }
+
+  .destination-label,
+  .context-label,
+  .origin-label {
+    position: absolute;
+    top: var(--label-y);
+    left: var(--label-x);
+    z-index: 1;
+    color: rgba(23, 25, 30, 0.72);
+    font:
+      700 clamp(0.62rem, 0.68vw, 0.78rem) / 1.2 "Space Grotesk",
+      var(--font-display);
+    text-transform: uppercase;
+    white-space: nowrap;
+    transform: translate(0.8rem, -1.6rem);
+  }
+
+  .label-uz,
+  .label-tj {
+    transform: translate(-100%, -1.6rem);
+  }
+
+  .label-kz {
+    transform: translate(0.8rem, -2rem);
+  }
+
+  .label-tj {
+    transform: translate(-100%, 0.9rem);
+  }
+
+  .context-label {
+    color: rgba(23, 25, 30, 0.42);
+    font-size: clamp(0.58rem, 0.6vw, 0.7rem);
+    transform: translate(-50%, -50%);
+  }
+
+  .origin-label {
+    display: grid;
+    gap: 0.2rem;
+    color: #123b98;
+    font-size: clamp(0.72rem, 0.82vw, 0.94rem);
+    transform: translate(1rem, -0.35rem);
+  }
+
+  .origin-label small {
+    color: rgba(23, 25, 30, 0.48);
+    font-size: 0.58rem;
+    letter-spacing: 0.08em;
+  }
+
+  .map-legend {
+    position: absolute;
+    right: var(--market-gutter);
+    bottom: 1.25rem;
+    display: grid;
+    gap: 0.7rem;
+    min-width: 15rem;
+    padding: 1rem 1.1rem;
+    border: 1px solid rgba(36, 46, 61, 0.16);
+    background: rgba(250, 248, 244, 0.72);
+    backdrop-filter: blur(8px);
+  }
+
+  .map-legend span {
+    display: flex;
+    align-items: center;
     gap: 0.75rem;
-    margin: 2rem 0 0;
+    color: rgba(23, 25, 30, 0.6);
+    font:
+      550 0.7rem/1.25 "Manrope",
+      var(--font-body);
+  }
+
+  .map-legend i {
+    position: relative;
+    flex: 0 0 auto;
+    width: 2.25rem;
+    height: 0.55rem;
+  }
+
+  .legend-route::before {
+    position: absolute;
+    top: 50%;
+    right: 0;
+    left: 0;
+    height: 1px;
+    background: #2365ed;
+    content: "";
+  }
+
+  .legend-route::after {
+    position: absolute;
+    top: calc(50% - 0.18rem);
+    right: 0;
+    width: 0.35rem;
+    height: 0.35rem;
+    border-top: 1px solid #2365ed;
+    border-right: 1px solid #2365ed;
+    content: "";
+    transform: rotate(45deg);
+  }
+
+  .legend-origin::before,
+  .legend-origin::after {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    border-radius: 50%;
+    content: "";
+    transform: translate(-50%, -50%);
+  }
+
+  .legend-origin::before {
+    width: 0.6rem;
+    height: 0.6rem;
+    border: 1px solid #1554dd;
+    background: #f8f5ef;
+  }
+
+  .legend-origin::after {
+    width: 0.25rem;
+    height: 0.25rem;
+    background: #1554dd;
+  }
+
+  .market-list {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    align-items: center;
+    gap: 2rem;
+    margin: 0 var(--market-gutter) 0 10%;
+    padding-top: 1rem;
+    border-top: 1px solid rgba(36, 46, 61, 0.15);
+  }
+
+  .market-list > p {
+    margin: 0;
+    color: rgba(23, 25, 30, 0.44);
+    font:
+      650 0.65rem/1.3 "Space Grotesk",
+      var(--font-display);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .market-list ul {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    gap: 0.5rem 1.2rem;
+    margin: 0;
     padding: 0;
     list-style: none;
   }
 
-  .market-copy li {
-    padding-block: 0.8rem;
-    border-top: 1px solid rgba(37, 43, 50, 0.14);
-    color: rgba(16, 23, 34, 0.76);
-    font-size: 0.92rem;
-    font-weight: 620;
-    line-height: 1.35;
-  }
-
-  .home-text-link {
+  .market-list li {
     display: inline-flex;
-    align-items: center;
-    gap: 0.72rem;
-    margin-top: 1.8rem;
-    color: #0c43df;
-    font-family: "Space Grotesk", var(--font-display);
-    font-size: 0.78rem;
-    font-weight: 700;
-    letter-spacing: 0.045em;
-    line-height: 1;
-    text-decoration: none;
-    text-transform: uppercase;
+    align-items: baseline;
+    gap: 0.4rem;
+    color: rgba(23, 25, 30, 0.7);
+    font:
+      650 0.72rem/1.3 "Space Grotesk",
+      var(--font-display);
   }
 
-  .home-text-link span:last-child {
-    transition: transform 220ms var(--ease-out);
+  .market-list li span {
+    color: #1a5be5;
+    font-size: 0.61rem;
   }
 
-  .home-text-link:hover span:last-child,
-  .home-text-link:focus-visible span:last-child {
-    transform: translateX(0.2rem);
-  }
-
-  @media (max-width: 980px) {
-    .market-shell {
-      grid-template-columns: 1fr;
+  @media (prefers-reduced-motion: no-preference) {
+    .map-column:not([data-reveal-state="visible"]) .route {
+      stroke-dasharray: 1;
+      stroke-dashoffset: 1;
     }
 
-    .market-map {
-      min-height: 31rem;
-      order: 2;
+    .map-column[data-reveal-state="visible"] .route {
+      animation: route-draw 1.2s var(--ease-out) both;
+    }
+
+    .map-column[data-reveal-state="visible"] .route-2 {
+      animation-delay: 120ms;
+    }
+
+    .map-column[data-reveal-state="visible"] .route-3 {
+      animation-delay: 220ms;
+    }
+
+    .map-column[data-reveal-state="visible"] .route-4 {
+      animation-delay: 320ms;
+    }
+  }
+
+  @keyframes route-draw {
+    from {
+      stroke-dasharray: 1;
+      stroke-dashoffset: 1;
+    }
+    to {
+      stroke-dasharray: 1;
+      stroke-dashoffset: 0;
+    }
+  }
+
+  @media (max-width: 1280px) {
+    .proof-row {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .proof-row li {
+      min-height: 11.5rem;
+    }
+
+    .proof-row li:nth-child(3) {
+      border-top: 1px solid rgba(36, 46, 61, 0.18);
+      border-left: 0;
+    }
+
+    .proof-row li:nth-child(4) {
+      border-top: 1px solid rgba(36, 46, 61, 0.18);
+    }
+
+    .market-scene {
+      min-height: 55rem;
+    }
+  }
+
+  @media (max-width: 1050px) {
+    .chapter {
+      grid-template-columns: auto 1fr;
+    }
+
+    .chapter p:last-child {
+      display: none;
+    }
+
+    .market-scene {
+      display: grid;
+      gap: 3.5rem;
+      min-height: 0;
+    }
+
+    .market-copy {
+      width: 100%;
+    }
+
+    h2 {
+      max-width: 42rem;
+    }
+
+    .map-column {
+      position: relative;
+      inset: auto;
+      min-height: clamp(36rem, 76vw, 48rem);
+    }
+
+    .map-meta {
+      padding-inline: 0;
+    }
+
+    .map-canvas {
+      inset: 1.5rem 0 3.5rem;
+    }
+
+    .map-legend {
+      right: 0;
+    }
+
+    .market-list {
+      margin-inline: 0;
     }
   }
 
   @media (max-width: 620px) {
-    .market-copy h2 {
-      font-size: clamp(2.55rem, 12vw, 4rem);
+    .market-direction::before {
+      mask-image: linear-gradient(180deg, transparent 3%, transparent 48%, #000 76%);
     }
 
-    .market-map {
-      min-height: 34rem;
+    .market-shell {
+      --market-gutter: clamp(1rem, 5.2vw, 1.5rem);
+      padding-block: 4.75rem 5rem;
     }
 
-    .corridor-line {
-      height: 8rem;
+    .market-scene {
+      gap: 2.75rem;
+      margin-top: 3rem;
     }
 
-    .region-cloud {
+    h2 {
+      max-width: 100%;
+      font-size: clamp(3rem, 13.8vw, 4.15rem);
+      line-height: 1.02;
+      overflow-wrap: anywhere;
+    }
+
+    .title-line {
+      white-space: normal;
+    }
+
+    .title-origin {
+      display: block;
+    }
+
+    .title-origin > span,
+    .title-origin em {
+      display: block;
+      white-space: nowrap;
+    }
+
+    .intro {
+      margin-top: 1.75rem;
+    }
+
+    .proof-row {
+      grid-template-columns: 1fr;
+      margin-top: 2.5rem;
+    }
+
+    .proof-row li {
+      display: grid;
+      grid-template-columns: 2.8rem minmax(0, 1fr) auto;
+      grid-template-rows: auto auto;
+      column-gap: 0.9rem;
+      min-height: 0;
+      padding: 1.1rem;
+    }
+
+    .proof-row li + li,
+    .proof-row li:nth-child(3),
+    .proof-row li:nth-child(4) {
+      border-top: 1px solid rgba(36, 46, 61, 0.18);
+      border-left: 0;
+    }
+
+    .proof-icon {
+      grid-row: 1 / 3;
+      align-self: center;
+    }
+
+    .proof-row h3 {
+      margin: 0;
+    }
+
+    .proof-row p {
+      grid-column: 2;
+      margin-top: 0.35rem;
+    }
+
+    .card-arrow {
+      grid-row: 1 / 3;
+      grid-column: 3;
+      align-self: center;
+      margin: 0;
+      padding: 0;
+    }
+
+    .market-cta {
+      width: 100%;
+      min-width: 0;
+    }
+
+    .map-column {
+      min-height: 35rem;
+    }
+
+    .map-meta {
+      padding-inline: 0;
+    }
+
+    .map-meta span:last-child {
+      display: none;
+    }
+
+    .map-canvas {
+      top: 1.5rem;
+      right: -18%;
+      bottom: 5.25rem;
+      left: -27%;
+      mask-image: none;
+    }
+
+    .context-label {
+      display: none;
+    }
+
+    .destination-label {
+      font-size: 0.68rem;
+    }
+
+    .origin-label {
+      max-width: 8rem;
+      font-size: 0.7rem;
+      white-space: normal;
+    }
+
+    .origin-label small {
+      display: none;
+    }
+
+    .map-legend {
+      right: 0;
+      bottom: 0;
+      left: 0;
       grid-template-columns: 1fr 1fr;
+      min-width: 0;
+      padding: 0.85rem;
+      background: rgba(250, 248, 244, 0.82);
+    }
+
+    .map-legend span {
+      align-items: flex-start;
+      font-size: 0.64rem;
+    }
+
+    .market-list {
+      grid-template-columns: 1fr;
+      gap: 0.8rem;
+      margin-top: 1rem;
+    }
+
+    .market-list ul {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      justify-content: start;
+      gap: 0;
+    }
+
+    .market-list li {
+      min-width: 0;
+      padding: 0.8rem 0;
+      border-bottom: 1px solid rgba(36, 46, 61, 0.15);
+      overflow-wrap: anywhere;
     }
   }
 </style>
