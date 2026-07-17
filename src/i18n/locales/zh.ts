@@ -1,4 +1,36 @@
 const zh = {
+  internalPages: {
+    story: {
+      eyebrow: "品牌故事",
+      title: "迈向国家级生产之路。",
+      description: "从商用运输经验，到吉尔吉斯斯坦首个国家级 OEM 平台。",
+      metadataTitle: "品牌故事",
+    },
+    projects: {
+      eyebrow: "项目",
+      title: "商用出行平台。",
+      description: "面向区域市场开发公交车、卡车与电动出行方向。",
+      metadataTitle: "项目",
+    },
+    capabilities: {
+      eyebrow: "能力",
+      title: "工程与生产能力。",
+      description: "BELES 平台背后的制造规模、室内车间与完整生产周期。",
+      metadataTitle: "能力",
+    },
+    about: {
+      eyebrow: "关于",
+      title: "国家级工业平台。",
+      description: "BELES 正在为吉尔吉斯斯坦的新汽车产业奠定基础。",
+      metadataTitle: "关于",
+    },
+    contact: {
+      eyebrow: "联系",
+      title: "与 BELES 开启合作。",
+      description: "适用于商业咨询、合作伙伴关系与工程项目。",
+      metadataTitle: "联系",
+    },
+  },
   home: {
     nationalOem: {
       eyebrow: "01 / National OEM",

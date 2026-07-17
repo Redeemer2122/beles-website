@@ -1,4 +1,38 @@
 const en = {
+  internalPages: {
+    story: {
+      eyebrow: "Story",
+      title: "The road to national production.",
+      description:
+        "From commercial transport experience to Kyrgyzstan’s first national OEM platform.",
+      metadataTitle: "Story",
+    },
+    projects: {
+      eyebrow: "Projects",
+      title: "Commercial mobility platforms.",
+      description: "Buses, trucks and electric mobility directions developed for regional markets.",
+      metadataTitle: "Projects",
+    },
+    capabilities: {
+      eyebrow: "Capabilities",
+      title: "Engineering and production capability.",
+      description:
+        "Manufacturing scale, covered workshops and the full production cycle behind BELES platforms.",
+      metadataTitle: "Capabilities",
+    },
+    about: {
+      eyebrow: "About",
+      title: "A national industrial platform.",
+      description: "BELES builds the foundation for a new automotive industry in Kyrgyzstan.",
+      metadataTitle: "About",
+    },
+    contact: {
+      eyebrow: "Contact",
+      title: "Start a partnership with BELES.",
+      description: "For commercial inquiries, partnerships and engineering programs.",
+      metadataTitle: "Contact",
+    },
+  },
   home: {
     nationalOem: {
       eyebrow: "01 / National OEM",

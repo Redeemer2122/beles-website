@@ -1,0 +1,26 @@
+---
+import InternalPageHero from "../components/sections/internal/InternalPageHero.astro";
+import en from "../i18n/locales/en";
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { internalPageKeys } from "../lib/internalPages";
+import type { InternalPageKey } from "../lib/internalPages";
+
+export function getStaticPaths() {
+  return internalPageKeys.map((page) => ({
+    params: { page },
+  }));
+}
+
+const page = Astro.params.page as InternalPageKey;
+const content = en.internalPages[page];
+---
+
+<BaseLayout title={content.metadataTitle} description={content.description} lang="en">
+  <main id="main">
+    <InternalPageHero
+      eyebrow={content.eyebrow}
+      title={content.title}
+      description={content.description}
+    />
+  </main>
+</BaseLayout>
