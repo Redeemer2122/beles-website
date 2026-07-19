@@ -178,13 +178,15 @@ const processIcons = processIconNames.map((name) => phosphorIcons.icons[name]);
     max-width: 12ch;
     margin: 0 0 -0.08em;
     padding-bottom: 0.08em;
-    font-family: Georgia, "Times New Roman", serif;
-    font-size: clamp(3.8rem, 5.25vw, 6.6rem);
-    font-weight: 400;
-    letter-spacing: -0.04em;
+    font-family: var(--font-home-heading);
+    font-size: var(--home-heading-size-compact);
+    font-weight: var(--font-home-heading-weight);
+    letter-spacing: var(--font-home-heading-tracking);
     line-height: 0.96;
+    overflow-wrap: normal;
     text-wrap: balance;
   }
+
   .intro {
     max-width: 40rem;
     margin: clamp(2rem, 2vw, 2.5rem) 0 0;
@@ -347,8 +349,7 @@ const processIcons = processIconNames.map((name) => phosphorIcons.icons[name]);
       margin-top: 3rem;
     }
     h2 {
-      font-size: clamp(2.85rem, 12vw, 4.35rem);
-      overflow-wrap: anywhere;
+      font-size: var(--home-heading-size-mobile);
     }
     .metrics {
       grid-template-columns: 1fr;

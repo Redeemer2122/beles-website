@@ -267,10 +267,10 @@ const certificateSpec =
     max-width: 29.5rem;
     padding-bottom: 0.08em;
     margin: 0;
-    font-family: Georgia, "Times New Roman", serif;
-    font-size: clamp(3.35rem, 3.68vw, 4.05rem);
-    font-weight: 400;
-    letter-spacing: -0.035em;
+    font-family: var(--font-home-heading);
+    font-size: var(--home-heading-size-compact);
+    font-weight: var(--font-home-heading-weight);
+    letter-spacing: var(--font-home-heading-tracking);
     line-height: 1;
     overflow-wrap: normal;
     text-wrap: normal;
@@ -665,10 +665,6 @@ const certificateSpec =
       grid-template-columns: minmax(18rem, 0.5fr) minmax(0, 1fr);
     }
 
-    .evolution-copy h2 {
-      font-size: 3.85rem;
-    }
-
     .evolution-image-frame {
       height: 30rem;
       min-height: 30rem;
@@ -717,9 +713,9 @@ const certificateSpec =
 
     .evolution-copy h2 {
       max-width: 11ch;
-      font-size: 3.85rem;
+      font-size: var(--home-heading-size-mobile);
       line-height: 0.94;
-      overflow-wrap: anywhere;
+      overflow-wrap: normal;
     }
 
     .evolution-image-frame {
@@ -820,7 +816,7 @@ const certificateSpec =
 
     .evolution-copy h2 {
       max-width: 10.5ch;
-      font-size: 3rem;
+      font-size: var(--home-heading-size-mobile);
       line-height: 0.98;
     }
 

@@ -25,6 +25,7 @@ const currentLocale = getLocaleFromPathname(Astro.url.pathname);
 const ctaHref = getLocalizedPath("/story/", currentLocale);
 const certificationParts = content.certification.split("K59");
 const proof = content.proof;
+const hasCjkTerminalPunctuation = (line: string) => /[。！？]$/.test(line);
 ---
 
 <section class="national-oem-section" aria-labelledby="national-oem-title">
@@ -57,8 +58,10 @@ const proof = content.proof;
                 data-reveal
                 style={`--reveal-delay: ${180 + index * 90}ms`}
               >
-                {index === content.titleLines.length - 1 ? line.replace(/\.$/, "") : line}
-                {index === content.titleLines.length - 1 ? (
+                {index === content.titleLines.length - 1 && !hasCjkTerminalPunctuation(line)
+                  ? line.replace(/\.$/, "")
+                  : line}
+                {index === content.titleLines.length - 1 && !hasCjkTerminalPunctuation(line) ? (
                   <span class="national-title-dot">.</span>
                 ) : null}
               </span>
@@ -260,11 +263,12 @@ const proof = content.proof;
     padding-bottom: 0.14em;
     margin: 0;
     color: rgb(var(--national-ink));
-    font-family: var(--national-serif);
-    font-size: clamp(4.38rem, 5.2vw, 6.42rem);
-    font-weight: 400;
-    letter-spacing: -0.052em;
+    font-family: var(--font-home-heading);
+    font-size: var(--home-heading-size-wide);
+    font-weight: var(--font-home-heading-weight);
+    letter-spacing: var(--font-home-heading-tracking);
     line-height: 0.96;
+    overflow-wrap: normal;
   }
 
   .national-title-line {
@@ -598,10 +602,6 @@ const proof = content.proof;
       gap: 2.6rem;
     }
 
-    .national-statement h2 {
-      font-size: clamp(4.05rem, 6.4vw, 5.65rem);
-    }
-
     .national-data {
       grid-template-columns: 0.82fr 1.18fr;
       min-height: 29rem;
@@ -641,7 +641,7 @@ const proof = content.proof;
 
     .national-statement h2 {
       max-width: 11.8ch;
-      font-size: clamp(3.45rem, 11.8vw, 5rem);
+      font-size: var(--home-heading-size-mobile);
       line-height: 0.99;
     }
 
@@ -701,7 +701,7 @@ const proof = content.proof;
 
     .national-statement h2 {
       max-width: 11.6ch;
-      font-size: clamp(3rem, 12.4vw, 3.85rem);
+      font-size: var(--home-heading-size-mobile);
       line-height: 1;
     }
 

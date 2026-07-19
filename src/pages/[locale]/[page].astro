@@ -1,5 +1,6 @@
 ---
 import InternalPageHero from "../../components/sections/internal/InternalPageHero.astro";
+import ProjectsPage from "../../components/sections/projects/ProjectsPage.astro";
 import { locales } from "../../i18n";
 import type { Locale } from "../../i18n";
 import en from "../../i18n/locales/en";
@@ -28,10 +29,16 @@ const content = translations[locale].internalPages[page];
 
 <BaseLayout title={content.metadataTitle} description={content.description} lang={locale}>
   <main id="main">
-    <InternalPageHero
-      eyebrow={content.eyebrow}
-      title={content.title}
-      description={content.description}
-    />
+    {
+      page === "projects" ? (
+        <ProjectsPage content={content} />
+      ) : (
+        <InternalPageHero
+          eyebrow={content.eyebrow}
+          title={content.title}
+          description={content.description}
+        />
+      )
+    }
   </main>
 </BaseLayout>

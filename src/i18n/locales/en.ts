@@ -10,8 +10,60 @@ const en = {
     projects: {
       eyebrow: "Projects",
       title: "Commercial mobility platforms.",
-      description: "Buses, trucks and electric mobility directions developed for regional markets.",
+      titleLines: ["Commercial", "mobility platforms"],
+      description:
+        "Passenger and cargo platforms developed for cities, fleets and regional markets.",
       metadataTitle: "Projects",
+      featured: {
+        eyebrow: "Featured project",
+        title: "BELES UMUT 12",
+        category: "Urban bus / 12m",
+        description:
+          "A 12-metre urban bus developed as a passenger platform for city and regional operating conditions.",
+        cta: "View project",
+        imageAlt: "Temporary image representing the BELES UMUT 12 urban bus project.",
+      },
+      directions: [
+        {
+          slug: "urban-bus-platforms",
+          title: "Urban Bus Platforms",
+          description:
+            "Passenger platforms developed around the needs of cities and public fleets.",
+          image: "/img/projects/projects-urban-bus.webp",
+          imageAlt: "Temporary image representing an urban bus platform.",
+          mediaFit: "cover",
+          mediaPosition: "58% center",
+        },
+        {
+          slug: "electric-bus-platform",
+          title: "Electric Bus Platform",
+          description: "An electric passenger direction for evolving urban mobility systems.",
+          image: "/img/projects/projects-electric-bus.webp",
+          imageAlt: "Temporary image of an electric city bus.",
+          mediaFit: "cover",
+          mediaPosition: "52% center",
+        },
+        {
+          slug: "commercial-trucks",
+          title: "Commercial Trucks",
+          description:
+            "Cargo platforms for fleets, distribution and regional commercial transport.",
+          image: "/img/projects/projects-commercial-truck.webp",
+          imageAlt: "Temporary image of a commercial cargo truck.",
+          mediaFit: "cover",
+          mediaPosition: "52% center",
+        },
+        {
+          slug: "heavy-special-vehicles",
+          title: "Heavy & Special Vehicles",
+          description:
+            "Heavy and special-purpose directions for demanding roads and operating conditions.",
+          image: "/img/projects/projects-heavy-special.webp",
+          imageAlt: "Temporary image of a heavy special-purpose truck.",
+          mediaFit: "cover",
+          mediaPosition: "54% center",
+        },
+      ],
     },
     capabilities: {
       eyebrow: "Capabilities",
@@ -38,8 +90,8 @@ const en = {
       eyebrow: "01 / National OEM",
       origin: "Kyrgyz Republic",
       certification: "WMI K59 / SAE International",
-      title: "Kyrgyzstan's first national OEM for commercial mobility.",
-      titleLines: ["Kyrgyzstan's", "first national OEM", "for commercial", "mobility."],
+      title: "Kyrgyzstan's first commercial mobility OEM.",
+      titleLines: ["Kyrgyzstan's", "commercial", "mobility OEM."],
       body: "BELES is building the foundation for a new automotive industry in Kyrgyzstan — connecting engineering, manufacturing and regional export potential.",
       cta: "Read the Story",
       proofLabel: "BELES national OEM proof points",
@@ -69,7 +121,7 @@ const en = {
         years: "2012 — 2022",
         direction: "From experience to production",
       },
-      title: "From transport expertise to national production.",
+      title: "From transport expertise to production.",
       body: "BELES evolved from commercial transport and logistics experience into a national manufacturing platform for commercial mobility in the Kyrgyz Republic.",
       cta: "Explore the Story",
       imageAlt: "Commercial bus production line inside an industrial assembly facility.",
@@ -113,7 +165,7 @@ const en = {
         index: "03",
         label: "Mobility Platforms",
       },
-      title: "Commercial mobility platforms for cities, fleets and industry.",
+      title: "Mobility platforms for cities and industry.",
       body: "BELES develops passenger and cargo directions across buses, trucks, electric vehicles and commercial transport platforms.",
       cta: "View Projects",
       panels: [
@@ -146,7 +198,7 @@ const en = {
     manufacturing: {
       eyebrow: "04 / Manufacturing Scale",
       label: "Production base",
-      title: "Industrial scale with a full production cycle.",
+      title: "Industrial scale, full production cycle.",
       body: "BELES operates a large-scale production base for covered workshops, vehicle assembly and the core processes behind commercial mobility platforms.",
       metrics: {
         territory: {
@@ -175,7 +227,7 @@ const en = {
       title: {
         lead: "Built in",
         accent: "Kyrgyzstan.",
-        second: "Positioned for",
+        second: "Ready for",
         third: "regional export.",
       },
       body: "BELES develops commercial mobility platforms for regional markets — combining local production, EAEU compliance and adaptation to Central Asian roads and climate.",
