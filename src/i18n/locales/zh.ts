@@ -18,7 +18,7 @@ const zh = {
         category: "城市公交 / 12 米",
         description: "面向城市与区域运营环境开发的十二米城市公交客运平台。",
         cta: "查看项目",
-        imageAlt: "代表 BELES UMUT 12 城市公交项目的临时图片。",
+        imageAlt: "BELES UMUT 12 城市公交车。",
       },
       directions: [
         {

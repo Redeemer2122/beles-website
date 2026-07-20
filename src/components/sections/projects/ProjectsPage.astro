@@ -30,8 +30,8 @@ type Props = {
 const { content } = Astro.props;
 const titleLines = content.titleLines ?? [content.title];
 
-// Temporary project placeholders. Replace with approved BELES vehicle assets later.
-const featuredImage = "/img/projects/projects-umut-12.webp";
+const featuredImage = "/img/projects/projects-featured-umut12.webp";
+const heroImage = "/img/projects/projects-hero-bg.webp";
 ---
 
 <div class="projects-page">
@@ -46,7 +46,7 @@ const featuredImage = "/img/projects/projects-umut-12.webp";
       </div>
 
       <div class="projects-hero__architecture" aria-hidden="true">
-        <span></span>
+        <img src={heroImage} alt="" width="1672" height="941" decoding="async" />
       </div>
     </div>
   </section>
@@ -155,7 +155,7 @@ const featuredImage = "/img/projects/projects-umut-12.webp";
 
   .projects-hero {
     position: relative;
-    min-height: 39rem;
+    min-height: clamp(39rem, 47vw, 44rem);
     border-bottom: 1px solid var(--projects-border);
     background: #f5f6f7;
   }
@@ -175,16 +175,17 @@ const featuredImage = "/img/projects/projects-umut-12.webp";
   .projects-hero__shell {
     position: relative;
     display: flex;
-    align-items: flex-start;
+    align-items: center;
     min-height: inherit;
-    padding-top: calc(4.75rem + 4.75rem);
+    padding-top: calc(4.75rem + 3.75rem);
     padding-bottom: 4.5rem;
   }
 
   .projects-hero__copy {
     position: relative;
     z-index: 2;
-    width: min(55rem, 58vw);
+    width: min(48rem, 48%);
+    min-width: 0;
   }
 
   .projects-hero h1 {
@@ -198,80 +199,58 @@ const featuredImage = "/img/projects/projects-umut-12.webp";
     line-height: 0.92;
   }
 
+  :global(html[lang="ky"]) .projects-hero h1 {
+    font-size: 4.95rem;
+  }
+
   .projects-hero h1 span:last-child::after {
     color: var(--projects-blue);
     content: ".";
   }
 
   .projects-hero__description {
-    max-width: 37rem;
-    margin: 2.75rem 0 0 7rem;
-    padding-left: 1.5rem;
-    border-left: 2px solid var(--projects-blue);
+    max-width: 30rem;
+    margin: 2.35rem 0 0;
+    padding-top: 1.1rem;
+    border-top: 2px solid var(--projects-blue);
     color: rgba(24, 33, 43, 0.67);
-    font-size: 1.12rem;
+    font-size: 1.06rem;
     line-height: 1.6;
     text-wrap: pretty;
   }
 
   .projects-hero__architecture {
     position: absolute;
-    right: 0;
-    bottom: 0;
-    width: min(56vw, 67rem);
-    height: 78%;
+    inset: 0;
     overflow: hidden;
-    border-top: 1px solid rgba(18, 86, 188, 0.11);
-    border-left: 1px solid rgba(18, 86, 188, 0.11);
-    border-radius: 68% 0 0 0 / 52% 0 0 0;
-    background: repeating-linear-gradient(
-      90deg,
-      rgba(18, 86, 188, 0.075) 0,
-      rgba(18, 86, 188, 0.075) 1px,
-      transparent 1px,
-      transparent 1.5rem
-    );
-    opacity: 0.74;
+    opacity: 0.78;
     pointer-events: none;
-    transform: translateX(8%);
-  }
-
-  .projects-hero__architecture::before,
-  .projects-hero__architecture::after,
-  .projects-hero__architecture span {
-    position: absolute;
-    border: 1px solid rgba(18, 86, 188, 0.13);
-    border-radius: 50%;
-    content: "";
-  }
-
-  .projects-hero__architecture::before {
-    right: -8%;
-    bottom: -87%;
-    width: 106%;
-    aspect-ratio: 1;
   }
 
   .projects-hero__architecture::after {
-    right: 14%;
-    bottom: -59%;
-    width: 66%;
-    aspect-ratio: 1;
-    border-style: dashed;
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      90deg,
+      rgba(245, 246, 247, 0.98) 0%,
+      rgba(245, 246, 247, 0.76) 24%,
+      rgba(245, 246, 247, 0.14) 46%,
+      transparent 62%
+    );
+    content: "";
   }
 
-  .projects-hero__architecture span {
-    right: 35%;
-    bottom: 13%;
-    width: 0.55rem;
-    aspect-ratio: 1;
-    border-radius: 0;
-    background: #f5f6f7;
-    transform: rotate(45deg);
+  .projects-hero__architecture img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+    filter: saturate(0.78) contrast(0.98);
   }
 
   .projects-portfolio {
-    padding-block: 2rem clamp(4rem, 5vw, 6rem);
+    padding-block: 2rem clamp(6rem, 8vw, 9rem);
   }
 
   .featured-project,
@@ -284,8 +263,11 @@ const featuredImage = "/img/projects/projects-umut-12.webp";
   }
 
   .featured-project {
-    aspect-ratio: 2.55 / 1;
-    max-height: 44rem;
+    display: grid;
+    grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.25fr);
+    align-items: stretch;
+    border-color: rgba(25, 35, 47, 0.18);
+    box-shadow: 0 1.15rem 2.5rem rgba(24, 33, 43, 0.055);
   }
 
   .project-media {
@@ -301,10 +283,8 @@ const featuredImage = "/img/projects/projects-umut-12.webp";
     height: 100%;
     object-fit: var(--media-fit, cover);
     object-position: var(--media-position, center center);
-    filter: saturate(0.72) contrast(0.98);
-    transition:
-      transform var(--duration-slow) var(--ease-out),
-      filter var(--duration-medium) var(--ease-out);
+    filter: saturate(0.62) contrast(1.03) brightness(1.02);
+    transition: filter var(--duration-medium) var(--ease-out);
   }
 
   .featured-project__veil,
@@ -316,27 +296,42 @@ const featuredImage = "/img/projects/projects-umut-12.webp";
   }
 
   .featured-project__veil {
-    background: linear-gradient(
-      90deg,
-      rgba(249, 250, 251, 0.99) 0,
-      rgba(249, 250, 251, 0.97) 24%,
-      rgba(249, 250, 251, 0.73) 39%,
-      rgba(249, 250, 251, 0.12) 59%,
-      transparent 72%
-    );
+    display: none;
+  }
+
+  .project-media--featured {
+    position: relative;
+    inset: auto;
+    z-index: 0;
+    grid-column: 2;
+    grid-row: 1;
+    aspect-ratio: 16 / 9;
+    background: #e2e8ed;
+  }
+
+  .project-media--featured img {
+    object-fit: contain;
+    object-position: center;
+    filter: saturate(0.76) contrast(1.03) brightness(1.01);
   }
 
   .featured-project__content {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    width: min(42%, 42rem);
-    height: 100%;
+    display: grid;
+    grid-template-rows: auto auto;
+    align-content: center;
+    align-items: start;
+    grid-column: 1;
+    grid-row: 1;
+    gap: clamp(2rem, 3.5vw, 3.5rem);
+    width: 100%;
+    min-width: 0;
     padding: clamp(2.5rem, 4vw, 5rem);
+    background: linear-gradient(135deg, #fbfcfd 0%, #eff3f6 100%);
   }
 
   .featured-project__details {
-    margin-top: auto;
+    min-width: 0;
+    margin: 0;
   }
 
   .featured-project__category {
@@ -397,8 +392,19 @@ const featuredImage = "/img/projects/projects-umut-12.webp";
 
   .featured-project:hover .project-media img,
   .project-card:hover .project-media img {
-    filter: saturate(0.92) contrast(1);
-    transform: scale(1.012);
+    filter: saturate(0.78) contrast(1.04) brightness(1.02);
+  }
+
+  .featured-project:hover .project-media--featured img {
+    filter: saturate(0.84) contrast(1.04) brightness(1.01);
+  }
+
+  .project-card#heavy-special-vehicles .project-media img {
+    filter: saturate(0.48) contrast(1.04) brightness(1.03);
+  }
+
+  .project-card#electric-bus-platform .project-media img {
+    filter: saturate(0.54) contrast(1.04) brightness(1.03);
   }
 
   .projects-grid {
@@ -472,8 +478,12 @@ const featuredImage = "/img/projects/projects-umut-12.webp";
       font-size: 4.75rem;
     }
 
-    .featured-project__content {
-      width: 42%;
+    :global(html[lang="ky"]) .projects-hero h1 {
+      font-size: 3rem;
+    }
+
+    .projects-hero__copy {
+      width: min(48rem, 53%);
     }
 
     .featured-project h2 {
@@ -500,7 +510,7 @@ const featuredImage = "/img/projects/projects-umut-12.webp";
     }
 
     .projects-hero {
-      min-height: 34rem;
+      min-height: 31rem;
     }
 
     .projects-hero::before {
@@ -524,6 +534,10 @@ const featuredImage = "/img/projects/projects-umut-12.webp";
       line-height: 0.96;
     }
 
+    :global(html[lang="ky"]) .projects-hero h1 {
+      font-size: 2.7rem;
+    }
+
     .projects-hero__description {
       margin: 2rem 0 0;
       padding-left: 1rem;
@@ -531,34 +545,25 @@ const featuredImage = "/img/projects/projects-umut-12.webp";
     }
 
     .projects-hero__architecture {
-      top: 4.5rem;
-      right: -8rem;
-      bottom: auto;
-      width: 24rem;
-      height: 18rem;
-      opacity: 0.55;
+      display: none;
     }
 
     .projects-portfolio {
-      padding-block: 1rem 4.5rem;
+      padding-block: 1rem 6rem;
     }
 
     .featured-project {
       display: grid;
-      aspect-ratio: auto;
-      max-height: none;
+      grid-template-columns: 1fr;
     }
 
     .featured-project__content {
+      align-content: start;
       grid-row: 1;
+      gap: 2.5rem;
       width: 100%;
-      min-height: 21rem;
       padding: 1.75rem;
       background: #fafbfc;
-    }
-
-    .featured-project__details {
-      margin-top: 3.5rem;
     }
 
     .featured-project h2 {
@@ -572,6 +577,7 @@ const featuredImage = "/img/projects/projects-umut-12.webp";
     .project-media--featured {
       position: relative;
       z-index: 0;
+      grid-column: 1;
       grid-row: 2;
       aspect-ratio: 16 / 10;
     }

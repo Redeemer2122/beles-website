@@ -21,7 +21,7 @@ const en = {
         description:
           "A 12-metre urban bus developed as a passenger platform for city and regional operating conditions.",
         cta: "View project",
-        imageAlt: "Temporary image representing the BELES UMUT 12 urban bus project.",
+        imageAlt: "BELES UMUT 12 urban bus.",
       },
       directions: [
         {
