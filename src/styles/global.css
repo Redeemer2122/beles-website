@@ -34,9 +34,9 @@
   --font-home-heading: "Space Grotesk", var(--font-display);
   --font-home-heading-weight: 500;
   --font-home-heading-tracking: -0.035em;
-  --home-heading-size-wide: clamp(3.75rem, 4.8vw, 4.5rem);
-  --home-heading-size-compact: clamp(3.25rem, 4vw, 4rem);
-  --home-heading-size-mobile: clamp(2.85rem, 12.3vw, 3rem);
+  --home-heading-size-wide: clamp(4rem, 5.1vw, 4.75rem);
+  --home-heading-size-compact: clamp(3.375rem, 4.1vw, 4.125rem);
+  --home-heading-size-mobile: clamp(2.9rem, 12.6vw, 3.125rem);
 
   --leading-none: 1;
   --leading-tight: 1.08;
